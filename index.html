@@ -1847,19 +1847,23 @@
                                 <p>Runs: ${match.team1.runs}/${match.team1.wickets} (${match.team1.overs}.${match.team1.balls} Overs)</p>
                                 <p>Extras: ${match.team1.totalExtras}</p>
                                 <h6>Batsmen:</h6>
-                                <table>
-                                    <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
-                                    <tbody>
-                                        ${match.team1.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? 'Out' : 'Not Out'}</td></tr>`).join('')}
-                                    </tbody>
-                                </table>
+                                <div class="overflow-x-auto">
+                                    <table>
+                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            ${match.team1.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? 'Out' : 'Not Out'}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <h6>Bowlers (${match.team2.name}):</h6>
-                                <table>
-                                    <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
-                                    <tbody>
-                                        ${match.team2.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
-                                    </tbody>
-                                </table>
+                                <div class="overflow-x-auto">
+                                    <table>
+                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
+                                        <tbody>
+                                            ${match.team2.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <h6>Fall of Wickets:</h6>
                                 <ul>
                                     ${match.team1.fallOfWickets.map(fow => `<li>${fow.batsman} out at ${fow.score} in ${fow.over} overs</li>`).join('') || '<li>No wickets.</li>'}
@@ -1870,19 +1874,23 @@
                                 <p>Runs: ${match.team2.runs}/${match.team2.wickets} (${match.team2.overs}.${match.team2.balls} Overs)</p>
                                 <p>Extras: ${match.team2.totalExtras}</p>
                                 <h6>Batsmen:</h6>
-                                <table>
-                                    <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
-                                    <tbody>
-                                        ${match.team2.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? 'Out' : 'Not Out'}</td></tr>`).join('')}
-                                    </tbody>
-                                </table>
+                                <div class="overflow-x-auto">
+                                    <table>
+                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            ${match.team2.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? 'Out' : 'Not Out'}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <h6>Bowlers (${match.team1.name}):</h6>
-                                <table>
-                                    <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
-                                    <tbody>
-                                        ${match.team1.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
-                                    </tbody>
-                                </table>
+                                <div class="overflow-x-auto">
+                                    <table>
+                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
+                                        <tbody>
+                                            ${match.team1.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <h6>Fall of Wickets:</h6>
                                 <ul>
                                     ${match.team2.fallOfWickets.map(fow => `<li>${fow.batsman} out at ${fow.score} in ${fow.over} overs</li>`).join('') || '<li>No wickets.</li>'}
