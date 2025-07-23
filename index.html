@@ -651,9 +651,10 @@
             </div>
 
             <!-- Share Live Score Button -->
-            <div class="text-center mt-8">
+            <!-- Removed the Share Live Score Button as per user request -->
+            <!-- <div class="text-center mt-8">
                 <button id="shareLiveScoreBtn" class="bg-blue-500 hover:bg-blue-600">Share Live Score</button>
-            </div>
+            </div> -->
 
             <!-- Match Result Display -->
             <div id="matchResultDisplay" class="match-result hidden">
@@ -858,7 +859,7 @@
         const undoBtn = document.getElementById('undoBtn');
         const switchTeamBtn = document.getElementById('switchTeamBtn');
         const newMatchBtn = document.getElementById('newMatchBtn');
-        const shareLiveScoreBtn = document.getElementById('shareLiveScoreBtn'); // New share button
+        // const shareLiveScoreBtn = document.getElementById('shareLiveScoreBtn'); // Removed share button
 
         const matchResultDisplay = document.getElementById('matchResultDisplay');
         const manOfTheMatchDisplay = document.getElementById('manOfTheMatchDisplay');
@@ -950,8 +951,7 @@
             } else {
                 console.warn("Firebase config not found. Live score sharing will be disabled.");
                 showMessageBox("Firebase not configured. Live score sharing is disabled.", "error");
-                // Disable share button if Firebase is not configured
-                shareLiveScoreBtn.disabled = true;
+                // shareLiveScoreBtn.disabled = true; // Removed share button
             }
         }
 
@@ -969,7 +969,7 @@
                 isViewingSharedScore = true;
                 hideAllSections();
                 scoreboardSection.classList.remove('hidden');
-                shareLiveScoreBtn.classList.add('hidden'); // Hide share button in view-only mode
+                // shareLiveScoreBtn.classList.add('hidden'); // Removed share button
                 showDeveloperInfoBtn.classList.add('hidden'); // Hide developer info button in view-only mode
                 newMatchBtn.classList.add('hidden'); // Hide new match button in view-only mode
                 clearPastMatchesBtn.classList.add('hidden'); // Hide clear past matches button in view-only mode
@@ -1023,7 +1023,7 @@
                             liveFOWSection.classList.add('hidden');
                             playerSelection.classList.add('hidden');
                             scoreControls.classList.add('hidden');
-                            shareLiveScoreBtn.classList.add('hidden'); // Ensure hidden
+                            // shareLiveScoreBtn.classList.add('hidden'); // Removed share button
                             matchResultDisplay.textContent = data.result;
                             manOfTheMatchPlayer.textContent = data.manOfTheMatch;
                             renderFinalScorecards();
@@ -1055,7 +1055,7 @@
                 strikerSelect.disabled = false;
                 nonStrikerSelect.disabled = false;
                 bowlerSelect.disabled = false;
-                shareLiveScoreBtn.classList.remove('hidden'); // Show share button
+                // shareLiveScoreBtn.classList.remove('hidden'); // Removed share button
                 showDeveloperInfoBtn.classList.remove('hidden'); // Show developer info button
                 newMatchBtn.classList.remove('hidden'); // Show new match button
                 clearPastMatchesBtn.classList.remove('hidden'); // Show clear past matches button
@@ -1661,7 +1661,7 @@
             playerSelection.classList.add('hidden');
             scoreControls.classList.add('hidden');
             finalScorecardsSection.classList.remove('hidden');
-            shareLiveScoreBtn.classList.add('hidden'); // Hide share button after match completion
+            // shareLiveScoreBtn.classList.add('hidden'); // Removed share button
 
 
             // Determine which team batted first and which batted second
@@ -1864,7 +1864,7 @@
             teamRegistrationSection.classList.remove('hidden'); // Show registration section
             pastMatchesSection.classList.remove('hidden'); // Ensure past matches section is visible
             showDeveloperInfoBtn.classList.remove('hidden'); // Show developer info button
-            shareLiveScoreBtn.classList.add('hidden'); // Hide share button on new match
+            // shareLiveScoreBtn.classList.add('hidden'); // Removed share button on new match
             newMatchBtn.classList.remove('hidden'); // Ensure new match button is visible
             clearPastMatchesBtn.classList.remove('hidden'); // Ensure clear past matches button is visible
 
@@ -2241,34 +2241,9 @@
 
         // Function to share live score details
         async function shareLiveScore() {
-            if (matchState !== 'innings1' && matchState !== 'innings2') {
-                showMessageBox('Live score can only be shared during an active match.', 'error');
-                return;
-            }
-            if (!liveScoreDocRef) {
-                // Ensure the score is saved at least once to get a document ID
-                await saveLiveScoreToFirestore();
-                if (!liveScoreDocRef) {
-                    showMessageBox('Could not generate a shareable link. Please try again.', 'error');
-                    return;
-                }
-            }
-
-            const shareUrl = `${window.location.origin}${window.location.pathname}?appId=${appId}&liveScoreId=${liveScoreDocRef.id}`;
-
-            // Copy to clipboard
-            const textarea = document.createElement('textarea');
-            textarea.value = shareUrl;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showMessageBox('Live score URL copied to clipboard!', 'success');
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-                showMessageBox('Failed to copy live score URL to clipboard. Please copy manually: ' + shareUrl, 'error');
-            }
-            document.body.removeChild(textarea);
+            // This function is no longer needed as the button is removed.
+            // However, if it were to be re-added, it would need to be re-enabled.
+            showMessageBox('Share Live Score feature has been removed.', 'info');
         }
 
 
@@ -2375,7 +2350,7 @@
                 hideAllSections(); // Hide all sections
                 scoreboardSection.classList.remove('hidden'); // Show scoreboard
                 showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
-                shareLiveScoreBtn.classList.remove('hidden'); // Show share button when match starts
+                // shareLiveScoreBtn.classList.remove('hidden'); // Removed share button when match starts
 
                 updateScoreboardDisplay();
                 showMessageBox('Match started!', 'success');
@@ -2402,7 +2377,7 @@
         switchTeamBtn.addEventListener('click', switchBattingTeam);
         newMatchBtn.addEventListener('click', newMatch);
         clearPastMatchesBtn.addEventListener('click', clearAllPastMatches); // New button listener
-        shareLiveScoreBtn.addEventListener('click', shareLiveScore); // Event listener for share button
+        // shareLiveScoreBtn.addEventListener('click', shareLiveScore); // Removed event listener for share button
 
         // Event listeners for Developer Info page (NEW)
         // Add a button to the main app container to show developer info
@@ -2430,13 +2405,13 @@
                 liveFOWSection.classList.remove('hidden');
                 playerSelection.classList.remove('hidden');
                 scoreControls.classList.remove('hidden');
-                shareLiveScoreBtn.classList.remove('hidden'); // Show share button when returning to live score
+                // shareLiveScoreBtn.classList.remove('hidden'); // Removed share button when returning to live score
 
                 if (matchState === 'completed') {
                     matchResultDisplay.classList.remove('hidden');
                     manOfTheMatchDisplay.classList.remove('hidden');
                     finalScorecardsSection.classList.remove('hidden');
-                    shareLiveScoreBtn.classList.add('hidden'); // Hide share button if match is completed
+                    // shareLiveScoreBtn.classList.add('hidden'); // Removed share button if match is completed
                 }
             }
             showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
