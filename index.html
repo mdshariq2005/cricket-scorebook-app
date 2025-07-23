@@ -288,10 +288,16 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
         }
         .past-match-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted min-width for better display */
+            display: flex; /* Default to flex column for small screens */
+            flex-direction: column;
             gap: 1.5rem; /* Increased gap */
             margin-top: 1.5rem;
+        }
+        @media (min-width: 768px) { /* md breakpoint in Tailwind */
+            .past-match-details {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
         }
         .past-match-details .card {
             background-color: #f8fafc;
