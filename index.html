@@ -422,6 +422,14 @@
             background-image: linear-gradient(to bottom right, #60a5fa, #3b82f6);
             margin-top: 2rem;
         }
+        /* Blue color for share button */
+        #shareLiveScoreBtn {
+            background-image: linear-gradient(to bottom right, #3b82f6, #2563eb);
+            border: 1px solid #2563eb;
+        }
+        #shareLiveScoreBtn:hover {
+            background-image: linear-gradient(to bottom right, #2563eb, #1d4ed8);
+        }
     </style>
 </head>
 <body>
@@ -642,6 +650,11 @@
                 </ul>
             </div>
 
+            <!-- Share Live Score Button -->
+            <div class="text-center mt-8">
+                <button id="shareLiveScoreBtn" class="bg-blue-500 hover:bg-blue-600">Share Live Score</button>
+            </div>
+
             <!-- Match Result Display -->
             <div id="matchResultDisplay" class="match-result hidden">
                 Match Result will appear here!
@@ -789,6 +802,11 @@
     </div>
 
     <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // Get references to HTML elements
         const teamRegistrationSection = document.getElementById('teamRegistrationSection');
         const scoreboardSection = document.getElementById('scoreboardSection');
@@ -840,6 +858,7 @@
         const undoBtn = document.getElementById('undoBtn');
         const switchTeamBtn = document.getElementById('switchTeamBtn');
         const newMatchBtn = document.getElementById('newMatchBtn');
+        const shareLiveScoreBtn = document.getElementById('shareLiveScoreBtn'); // New share button
 
         const matchResultDisplay = document.getElementById('matchResultDisplay');
         const manOfTheMatchDisplay = document.getElementById('manOfTheMatchDisplay');
@@ -858,7 +877,7 @@
         // Final Scorecards elements
         const finalScorecardsSection = document.getElementById('finalScorecardsSection');
         const finalTeam1NameDisplay = document.getElementById('finalTeam1Name');
-        const finalTeam2NameDisplay = document.getElementById('finalTeam2Name'); // Corrected assignment
+        const finalTeam2NameDisplay = document.getElementById('finalTeam2Name');
         const finalTeam1BatsmanScorecardTable = document.getElementById('finalTeam1BatsmanScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1BowlerScorecardTable = document.getElementById('finalTeam1BowlerScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1FOWList = document.getElementById('finalTeam1FOWList');
@@ -889,6 +908,160 @@
             pastMatchesSection,
             developerInfoSection
         ];
+
+        // Firebase variables
+        let app;
+        let db;
+        let auth;
+        let userId;
+        let liveScoreDocRef = null; // Reference to the current live score document in Firestore
+        let unsubscribeSnapshot = null; // To store the unsubscribe function for onSnapshot
+        let isViewingSharedScore = false; // Flag to indicate if the user is viewing a shared score
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Function to initialize Firebase
+        async function initializeFirebase() {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase authenticated. User ID:", userId);
+                        await handleUrlParams(); // Check for shared score URL after auth
+                    } else {
+                        // Sign in anonymously if no user is authenticated
+                        try {
+                            await signInAnonymously(auth);
+                            userId = auth.currentUser.uid; // Get UID after anonymous sign-in
+                            console.log("Signed in anonymously. User ID:", userId);
+                            await handleUrlParams(); // Check for shared score URL after auth
+                        } catch (error) {
+                            console.error("Error signing in anonymously:", error);
+                            showMessageBox("Failed to authenticate with Firebase. Live score sharing may not work.", "error");
+                        }
+                    }
+                    loadPastMatchesLocal(); // Load past matches after auth is ready
+                });
+            } else {
+                console.warn("Firebase config not found. Live score sharing will be disabled.");
+                showMessageBox("Firebase not configured. Live score sharing is disabled.", "error");
+                // Disable share button if Firebase is not configured
+                shareLiveScoreBtn.disabled = true;
+            }
+        }
+
+        // Function to handle URL parameters for shared scores
+        async function handleUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedAppId = urlParams.get('appId');
+            const liveScoreId = urlParams.get('liveScoreId');
+
+            if (sharedAppId && liveScoreId) {
+                if (!db) {
+                    showMessageBox("Firebase is not initialized. Cannot load shared score.", "error");
+                    return;
+                }
+                isViewingSharedScore = true;
+                hideAllSections();
+                scoreboardSection.classList.remove('hidden');
+                shareLiveScoreBtn.classList.add('hidden'); // Hide share button in view-only mode
+                showDeveloperInfoBtn.classList.add('hidden'); // Hide developer info button in view-only mode
+                newMatchBtn.classList.add('hidden'); // Hide new match button in view-only mode
+                clearPastMatchesBtn.classList.add('hidden'); // Hide clear past matches button in view-only mode
+                pastMatchesSection.classList.add('hidden'); // Hide past matches section in view-only mode
+
+                // Disable all score controls
+                Array.from(scoreControls.children).forEach(button => button.disabled = true);
+                strikerSelect.disabled = true;
+                nonStrikerSelect.disabled = true;
+                bowlerSelect.disabled = true;
+
+                showMessageBox("Loading live score...", "info");
+
+                liveScoreDocRef = doc(db, `artifacts/${sharedAppId}/public/data/liveScores/${liveScoreId}`);
+
+                if (unsubscribeSnapshot) {
+                    unsubscribeSnapshot(); // Unsubscribe from any previous listener
+                }
+
+                unsubscribeSnapshot = onSnapshot(liveScoreDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Restore game state from Firestore data
+                        team1 = data.team1;
+                        team2 = data.team2;
+                        totalOversPerInnings = data.totalOversPerInnings;
+                        firstInningsTotalRuns = data.firstInningsTotalRuns;
+                        matchState = data.matchState;
+                        currentPartnershipRuns = data.currentPartnershipRuns;
+
+                        // Re-establish current batting/bowling teams based on names
+                        currentBattingTeam = (data.currentBattingTeamName === team1.name) ? team1 : team2;
+                        currentBowlingTeam = (data.currentBowlingTeamName === team1.name) ? team1 : team2;
+                        currentBowlerIndex = data.currentBowlerIndex;
+
+                        // Restore player indices (important for dropdowns)
+                        if (currentBattingTeam) {
+                            currentBattingTeam.currentStrikerIndex = data.currentStrikerIndex;
+                            currentBattingTeam.currentNonStrikerIndex = data.currentNonStrikerIndex;
+                        }
+
+                        updateScoreboardDisplay();
+                        showMessageBox("Live score updated!", "success");
+
+                        // If match is completed, show final scorecards and hide live controls
+                        if (matchState === 'completed') {
+                            matchResultDisplay.classList.remove('hidden');
+                            manOfTheMatchDisplay.classList.remove('hidden');
+                            finalScorecardsSection.classList.remove('hidden');
+                            liveScorecardsSection.classList.add('hidden');
+                            liveFOWSection.classList.add('hidden');
+                            playerSelection.classList.add('hidden');
+                            scoreControls.classList.add('hidden');
+                            shareLiveScoreBtn.classList.add('hidden'); // Ensure hidden
+                            matchResultDisplay.textContent = data.result;
+                            manOfTheMatchPlayer.textContent = data.manOfTheMatch;
+                            renderFinalScorecards();
+                        } else {
+                            matchResultDisplay.classList.add('hidden');
+                            manOfTheMatchDisplay.classList.add('hidden');
+                            finalScorecardsSection.classList.add('hidden');
+                            liveScorecardsSection.classList.remove('hidden');
+                            liveFOWSection.classList.remove('hidden');
+                            playerSelection.classList.remove('hidden');
+                            scoreControls.classList.remove('hidden');
+                        }
+
+                    } else {
+                        showMessageBox("Live score not found or has been deleted.", "error");
+                        isViewingSharedScore = false; // Reset flag
+                        newMatch(); // Start a new match setup
+                    }
+                }, (error) => {
+                    console.error("Error fetching shared live score:", error);
+                    showMessageBox("Error loading shared live score.", "error");
+                    isViewingSharedScore = false; // Reset flag
+                    newMatch(); // Start a new match setup
+                });
+            } else {
+                isViewingSharedScore = false;
+                // Ensure controls are enabled if not viewing a shared score
+                Array.from(scoreControls.children).forEach(button => button.disabled = false);
+                strikerSelect.disabled = false;
+                nonStrikerSelect.disabled = false;
+                bowlerSelect.disabled = false;
+                shareLiveScoreBtn.classList.remove('hidden'); // Show share button
+                showDeveloperInfoBtn.classList.remove('hidden'); // Show developer info button
+                newMatchBtn.classList.remove('hidden'); // Show new match button
+                clearPastMatchesBtn.classList.remove('hidden'); // Show clear past matches button
+                pastMatchesSection.classList.remove('hidden'); // Show past matches section
+            }
+        }
 
         // Function to hide all main content sections
         function hideAllSections() {
@@ -987,6 +1160,7 @@
 
         // Event listeners for player selection changes
         strikerSelect.addEventListener('change', (event) => {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             const newStrikerIndex = parseInt(event.target.value);
             if (newStrikerIndex === currentBattingTeam.currentNonStrikerIndex) {
                 showMessageBox('Striker and Non-Striker cannot be the same player.', 'error');
@@ -996,9 +1170,11 @@
             currentBattingTeam.currentStrikerIndex = newStrikerIndex;
             showMessageBox(`${currentBattingTeam.players[newStrikerIndex].name} is now the Striker.`, 'success');
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         });
 
         nonStrikerSelect.addEventListener('change', (event) => {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             const newNonStrikerIndex = parseInt(event.target.value);
             if (newNonStrikerIndex === currentBattingTeam.currentStrikerIndex) {
                 showMessageBox('Striker and Non-Striker cannot be the same player.', 'error');
@@ -1008,12 +1184,15 @@
             currentBattingTeam.currentNonStrikerIndex = newNonStrikerIndex;
             showMessageBox(`${currentBattingTeam.players[newNonStrikerIndex].name} is now the Non-Striker.`, 'success');
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         });
 
         bowlerSelect.addEventListener('change', (event) => {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             currentBowlerIndex = parseInt(event.target.value);
             showMessageBox(`${currentBowlingTeam.players[currentBowlerIndex].name} is now bowling.`, 'success');
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         });
 
         // Function to update the scoreboard display and scorecards
@@ -1088,6 +1267,7 @@
 
         // Function to add runs
         function addRuns(runs) {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1127,10 +1307,12 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         // Function to add a wicket
         function addWicket() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1194,6 +1376,7 @@
 
                 checkInningsCompletion();
                 updateScoreboardDisplay();
+                saveLiveScoreToFirestore(); // Save changes to Firestore
             } else {
                 showMessageBox(`${currentBattingTeam.name} is already all out!`, 'error');
             }
@@ -1201,6 +1384,7 @@
 
         // Function to add a dot ball
         function addBall() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1228,10 +1412,12 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         // Functions for Extras
         function addWide() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1256,9 +1442,11 @@
 
             checkInningsCompletion(); // Wide doesn't count as a ball, but check innings completion
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         function addNoBall() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1283,9 +1471,11 @@
 
             checkInningsCompletion(); // No ball doesn't count as a ball, but check innings completion
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         function addBye() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1310,9 +1500,11 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         function addLegBye() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1337,10 +1529,12 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         // Function to switch strike between the two current batsmen
         function switchStrike(isAutomatic = false) {
+            if (isViewingSharedScore && !isAutomatic) return; // Prevent manual changes in view-only mode
             if (currentBattingTeam.currentStrikerIndex !== -1 && currentBattingTeam.currentNonStrikerIndex !== -1) {
                 const temp = currentBattingTeam.currentStrikerIndex;
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.currentNonStrikerIndex;
@@ -1348,6 +1542,7 @@
                 populatePlayerDropdowns(); // Update dropdowns to reflect strike change
                 if (!isAutomatic) {
                     showMessageBox('Strike switched manually.', 'info');
+                    saveLiveScoreToFirestore(); // Save changes to Firestore
                 }
             } else if (!isAutomatic) {
                 showMessageBox('Cannot switch strike: ensure both batsmen are selected.', 'error');
@@ -1387,6 +1582,7 @@
                     matchState = 'innings2';
                     switchBattingTeam(); // Automatically switch to Team 2 for chasing
                     updateScoreboardDisplay(); // Update display immediately after switch
+                    saveLiveScoreToFirestore(); // Save changes to Firestore
                 }
             } else if (matchState === 'innings2') {
                 // Check for win condition immediately when target is surpassed
@@ -1403,6 +1599,7 @@
 
         // Function to switch the batting team
         function switchBattingTeam() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'completed') {
                 showMessageBox('Match is completed. Start a new match.', 'error');
                 return;
@@ -1448,6 +1645,7 @@
 
             showMessageBox(`Switched to ${currentBattingTeam.name} batting!`, 'success');
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
         // Function to declare the winner and Man of the Match
@@ -1463,6 +1661,7 @@
             playerSelection.classList.add('hidden');
             scoreControls.classList.add('hidden');
             finalScorecardsSection.classList.remove('hidden');
+            shareLiveScoreBtn.classList.add('hidden'); // Hide share button after match completion
 
 
             // Determine which team batted first and which batted second
@@ -1506,6 +1705,7 @@
 
             // Save match details to localStorage
             saveMatchDetailsLocal(resultMessage, motmPlayer ? motmPlayer.name : 'N/A');
+            saveLiveScoreToFirestore(resultMessage, motmPlayer ? motmPlayer.name : 'N/A'); // Save final state to Firestore
         }
 
         // Function to determine Man of the Match based on a simple heuristic
@@ -1542,6 +1742,7 @@
 
         // Function to undo the last action
         function undoLastAction() {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (!lastAction) {
                 showMessageBox('No action to undo.', 'error');
                 return;
@@ -1630,11 +1831,18 @@
             lastAction = null; // Clear last action after undo
             showMessageBox('Last action undone.', 'info');
             updateScoreboardDisplay();
+            saveLiveScoreToFirestore(); // Save changes to Firestore
         }
 
 
         // Function to reset the match
         function newMatch() {
+            if (unsubscribeSnapshot) {
+                unsubscribeSnapshot(); // Unsubscribe from live score updates
+                unsubscribeSnapshot = null;
+            }
+            isViewingSharedScore = false; // Reset view-only flag
+
             // Reset game state
             team1 = { name: '', players: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
             team2 = { name: '', players: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
@@ -1646,6 +1854,7 @@
             firstInningsTotalRuns = 0;
             lastAction = null;
             currentPartnershipRuns = 0; // Reset partnership for new match
+            liveScoreDocRef = null; // Clear Firestore document reference
 
             // Clear form fields
             teamRegistrationForm.reset();
@@ -1655,6 +1864,10 @@
             teamRegistrationSection.classList.remove('hidden'); // Show registration section
             pastMatchesSection.classList.remove('hidden'); // Ensure past matches section is visible
             showDeveloperInfoBtn.classList.remove('hidden'); // Show developer info button
+            shareLiveScoreBtn.classList.add('hidden'); // Hide share button on new match
+            newMatchBtn.classList.remove('hidden'); // Ensure new match button is visible
+            clearPastMatchesBtn.classList.remove('hidden'); // Ensure clear past matches button is visible
+
 
             // Clear scorecards
             liveBatsmanScorecardTable.innerHTML = '';
@@ -1684,6 +1897,12 @@
 
             showMessageBox('New match started! Please register teams.', 'success');
             updateScoreboardDisplay(); // Clear scoreboard display
+
+            // Clear URL parameters
+            const url = new URL(window.location.href);
+            url.searchParams.delete('appId');
+            url.searchParams.delete('liveScoreId');
+            window.history.replaceState({}, document.title, url.toString());
 
             loadPastMatchesLocal(); // Reload past matches after a new match is started
         }
@@ -1984,9 +2203,77 @@
             });
         }
 
+        // Function to save live score details to Firestore
+        async function saveLiveScoreToFirestore(resultMessage = null, manOfTheMatchName = null) {
+            if (!db || !userId || isViewingSharedScore) return; // Don't save if Firebase not ready or in view-only mode
+
+            try {
+                if (!liveScoreDocRef) {
+                    // Create a new document reference if it's a new match
+                    liveScoreDocRef = doc(db, `artifacts/${appId}/public/data/liveScores/${crypto.randomUUID()}`);
+                }
+
+                const dataToSave = {
+                    team1: team1,
+                    team2: team2,
+                    totalOversPerInnings: totalOversPerInnings,
+                    matchState: matchState,
+                    firstInningsTotalRuns: firstInningsTotalRuns,
+                    currentBattingTeamName: currentBattingTeam ? currentBattingTeam.name : null,
+                    currentBowlingTeamName: currentBowlingTeam ? currentBowlingTeam.name : null,
+                    currentBowlerIndex: currentBowlerIndex,
+                    currentStrikerIndex: currentBattingTeam ? currentBattingTeam.currentStrikerIndex : -1,
+                    currentNonStrikerIndex: currentBattingTeam ? currentBattingTeam.currentNonStrikerIndex : -1,
+                    currentPartnershipRuns: currentPartnershipRuns,
+                    matchDate: document.getElementById('matchDate').value,
+                    matchTime: document.getElementById('matchTime').value,
+                    result: resultMessage,
+                    manOfTheMatch: manOfTheMatchName
+                };
+
+                await setDoc(liveScoreDocRef, dataToSave, { merge: true });
+                console.log("Live score saved to Firestore:", liveScoreDocRef.id);
+            } catch (e) {
+                console.error("Error saving live score to Firestore: ", e);
+                showMessageBox('Failed to save live score to cloud.', 'error');
+            }
+        }
+
+        // Function to share live score details
+        async function shareLiveScore() {
+            if (matchState !== 'innings1' && matchState !== 'innings2') {
+                showMessageBox('Live score can only be shared during an active match.', 'error');
+                return;
+            }
+            if (!liveScoreDocRef) {
+                // Ensure the score is saved at least once to get a document ID
+                await saveLiveScoreToFirestore();
+                if (!liveScoreDocRef) {
+                    showMessageBox('Could not generate a shareable link. Please try again.', 'error');
+                    return;
+                }
+            }
+
+            const shareUrl = `${window.location.origin}${window.location.pathname}?appId=${appId}&liveScoreId=${liveScoreDocRef.id}`;
+
+            // Copy to clipboard
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showMessageBox('Live score URL copied to clipboard!', 'success');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                showMessageBox('Failed to copy live score URL to clipboard. Please copy manually: ' + shareUrl, 'error');
+            }
+            document.body.removeChild(textarea);
+        }
+
 
         // Event listener for team registration form submission
-        teamRegistrationForm.addEventListener('submit', function(event) {
+        teamRegistrationForm.addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent default form submission
 
             try {
@@ -2066,7 +2353,8 @@
         });
 
         // Event listener for Start Match button (NEW)
-        startMatchBtn.addEventListener('click', () => {
+        startMatchBtn.addEventListener('click', async () => {
+            if (isViewingSharedScore) return; // Prevent changes in view-only mode
             if (matchState === 'teams_registered') {
                 currentBattingTeam = team1;
                 currentBowlingTeam = team2;
@@ -2087,9 +2375,11 @@
                 hideAllSections(); // Hide all sections
                 scoreboardSection.classList.remove('hidden'); // Show scoreboard
                 showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
+                shareLiveScoreBtn.classList.remove('hidden'); // Show share button when match starts
 
                 updateScoreboardDisplay();
                 showMessageBox('Match started!', 'success');
+                await saveLiveScoreToFirestore(); // Save initial match state to Firestore
             } else {
                 showMessageBox('Teams are not registered yet or match already started.', 'error');
             }
@@ -2112,6 +2402,7 @@
         switchTeamBtn.addEventListener('click', switchBattingTeam);
         newMatchBtn.addEventListener('click', newMatch);
         clearPastMatchesBtn.addEventListener('click', clearAllPastMatches); // New button listener
+        shareLiveScoreBtn.addEventListener('click', shareLiveScore); // Event listener for share button
 
         // Event listeners for Developer Info page (NEW)
         // Add a button to the main app container to show developer info
@@ -2139,11 +2430,13 @@
                 liveFOWSection.classList.remove('hidden');
                 playerSelection.classList.remove('hidden');
                 scoreControls.classList.remove('hidden');
+                shareLiveScoreBtn.classList.remove('hidden'); // Show share button when returning to live score
 
                 if (matchState === 'completed') {
                     matchResultDisplay.classList.remove('hidden');
                     manOfTheMatchDisplay.classList.remove('hidden');
                     finalScorecardsSection.classList.remove('hidden');
+                    shareLiveScoreBtn.classList.add('hidden'); // Hide share button if match is completed
                 }
             }
             showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
@@ -2151,7 +2444,8 @@
 
 
         // Initial load of past matches when the page loads
-        loadPastMatchesLocal();
+        initializeFirebase(); // Initialize Firebase on page load
+        // handleUrlParams() is called after Firebase auth is ready
         updateScoreboardDisplay(); // Initial update to ensure display is correct on load (e.g., if page refreshed)
     </script>
 </body>
