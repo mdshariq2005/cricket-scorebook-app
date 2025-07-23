@@ -63,24 +63,26 @@
         }
         /* Style for buttons */
         button {
-            background-image: linear-gradient(to bottom right, #3b82f6, #2563eb); /* Blue gradient */
+            /* Consistent blue gradient for all buttons */
+            background-image: linear-gradient(to bottom right, #3b82f6, #2563eb); /* Blue-500 to Blue-600 */
             color: white;
-            padding: 0.85rem 1.75rem; /* More padding */
-            border-radius: 0.75rem; /* More rounded */
-            font-weight: 700; /* Bolder text */
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow */
-            border: none; /* Remove default border */
+            /* New box-shadow for a slightly more defined, elevated look */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #2563eb; /* Subtle border matching the darker gradient edge */
         }
         button:hover {
-            background-image: linear-gradient(to bottom right, #2563eb, #1d4ed8); /* Darker gradient on hover */
-            transform: translateY(-2px); /* More pronounced lift effect */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-image: linear-gradient(to bottom right, #2563eb, #1d4ed8); /* Darker blue-600 to Blue-700 */
+            transform: translateY(-1px); /* Slightly less pronounced lift */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.08);
         }
         button:active {
-            transform: translateY(0); /* Press down effect */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Pressed effect */
         }
         button:disabled {
             background-image: none;
@@ -88,40 +90,45 @@
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
+            border-color: #94a3b8; /* Match border to background */
         }
-        /* Specific button styles for score controls */
+        /* Remove specific color overrides for score control buttons and make them inherit or use the general blue */
         .score-control-button {
-            background-image: linear-gradient(to bottom right, #10b981, #059669); /* Green gradient */
-            padding: 0.6rem 1.2rem; /* Slightly smaller for control buttons */
-            font-size: 0.95rem;
+            /* These will now inherit the general button styles for color and design */
+            /* Only keep specific padding and font-size if they are different from general button */
+            padding: 0.6rem 1.2rem; /* Keep smaller padding */
+            font-size: 0.95rem; /* Keep smaller font size */
+            /* Explicitly set to main blue gradient for consistency */
+            background-image: linear-gradient(to bottom right, #3b82f6, #2563eb);
+            border: 1px solid #2563eb;
         }
         .score-control-button:hover {
-            background-image: linear-gradient(to bottom right, #059669, #047857);
+             background-image: linear-gradient(to bottom right, #2563eb, #1d4ed8); /* Darker blue on hover */
         }
-        .wicket-button {
-            background-image: linear-gradient(to bottom right, #ef4444, #dc2626); /* Red gradient */
-        }
-        .wicket-button:hover {
-            background-image: linear-gradient(to bottom right, #dc2626, #b91c1c);
-        }
-        .over-button {
-            background-image: linear-gradient(to bottom right, #f59e0b, #d97706); /* Amber gradient */
-        }
-        .over-button:hover {
-            background-image: linear-gradient(to bottom right, #d97706, #b45309);
-        }
-        .extra-button {
-            background-image: linear-gradient(to bottom right, #60a5fa, #3b82f6); /* Light blue gradient */
-        }
-        .extra-button:hover {
+
+        /* Specific buttons that had unique colors will now also be blue */
+        .wicket-button,
+        .over-button,
+        .extra-button,
+        .undo-button,
+        #startMatchBtn,
+        #newMatchBtn,
+        #clearPastMatchesBtn,
+        .back-button {
             background-image: linear-gradient(to bottom right, #3b82f6, #2563eb);
+            border: 1px solid #2563eb;
         }
-        .undo-button {
-            background-image: linear-gradient(to bottom right, #6b7280, #4b5563); /* Gray gradient */
+        .wicket-button:hover,
+        .over-button:hover,
+        .extra-button:hover,
+        .undo-button:hover,
+        #startMatchBtn:hover,
+        #newMatchBtn:hover,
+        #clearPastMatchesBtn:hover,
+        .back-button:hover {
+            background-image: linear-gradient(to bottom right, #2563eb, #1d4ed8);
         }
-        .undo-button:hover {
-            background-image: linear-gradient(to bottom right, #4b5563, #374151);
-        }
+
         /* Message box styling */
         .message-box {
             position: fixed;
@@ -391,6 +398,30 @@
             color: #065f46;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
         }
+
+        /* Developer Info Section Specific Styles */
+        #developerInfoSection {
+            background-color: #f0f8ff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+        #developerInfoSection h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+        }
+        #developerInfoSection p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 0.8rem;
+        }
+        #developerInfoSection .back-button {
+            background-image: linear-gradient(to bottom right, #60a5fa, #3b82f6);
+            margin-top: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -529,8 +560,8 @@
                     <div class="score-control-group">
                         <h4>Wickets & Balls</h4>
                         <div class="flex flex-wrap justify-center gap-2">
-                            <button id="addWicketBtn" class="score-control-button wicket-button">Wicket</button>
-                            <button id="addBallBtn" class="score-control-button over-button">Dot Ball</button>
+                            <button id="addWicketBtn" class="score-control-button">Wicket</button>
+                            <button id="addBallBtn" class="score-control-button">Dot Ball</button>
                         </div>
                     </div>
 
@@ -538,10 +569,10 @@
                     <div class="score-control-group">
                         <h4>Extras</h4>
                         <div class="flex flex-wrap justify-center gap-2">
-                            <button id="addWideBtn" class="score-control-button extra-button">Wide</button>
-                            <button id="addNoBallBtn" class="score-control-button extra-button">No Ball</button>
-                            <button id="addByeBtn" class="score-control-button extra-button">Bye</button>
-                            <button id="addLegByeBtn" class="score-control-button extra-button">Leg Bye</button>
+                            <button id="addWideBtn" class="score-control-button">Wide</button>
+                            <button id="addNoBallBtn" class="score-control-button">No Ball</button>
+                            <button id="addByeBtn" class="score-control-button">Bye</button>
+                            <button id="addLegByeBtn" class="score-control-button">Leg Bye</button>
                         </div>
                     </div>
 
@@ -549,9 +580,9 @@
                     <div class="score-control-group md:col-span-2 lg:col-span-3">
                         <h4>Match Controls</h4>
                         <div class="flex flex-wrap justify-center gap-2">
-                            <button id="switchStrikeBtn" class="score-control-button bg-orange-500 hover:bg-orange-600">Switch Strike</button>
-                            <button id="undoBtn" class="score-control-button undo-button">Undo Last</button>
-                            <button id="switchTeamBtn" class="score-control-button bg-purple-500 hover:bg-purple-600">Switch Batting Team</button>
+                            <button id="switchStrikeBtn" class="score-control-button">Switch Strike</button>
+                            <button id="undoBtn" class="score-control-button">Undo Last</button>
+                            <button id="switchTeamBtn" class="score-control-button">Switch Batting Team</button>
                         </div>
                     </div>
                 </div>
@@ -744,6 +775,14 @@
             </div>
         </div>
 
+        <!-- Developer Info Section (NEW) -->
+        <div id="developerInfoSection" class="hidden">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Developer Information</h2>
+            <p>Developed by: Shariq Mohd</p>
+            <p>&copy; 2025 Shariq Mohd. All rights reserved.</p>
+            <button id="backToMainBtn" class="back-button">Back to Main</button>
+        </div>
+
 
         <!-- Message Box for notifications -->
         <div id="messageBox" class="message-box"></div>
@@ -819,7 +858,7 @@
         // Final Scorecards elements
         const finalScorecardsSection = document.getElementById('finalScorecardsSection');
         const finalTeam1NameDisplay = document.getElementById('finalTeam1Name');
-        const finalTeam2NameDisplay = document.getElementById('finalTeam2Name');
+        const finalTeam2NameDisplay = document.getElementById('finalTeam2Name'); // Corrected assignment
         const finalTeam1BatsmanScorecardTable = document.getElementById('finalTeam1BatsmanScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1BowlerScorecardTable = document.getElementById('finalTeam1BowlerScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1FOWList = document.getElementById('finalTeam1FOWList');
@@ -836,6 +875,25 @@
         const currentOverBallsDisplay = document.getElementById('currentOverBallsDisplay');
         const partnershipRunsDisplay = document.getElementById('partnershipRunsDisplay');
 
+        // Developer Info elements (NEW)
+        const developerInfoSection = document.getElementById('developerInfoSection');
+        let showDeveloperInfoBtn; // Declared here, initialized after its creation
+
+        const backToMainBtn = document.getElementById('backToMainBtn'); // New button
+
+        // Array of all main content sections to easily hide/show them
+        const allSections = [
+            teamRegistrationSection,
+            matchReadySection,
+            scoreboardSection,
+            pastMatchesSection,
+            developerInfoSection
+        ];
+
+        // Function to hide all main content sections
+        function hideAllSections() {
+            allSections.forEach(section => section.classList.add('hidden'));
+        }
 
         // Game state variables
         let team1 = {
@@ -1593,22 +1651,10 @@
             teamRegistrationForm.reset();
 
             // Hide scoreboard and show registration
-            scoreboardSection.classList.add('hidden');
-            matchReadySection.classList.add('hidden'); // Hide match ready section
-            teamRegistrationSection.classList.remove('hidden');
-            matchResultDisplay.classList.add('hidden'); // Hide result display
-            targetScoreDisplayElement.classList.add('hidden'); // Hide target display
-            manOfTheMatchDisplay.classList.add('hidden'); // Hide Man of the Match display
-            finalScorecardsSection.classList.add('hidden'); // Hide final scorecards section
+            hideAllSections(); // Hide all sections first
+            teamRegistrationSection.classList.remove('hidden'); // Show registration section
             pastMatchesSection.classList.remove('hidden'); // Ensure past matches section is visible
-
-
-            // Show live score sections
-            liveScorecardsSection.classList.remove('hidden');
-            liveFOWSection.classList.remove('hidden');
-            // playerSelection.classList.remove('hidden'); // These are now inside live-score-panel
-            // scoreControls.classList.remove('hidden'); // These are now inside live-score-panel
-
+            showDeveloperInfoBtn.classList.remove('hidden'); // Show developer info button
 
             // Clear scorecards
             liveBatsmanScorecardTable.innerHTML = '';
@@ -1823,7 +1869,7 @@
         // Function to load and display past matches from localStorage
         function loadPastMatchesLocal() {
             pastMatchesList.innerHTML = ''; // Clear existing list
-            pastMatchesSection.classList.remove('hidden'); // Ensure the section is visible
+            // pastMatchesSection.classList.remove('hidden'); // Ensure the section is visible - this is now handled by showSection
 
             try {
                 const storedMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
@@ -2005,9 +2051,9 @@
                 matchState = 'teams_registered';
 
                 // Hide registration and show match ready section
-                teamRegistrationSection.classList.add('hidden');
-                matchReadySection.classList.remove('hidden');
-                pastMatchesSection.classList.add('hidden'); // Hide past matches when registering a new game
+                hideAllSections(); // Hide all sections
+                matchReadySection.classList.remove('hidden'); // Show match ready section
+                showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
 
                 registeredTeamsSummary.textContent = `${team1.name} vs ${team2.name} (${totalOversPerInnings} Overs per innings) on ${matchDate} at ${matchTime}`;
 
@@ -2038,8 +2084,9 @@
                     return;
                 }
 
-                matchReadySection.classList.add('hidden'); // Hide match ready section
+                hideAllSections(); // Hide all sections
                 scoreboardSection.classList.remove('hidden'); // Show scoreboard
+                showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
 
                 updateScoreboardDisplay();
                 showMessageBox('Match started!', 'success');
@@ -2065,6 +2112,43 @@
         switchTeamBtn.addEventListener('click', switchBattingTeam);
         newMatchBtn.addEventListener('click', newMatch);
         clearPastMatchesBtn.addEventListener('click', clearAllPastMatches); // New button listener
+
+        // Event listeners for Developer Info page (NEW)
+        // Add a button to the main app container to show developer info
+        const developerInfoButtonContainer = document.createElement('div');
+        developerInfoButtonContainer.className = 'text-center mt-8';
+        developerInfoButtonContainer.innerHTML = '<button id="showDeveloperInfoBtn" class="bg-blue-500 hover:bg-blue-600">Developer Info</button>';
+        document.querySelector('.app-container').appendChild(developerInfoButtonContainer);
+        showDeveloperInfoBtn = document.getElementById('showDeveloperInfoBtn'); // Assign to the global variable
+
+        showDeveloperInfoBtn.addEventListener('click', () => {
+            hideAllSections();
+            developerInfoSection.classList.remove('hidden');
+            showDeveloperInfoBtn.classList.add('hidden'); // Hide the button when on this page
+        });
+
+        backToMainBtn.addEventListener('click', () => {
+            hideAllSections();
+            // Determine which section to show based on the current match state
+            if (matchState === 'registration' || matchState === 'teams_registered') {
+                teamRegistrationSection.classList.remove('hidden');
+                pastMatchesSection.classList.remove('hidden'); // Always show past matches on initial screen
+            } else {
+                scoreboardSection.classList.remove('hidden');
+                liveScorecardsSection.classList.remove('hidden');
+                liveFOWSection.classList.remove('hidden');
+                playerSelection.classList.remove('hidden');
+                scoreControls.classList.remove('hidden');
+
+                if (matchState === 'completed') {
+                    matchResultDisplay.classList.remove('hidden');
+                    manOfTheMatchDisplay.classList.remove('hidden');
+                    finalScorecardsSection.classList.remove('hidden');
+                }
+            }
+            showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
+        });
+
 
         // Initial load of past matches when the page loads
         loadPastMatchesLocal();
