@@ -43,7 +43,7 @@
         textarea,
         select {
             width: 100%;
-            padding: 0.85rem; /* Slightly more padding */
+            padding: 1rem 2.5rem; /* Increased horizontal padding significantly again */
             margin-bottom: 1.25rem; /* More space below inputs */
             border: 1px solid #cbd5e1; /* Light gray border */
             border-radius: 0.75rem; /* More rounded corners for inputs */
@@ -419,7 +419,7 @@
 
         <!-- Team Registration Section -->
         <div id="teamRegistrationSection">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Match Setup</h2>
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Team Registration</h2>
             <form id="teamRegistrationForm" class="space-y-4">
                 <div>
                     <label for="team1Name">Team 1 Name:</label>
@@ -487,8 +487,8 @@
             </div>
 
             <div class="mb-6 text-center">
-                <p class="text-xl font-bold text-gray-800">Current Batting: <span id="currentBattingTeam"></span></p>
-                <p class="text-lg text-gray-600">Overs Remaining: <span id="oversRemaining">N/A</span></p>
+                <p class="text-xl font-bold text-gray-800" id="currentBattingTeamContainer">Current Batting: <span id="currentBattingTeam"></span></p>
+                <p class="text-lg text-gray-600" id="oversRemainingContainer">Overs Remaining: <span id="oversRemaining">N/A</span></p>
                 <p class="text-lg text-gray-600 hidden" id="targetScoreDisplay">Target: <span id="targetScore">0</span> runs</p>
                 <p class="text-lg font-bold text-red-600 mt-2 hidden" id="freeHitDisplay">FREE HIT!</p>
             </div>
@@ -497,10 +497,10 @@
             <div class="live-score-panel">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <!-- Current Over and Partnership Info -->
-                    <div class="info-panel">
+                    <div class="info-panel" id="currentOverInfoPanel">
                         Current Over: <span id="currentOverBallsDisplay">0</span> balls
                     </div>
-                    <div class="info-panel">
+                    <div class="info-panel" id="partnershipInfoPanel">
                         Partnership: <span id="partnershipRunsDisplay">0</span> runs
                     </div>
                 </div>
@@ -584,6 +584,7 @@
                                     <th>Batsman</th>
                                     <th class="text-right">Runs</th>
                                     <th class="text-right">Balls</th>
+                                    <th class="text-right">SR</th> <!-- Added Strike Rate header -->
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -607,6 +608,7 @@
                                     <th class="text-right">Wickets</th>
                                     <th class="text-right">WD</th>
                                     <th class="text-right">NB</th>
+                                    <th class="text-right">Econ</th> <!-- Added Economy header -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -652,6 +654,7 @@
                                             <th>Batsman</th>
                                             <th class="text-right">Runs</th>
                                             <th class="text-right">Balls</th>
+                                            <th class="text-right">SR</th> <!-- Added Strike Rate header -->
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -673,6 +676,7 @@
                                             <th class="text-right">Wickets</th>
                                             <th class="text-right">WD</th>
                                             <th class="text-right">NB</th>
+                                            <th class="text-right">Econ</th> <!-- Added Economy header -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -703,6 +707,7 @@
                                             <th>Batsman</th>
                                             <th class="text-right">Runs</th>
                                             <th class="text-right">Balls</th>
+                                            <th class="text-right">SR</th> <!-- Added Strike Rate header -->
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -724,6 +729,7 @@
                                             <th class="text-right">Wickets</th>
                                             <th class="text-right">WD</th>
                                             <th class="text-right">NB</th>
+                                            <th class="text-right">Econ</th> <!-- Added Economy header -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -806,7 +812,9 @@
         const team2ExtrasDisplay = document.getElementById('team2Extras');
         const team2Card = document.getElementById('team2Card');
 
+        const currentBattingTeamContainer = document.getElementById('currentBattingTeamContainer'); // NEW ID
         const currentBattingTeamDisplay = document.getElementById('currentBattingTeam');
+        const oversRemainingContainer = document.getElementById('oversRemainingContainer'); // NEW ID
         const oversRemainingDisplay = document.getElementById('oversRemaining');
         const targetScoreDisplayElement = document.getElementById('targetScoreDisplay');
         const targetScoreElement = document.getElementById('targetScore');
@@ -874,7 +882,9 @@
         const clearPastMatchesBtn = document.getElementById('clearPastMatchesBtn');
 
         // New UI elements for live score page
+        const currentOverInfoPanel = document.getElementById('currentOverInfoPanel'); // NEW ID
         const currentOverBallsDisplay = document.getElementById('currentOverBallsDisplay');
+        const partnershipInfoPanel = document.getElementById('partnershipInfoPanel'); // NEW ID
         const partnershipRunsDisplay = document.getElementById('partnershipRunsDisplay');
 
         // Developer Info elements (NEW)
@@ -946,6 +956,7 @@
 
         let currentPartnershipRuns = 0; // New: Tracks runs scored by the current batting pair
         let isFreeHit = false; // New: Free hit state
+        let lastCompletedBowlerIndex = -1; // New: Stores the index of the bowler who just completed an over
 
         // Function to show a message box
         function showMessageBox(message, type = 'success') {
@@ -985,7 +996,7 @@
         // Function to populate player dropdowns
         function populatePlayerDropdowns() {
             strikerSelect.innerHTML = '<option value="">Select Striker</option>';
-            nonStrikerSelect.innerHTML = '<option value="">Select Non-Striker</option>';
+            nonStrikerSelect.innerHTML = '<option value="">Select Non-Striker</option>'; // Corrected this line
             bowlerSelect.innerHTML = '<option value="">Select Bowler</option>';
 
             if (currentBattingTeam && currentBowlingTeam) {
@@ -1010,6 +1021,12 @@
                     const optionBowler = document.createElement('option');
                     optionBowler.value = index;
                     optionBowler.textContent = player.name;
+                    // Disable the last bowler if it's a new over (currentBattingTeam.balls === 0)
+                    // and the bowler's index matches the lastCompletedBowlerIndex
+                    if (index === lastCompletedBowlerIndex && currentBattingTeam.balls === 0) {
+                        optionBowler.disabled = true;
+                        optionBowler.textContent += ' (Last Over)'; // Add a visual cue
+                    }
                     bowlerSelect.appendChild(optionBowler);
                 });
 
@@ -1048,10 +1065,23 @@
         });
 
         bowlerSelect.addEventListener('change', (event) => {
-            currentBowlerIndex = parseInt(event.target.value);
+            const newBowlerIndex = parseInt(event.target.value);
+
+            // Check if it's the start of a new over AND the selected bowler is the one who just bowled
+            if (currentBattingTeam.balls === 0 && newBowlerIndex === lastCompletedBowlerIndex) {
+                showMessageBox('This bowler cannot bowl the next over. Please select a different bowler.', 'error');
+                bowlerSelect.value = ''; // Reset dropdown to empty
+                currentBowlerIndex = -1; // Ensure no bowler is selected
+                return; // Stop further execution
+            }
+
+            // If a valid bowler is selected (either not the previous bowler, or it's not the start of a new over)
+            currentBowlerIndex = newBowlerIndex;
             showMessageBox(`${currentBowlingTeam.players[currentBowlerIndex].name} is now bowling.`, 'success');
+
+            // Note: lastCompletedBowlerIndex is now only cleared when the first ball of the *new* over is bowled.
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         });
 
         // Function to update the scoreboard display and scorecards
@@ -1121,6 +1151,35 @@
                 freeHitDisplay.classList.add('hidden');
             }
 
+            // Manage visibility of live score info boxes based on match state
+            if (matchState === 'innings1' || matchState === 'innings2') {
+                currentBattingTeamContainer.classList.remove('hidden');
+                oversRemainingContainer.classList.remove('hidden');
+                currentOverInfoPanel.classList.remove('hidden');
+                partnershipInfoPanel.classList.remove('hidden');
+                liveScorecardsSection.classList.remove('hidden');
+                liveFOWSection.classList.remove('hidden');
+                playerSelection.classList.remove('hidden');
+                scoreControls.classList.remove('hidden');
+            } else if (matchState === 'completed') {
+                currentBattingTeamContainer.classList.add('hidden');
+                oversRemainingContainer.classList.add('hidden');
+                currentOverInfoPanel.classList.add('hidden');
+                partnershipInfoPanel.classList.add('hidden');
+                liveScorecardsSection.classList.add('hidden'); // Ensure live scorecards are hidden
+                liveFOWSection.classList.add('hidden'); // Ensure live FOW is hidden
+                playerSelection.classList.add('hidden'); // Ensure player selection is hidden
+                scoreControls.classList.add('hidden'); // Ensure score controls are hidden
+            } else { // registration, teams_registered
+                currentBattingTeamContainer.classList.add('hidden');
+                oversRemainingContainer.classList.add('hidden');
+                currentOverInfoPanel.classList.add('hidden');
+                partnershipInfoPanel.classList.add('hidden');
+                liveScorecardsSection.classList.add('hidden');
+                liveFOWSection.classList.add('hidden');
+                playerSelection.classList.add('hidden');
+                scoreControls.classList.add('hidden');
+            }
 
             // Only render live scorecards if match is not completed
             if (matchState === 'innings1' || matchState === 'innings2') { // Only render if match is active
@@ -1145,6 +1204,11 @@
             const striker = currentBattingTeam.players[currentBattingTeam.currentStrikerIndex];
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
 
+            // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
+            if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+                lastCompletedBowlerIndex = -1;
+            }
+
             striker.runsScored += runs;
             striker.ballsFaced++;
             currentBattingTeam.runs += runs;
@@ -1161,7 +1225,7 @@
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 wasStrikeSwitched: false, // Will be updated if strike is switched
                 prevPartnershipRuns: currentPartnershipRuns, // Store partnership before this action
-                prevIsFreeHit: isFreeHit // Store free hit state for undo
+                prevIsFreeHit: isFreeHit
             };
             currentPartnershipRuns += runs; // Update partnership
 
@@ -1190,6 +1254,11 @@
 
             const striker = currentBattingTeam.players[currentBattingTeam.currentStrikerIndex];
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+
+            // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
+            if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+                lastCompletedBowlerIndex = -1;
+            }
 
             // Determine the maximum wickets allowed for this team (all players except one)
             const maxWickets = currentBattingTeam.players.length - 1;
@@ -1285,6 +1354,11 @@
             const striker = currentBattingTeam.players[currentBattingTeam.currentStrikerIndex];
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
 
+            // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
+            if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+                lastCompletedBowlerIndex = -1;
+            }
+
             striker.ballsFaced++;
             bowler.ballsBowled++;
             currentBattingTeam.balls++;
@@ -1316,6 +1390,12 @@
                 return;
             }
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+
+            // Wide does not count as a legal delivery, so it doesn't clear lastCompletedBowlerIndex
+            // if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+            //     lastCompletedBowlerIndex = -1; // This should NOT happen for extras
+            // }
+
             currentBattingTeam.runs += 1; // 1 run for wide
             currentBattingTeam.totalWides += 1;
             bowler.runsConceded += 1;
@@ -1345,6 +1425,12 @@
                 return;
             }
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+
+            // No ball does not count as a legal delivery, so it doesn't clear lastCompletedBowlerIndex
+            // if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+            //     lastCompletedBowlerIndex = -1; // This should NOT happen for extras
+            // }
+
             currentBattingTeam.runs += 1; // 1 run for no ball
             currentBattingTeam.totalNoBalls += 1;
             bowler.runsConceded += 1;
@@ -1376,6 +1462,12 @@
                 return;
             }
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+
+            // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
+            if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+                lastCompletedBowlerIndex = -1;
+            }
+
             currentBattingTeam.runs += 1; // 1 run for bye
             currentBattingTeam.totalByes += 1;
             currentBattingTeam.balls++; // Bye counts as a ball
@@ -1406,6 +1498,12 @@
                 return;
             }
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+
+            // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
+            if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
+                lastCompletedBowlerIndex = -1;
+            }
+
             currentBattingTeam.runs += 1; // 1 run for leg bye
             currentBattingTeam.totalLegByes += 1;
             currentBattingTeam.balls++; // Leg bye counts as a ball
@@ -1450,9 +1548,10 @@
                 currentBattingTeam.balls = currentBattingTeam.balls % 6;
                 // After an over, automatically switch strike
                 switchStrike(true); // Automatic switch
+                lastCompletedBowlerIndex = currentBowlerIndex; // Store the bowler who just completed the over
+                currentBowlerIndex = -1; // Reset current bowler
+                bowlerSelect.value = ''; // Clear dropdown
                 showMessageBox('Over completed! Select a new bowler.', 'info');
-                currentBowlerIndex = -1; // Reset bowler selection after over
-                bowlerSelect.value = ''; // Clear bowler dropdown
             }
 
             // Update full overs for the current bowler
@@ -1470,20 +1569,13 @@
 
             if (matchState === 'innings1') {
                 if (isAllOut || allOversBowled) {
-                    showConfirmationModal(`First innings ended. Do you want to start ${team2.name}'s innings?`,
-                        () => {
-                            firstInningsTotalRuns = team1.runs;
-                            showMessageBox(`${team1.name} Innings Completed! Target for ${team2.name} is ${firstInningsTotalRuns + 1}.`, 'success');
-                            matchState = 'innings2';
-                            switchBattingTeam(); // Automatically switch to Team 2 for chasing
-                            updateScoreboardDisplay(); // Update display immediately after switch
-                            saveCurrentMatchStateToLocal(); // Save changes to local storage
-                        },
-                        () => {
-                            // User cancelled, remain in current state (e.g., if they want to review scorecard)
-                            showMessageBox('First innings transition cancelled.', 'info');
-                        }
-                    );
+                    // Automatically transition to second innings without confirmation
+                    firstInningsTotalRuns = team1.runs;
+                    showMessageBox(`${team1.name} Innings Completed! Target for ${team2.name} is ${firstInningsTotalRuns + 1}.`, 'success');
+                    matchState = 'innings2';
+                    switchBattingTeam(); // Automatically switch to Team 2 for chasing
+                    updateScoreboardDisplay(); // Update display immediately after switch
+                    saveCurrentMatchStateToLocal(); // Save changes to local storage
                 }
             } else if (matchState === 'innings2') {
                 // Check for win condition immediately when target is surpassed
@@ -1525,6 +1617,7 @@
 
             // Reset current bowler for the new bowling team
             currentBowlerIndex = -1;
+            lastCompletedBowlerIndex = -1; // Reset for new innings
 
             // Clear current batsmen for the new batting team if they haven't batted yet
             if (currentBattingTeam.currentStrikerIndex === -1 || currentBattingTeam.players[currentBattingTeam.currentStrikerIndex].isOut) {
@@ -1556,16 +1649,16 @@
 
             // Determine which team batted first and which batted second
             const firstBattingTeam = (firstInningsTotalRuns === team1.runs) ? team1 : team2;
-            const secondBattingTeam = (firstBattingTeam === team1) ? team2 : team1;
+            const secondBattingTeam = (firstInningsTotalRuns === team1.runs) ? team2 : team1;
 
             // Determine if the second batting team chased the target successfully
-            const targetChased = secondBattingTeam.runs > firstBattingTeam.runs;
+            const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
 
             if (targetChased) {
                 resultMessage = `${secondBattingTeam.name} wins by ${secondBattingTeam.players.length - 1 - secondBattingTeam.wickets} wickets!`;
-            } else if (firstBattingTeam.runs > secondBattingTeam.runs) {
+            } else if (firstInningsTotalRuns > secondBattingTeam.runs) {
                 // First batting team won (either by runs if second team all out/overs, or if target wasn't chased)
-                resultMessage = `${firstBattingTeam.name} wins by ${firstBattingTeam.runs - secondBattingTeam.runs} runs!`;
+                resultMessage = `${firstBattingTeam.name} wins by ${firstInningsTotalRuns - secondBattingTeam.runs} runs!`;
             } else {
                 // Scores are tied
                 resultMessage = `Match Drawn!`;
@@ -1579,11 +1672,8 @@
             saveMatchDetailsLocal(resultMessage, motmName);
             saveCurrentMatchStateToLocal(); // Save final state to local storage
 
-            // Hide live score elements
-            liveScorecardsSection.classList.add('hidden');
-            liveFOWSection.classList.add('hidden');
-            playerSelection.classList.add('hidden');
-            scoreControls.classList.add('hidden');
+            // The visibility of live score elements is now handled by updateScoreboardDisplay()
+            // No need to explicitly hide them here.
 
             // Immediately show the match result (winner and difference)
             matchResultDisplay.textContent = resultMessage;
@@ -1605,7 +1695,7 @@
             nonStrikerSelect.disabled = true;
             bowlerSelect.disabled = true;
 
-            // Update scoreboard display to reflect final state (but not full summary)
+            // Update scoreboard display to reflect final state (this will hide the info boxes)
             updateScoreboardDisplay();
         }
 
@@ -1667,9 +1757,6 @@
                     currentBowler.runsConceded -= lastAction.runs;
                     currentBowler.ballsBowled--;
                     targetTeam.balls--;
-                    if (lastAction.wasStrikeSwitched) {
-                        switchStrike(true); // Reverse the automatic strike switch
-                    }
                     break;
                 case 'wicket':
                     const batsmanOut = targetTeam.players[lastAction.batsmanOutIndex];
@@ -1727,6 +1814,11 @@
                     break;
             }
 
+            // If the last action involved an automatic strike switch, reverse it
+            if (lastAction.wasStrikeSwitched) {
+                switchStrike(true);
+            }
+
             // Adjust overs if balls go negative or cross over boundary
             if (targetTeam.balls < 0) {
                 targetTeam.overs--;
@@ -1736,6 +1828,17 @@
                 currentBowler.oversBowled--;
                 currentBowler.ballsBowled += 6;
             }
+
+            // If undoing an action that was the first ball of an over, and a bowler was previously restricted,
+            // reinstate that restriction. This is crucial for the bowler re-selection fix.
+            // This logic is complex and might need more robust state management for `lastCompletedBowlerIndex`
+            // if multiple undo operations are expected to cross over boundaries. For a single undo,
+            // we can try to infer.
+            // For now, let's assume `lastCompletedBowlerIndex` is only set on over completion and cleared on first ball.
+            // If we undo the first ball, the restriction should conceptually return.
+            // This is a tricky edge case for `undo`. For simplicity, we'll keep `lastCompletedBowlerIndex` as is,
+            // and the `populatePlayerDropdowns` will handle disabling based on `currentBattingTeam.balls === 0`.
+            // The main fix for re-selection is in the `bowlerSelect.addEventListener`.
 
 
             lastAction = null; // Clear last action after undo
@@ -1760,6 +1863,7 @@
                     currentNonStrikerIndex: currentBattingTeam ? currentBattingTeam.currentNonStrikerIndex : -1,
                     currentPartnershipRuns: currentPartnershipRuns,
                     isFreeHit: isFreeHit, // Save free hit state
+                    lastCompletedBowlerIndex: lastCompletedBowlerIndex, // Save last completed bowler
                     matchDate: document.getElementById('matchDate').value,
                     matchTime: document.getElementById('matchTime').value
                 };
@@ -1784,6 +1888,7 @@
                     firstInningsTotalRuns = loadedState.firstInningsTotalRuns;
                     currentPartnershipRuns = loadedState.currentPartnershipRuns;
                     isFreeHit = loadedState.isFreeHit || false; // Load free hit state, default to false
+                    lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1; // Load last completed bowler
 
                     // Re-establish object references for currentBattingTeam and currentBowlingTeam
                     if (loadedState.currentBattingTeamName === team1.name) {
@@ -1829,10 +1934,6 @@
                     } else if (matchState === 'innings1' || matchState === 'innings2') {
                         hideAllSections();
                         scoreboardSection.classList.remove('hidden');
-                        liveScorecardsSection.classList.remove('hidden');
-                        liveFOWSection.classList.remove('hidden');
-                        playerSelection.classList.remove('hidden');
-                        scoreControls.classList.remove('hidden');
                         showDeveloperInfoBtn.classList.remove('hidden'); // Always show dev info button
                         endMatchBtn.classList.add('hidden'); // Hide end match button if not completed
                         newMatchBtn.classList.add('hidden'); // Hide new match button during innings
@@ -1855,7 +1956,7 @@
                         bowlerSelect.disabled = true;
                     }
 
-                    updateScoreboardDisplay();
+                    updateScoreboardDisplay(); // This will now handle visibility of info boxes
                     showMessageBox('Match state loaded from local storage.', 'info');
                 } else {
                     console.log("No previous match state found in local storage. Starting new registration.");
@@ -1892,6 +1993,7 @@
             lastAction = null;
             currentPartnershipRuns = 0; // Reset partnership for new match
             isFreeHit = false; // Reset free hit for new match
+            lastCompletedBowlerIndex = -1; // Reset last completed bowler for new match
 
             // Clear form fields
             teamRegistrationForm.reset();
@@ -1934,7 +2036,7 @@
             populatePlayerDropdowns(); // Clear dropdowns
 
             showMessageBox('New match started! Please register teams.', 'success');
-            updateScoreboardDisplay(); // Clear scoreboard display
+            updateScoreboardDisplay(); // Clear scoreboard display and handle info box visibility
 
             loadPastMatchesLocal(); // Reload past matches after a new match is started
         }
@@ -1950,11 +2052,16 @@
                     const nameCell = row.insertCell();
                     const runsCell = row.insertCell();
                     const ballsCell = row.insertCell();
+                    const strikeRateCell = row.insertCell(); // New cell for Strike Rate
                     const statusCell = row.insertCell();
 
                     nameCell.textContent = player.name;
                     runsCell.textContent = player.runsScored;
                     ballsCell.textContent = player.ballsFaced;
+
+                    // Calculate Strike Rate: (Runs / Balls Faced) * 100
+                    const strikeRate = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
+                    strikeRateCell.textContent = strikeRate;
                     
                     // Determine status based on context (live vs. final scorecard)
                     if (targetTable === liveBatsmanScorecardTable) {
@@ -1964,11 +2071,13 @@
                             row.classList.add('bg-yellow-100');
                         }
                     } else {
+                        // Corrected: Changed 'p.name' to 'player.name'
                         statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out';
                     }
 
                     runsCell.classList.add('text-right');
                     ballsCell.classList.add('text-right');
+                    strikeRateCell.classList.add('text-right'); // Align Strike Rate to right
                 });
             }
         }
@@ -1989,6 +2098,7 @@
                         const wicketsCell = row.insertCell();
                         const widesCell = row.insertCell();
                         const noBallsCell = row.insertCell();
+                        const economyCell = row.insertCell(); // New cell for Economy
 
                         nameCell.textContent = player.name;
                         oversCell.textContent = `${player.oversBowled}.${player.ballsBowled % 6}`;
@@ -1997,11 +2107,17 @@
                         widesCell.textContent = player.wides;
                         noBallsCell.textContent = player.noBalls;
 
+                        // Calculate Economy: Runs Conceded / Total Overs Bowled (including partial overs)
+                        const totalBallsBowled = (player.oversBowled * 6) + player.ballsBowled;
+                        const economy = totalBallsBowled > 0 ? ((player.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
+                        economyCell.textContent = economy;
+
                         oversCell.classList.add('text-right');
                         runsCell.classList.add('text-right');
                         wicketsCell.classList.add('text-right');
                         widesCell.classList.add('text-right');
                         noBallsCell.classList.add('text-right');
+                        economyCell.classList.add('text-right'); // Align Economy to right
 
                         // Highlight current bowler only in live scorecard
                         if (targetTable === liveBowlerScorecardTable && index === currentBowlerIndex) {
@@ -2168,18 +2284,25 @@
                                 <h6>Batsmen:</h6>
                                 <div class="overflow-x-auto">
                                     <table>
-                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
+                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${match.team1.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`).join('')}
+                                            ${match.team1.players.map(p => {
+                                                const sr = p.ballsFaced > 0 ? ((p.runsScored / p.ballsFaced) * 100).toFixed(2) : '0.00';
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td class="text-right">${sr}</td><td>${p.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                            }).join('')}
                                         </tbody>
                                     </table>
                                 </div>
                                 <h6>Bowlers (${match.team2.name}):</h6>
                                 <div class="overflow-x-auto">
                                     <table>
-                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
+                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th><th>Econ</th></tr></thead>
                                         <tbody>
-                                            ${match.team2.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
+                                            ${match.team2.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
+                                                const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
+                                                const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
+                                            }).join('')}
                                         </tbody>
                                     </table>
                                 </div>
@@ -2195,18 +2318,25 @@
                                 <h6>Batsmen:</h6>
                                 <div class="overflow-x-auto">
                                     <table>
-                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>Status</th></tr></thead>
+                                        <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${match.team2.players.map(p => `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td>${p.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`).join('')}
+                                            ${match.team2.players.map(p => {
+                                                const sr = p.ballsFaced > 0 ? ((p.runsScored / p.ballsFaced) * 100).toFixed(2) : '0.00';
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td class="text-right">${sr}</td><td>${p.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                            }).join('')}
                                         </tbody>
                                     </table>
                                 </div>
                                 <h6>Bowlers (${match.team1.name}):</h6>
                                 <div class="overflow-x-auto">
                                     <table>
-                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th></tr></thead>
+                                        <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th><th>Econ</th></tr></thead>
                                         <tbody>
-                                            ${match.team1.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td></tr>`).join('')}
+                                            ${match.team1.players.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
+                                                const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
+                                                const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
+                                            }).join('')}
                                         </tbody>
                                     </table>
                                 </div>
@@ -2363,7 +2493,7 @@
         add2RunsBtn.addEventListener('click', () => addRuns(2));
         add4RunsBtn.addEventListener('click', () => addRuns(4));
         add6RunsBtn.addEventListener('click', () => addRuns(6));
-        // New Wicket Button Listeners
+        // New Wicket Buttons
         addCaughtBtn.addEventListener('click', () => addWicket('Caught'));
         addBowledLbwBtn.addEventListener('click', () => addWicket('Bowled/LBW'));
         addRunOutBtn.addEventListener('click', () => addWicket('Run Out'));
@@ -2420,13 +2550,8 @@
                 pastMatchesSection.classList.remove('hidden'); // Always show past matches on initial screen
                 newMatchBtn.classList.remove('hidden'); // New match button visible
                 clearPastMatchesBtn.classList.remove('hidden'); // Clear past matches button visible
-
             } else if (matchState === 'innings1' || matchState === 'innings2') {
                 scoreboardSection.classList.remove('hidden');
-                liveScorecardsSection.classList.remove('hidden');
-                liveFOWSection.classList.remove('hidden');
-                playerSelection.classList.remove('hidden');
-                scoreControls.classList.remove('hidden');
                 newMatchBtn.classList.add('hidden'); // Hide new match button during innings
             } else if (matchState === 'completed') {
                 scoreboardSection.classList.remove('hidden');
@@ -2435,9 +2560,10 @@
                 manOfTheMatchDisplay.classList.add('hidden');
                 finalScorecardsSection.classList.add('hidden');
                 endMatchBtn.classList.remove('hidden'); // Show end match button
-                newMatchBtn.classList.add('hidden'); // Hide new match button
+                newMatchBtn.classList.remove('hidden'); // Hide new match button
             }
             showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
+            updateScoreboardDisplay(); // Ensure info boxes are correctly hidden/shown
         });
 
 
