@@ -427,7 +427,7 @@
                 </div>
                 <div>
                     <label for="team1Players">Team 1 Players (one per line):</label>
-                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="  Player A&#10;  Player B&#10;  Player C"></textarea>
+                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="Player A&#10;Player B&#10;Player C"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -436,7 +436,7 @@
                 </div>
                 <div>
                     <label for="team2Players">Team 2 Players (one per line):</label>
-                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="  Player X&#10;  Player Y&#10;  Player Z"></textarea>
+                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="Player X&#10;Player Y&#10;Player Z"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -864,6 +864,7 @@
         const liveFowTeamName = document.getElementById('fowTeamName');
         const liveScorecardsSection = document.getElementById('liveScorecards');
         const liveFOWSection = document.getElementById('liveFOW');
+        const liveScorePanel = document.querySelector('.live-score-panel'); // NEW: Reference to the live score panel
 
         // Final Scorecards elements
         const finalScorecardsSection = document.getElementById('finalScorecardsSection');
@@ -1161,6 +1162,7 @@
                 liveFOWSection.classList.remove('hidden');
                 playerSelection.classList.remove('hidden');
                 scoreControls.classList.remove('hidden');
+                liveScorePanel.classList.remove('hidden'); // Ensure live score panel is visible
             } else if (matchState === 'completed') {
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
@@ -1170,6 +1172,7 @@
                 liveFOWSection.classList.add('hidden'); // Ensure live FOW is hidden
                 playerSelection.classList.add('hidden'); // Ensure player selection is hidden
                 scoreControls.classList.add('hidden'); // Ensure score controls are hidden
+                liveScorePanel.classList.add('hidden'); // NEW: Hide the live score panel
             } else { // registration, teams_registered
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
@@ -1179,6 +1182,7 @@
                 liveFOWSection.classList.add('hidden');
                 playerSelection.classList.add('hidden');
                 scoreControls.classList.add('hidden');
+                liveScorePanel.classList.add('hidden'); // Hide the live score panel
             }
 
             // Only render live scorecards if match is not completed
@@ -2521,6 +2525,7 @@
                 endMatchBtn.classList.add('hidden'); // Hide end match button after click
                 newMatchBtn.classList.remove('hidden'); // Keep new match button visible
                 // Controls are already disabled by declareWinner
+                updateScoreboardDisplay(); // Call updateScoreboardDisplay again to hide live info boxes
             } else {
                 showMessageBox('Match is not yet completed.', 'error');
             }
