@@ -50,11 +50,9 @@
             font-size: 0.95rem; /* Slightly smaller font size for readability */
             box-sizing: border-box; /* Include padding in width */
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            text-align: center; /* Center align text in input fields */
+            text-align: center; from here 
         }
-        textarea { /* Specific style for textareas */
-            text-align: center; /* Center align text in textareas */
-        }
+        text-align: center; from here 
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus, /* Added focus style for date input */
@@ -69,7 +67,7 @@
         button {
             background-color: #87CEEB; /* Solid Light blue background (SkyBlue) */
             color: #1a202c; /* Black text */
-            padding: 1.5rem 4rem; /* Increased padding for more space, especially horizontally */
+            padding: 0.6rem 1.2rem; /* Reduced default padding for a more balanced look */
             border-radius: 0.5rem; /* Equivalent to rounded-lg */
             font-weight: 700; /* Bold */
             cursor: pointer;
@@ -77,8 +75,12 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to shadow-lg */
             border: 1px solid #6495ED; /* Subtle border matching a slightly darker light blue */
             box-sizing: border-box; /* Ensure padding is included in element's total width and height */
-            text-align: center; /* Center the text within the button */
-            display: inline-block; /* Ensure padding behaves correctly */
+            /* Updated centering properties */
+            display: flex; /* Use flexbox for centering content */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            white-space: nowrap; /* Prevent text from wrapping */
+            margin: 0 auto; /* Center the button itself as a block element */
         }
         button:hover {
             background-color: #6495ED; /* Slightly darker light blue on hover */
@@ -97,16 +99,23 @@
             transform: none;
             border-color: #cbd5e1; /* Match border to background */
         }
-        /* Remove specific color overrides for score control buttons and make them inherit or use the general blue */
-        .score-control-button,
-        .wicket-button,
-        .over-button,
-        .extra-button,
+        /* Specific padding for larger primary action buttons */
+        #teamRegistrationForm button[type="submit"],
+        #proceedToMatchReadyBtn,
         #startMatchBtn,
         #newMatchBtn,
         #clearPastMatchesBtn,
-        .back-button {
-            /* No specific styles needed here, they will inherit the main button styles */
+        #backToMainBtn,
+        #endMatchBtn,
+        #showDeveloperInfoBtn { /* Added #showDeveloperInfoBtn here */
+            padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
+            font-size: 0.9rem; /* Slightly larger font for main action buttons */
+        }
+
+        /* Ensure score control buttons maintain their size or inherit the new default */
+        .score-control-button {
+            /* Inherits general button styles, including flex centering */
+            padding: 0.5rem 1rem; /* Slightly smaller padding for score controls */
         }
 
         /* Message box styling */
@@ -773,7 +782,7 @@
                             </div>
                         </div>
                         <div>
-                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Bowler Scorecard</h4>
+                            <h4 class="text-lg font-semibold text-gray-700 mb-2">Bowler Scorecard</th>
                             <div class="overflow-x-auto">
                                 <table id="finalTeam2BowlerScorecard" class="scorecard-table">
                                     <thead>
@@ -1872,6 +1881,7 @@
                     targetTeam.balls--;
                     break;
                 case 'ball':
+                    // Corrected: Changed 'targetHteam' to 'targetTeam'
                     const strikerForBall = targetTeam.players[lastAction.strikerIndex];
                     strikerForBall.ballsFaced--;
                     currentBowler.ballsBowled--;
