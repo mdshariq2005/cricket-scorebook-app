@@ -473,7 +473,9 @@
                     <input type="time" id="matchTime" name="matchTime" required>
                 </div>
 
-                <button type="submit" class="w-full">Register Teams</button>
+                <div class="text-center"> <!-- Centering div for the button -->
+                    <button type="submit">Register Teams</button>
+                </div>
             </form>
         </div>
 
@@ -496,7 +498,9 @@
                         <option value="bowl">Bowl First</option>
                     </select>
                 </div>
-                <button id="proceedToMatchReadyBtn" class="w-full">Proceed to Match Ready</button>
+                <div class="text-center"> <!-- Centering div for the button -->
+                    <button id="proceedToMatchReadyBtn">Proceed to Match Ready</button>
+                </div>
             </div>
         </div>
 
@@ -2680,7 +2684,7 @@
         addWideBtn.addEventListener('click', addWide);
         addNoBallBtn.addEventListener('click', addNoBall);
         addByeBtn.addEventListener('click', addBye);
-        addLegByeBtn.addEventListener('click', addLegBye);
+addLegByeBtn.addEventListener('click', addLegBye);
         switchStrikeBtn.addEventListener('click', switchStrike);
         undoBtn.addEventListener('click', undoLastAction);
         switchTeamBtn.addEventListener('click', switchBattingTeam);
