@@ -108,9 +108,9 @@
         /* Message box styling */
         .message-box {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 20px; /* Distance from top */
+            right: 20px; /* Distance from right */
+            transform: translateX(100%); /* Start off-screen to the right */
             background-color: #10b981; /* Green for success */
             color: white;
             padding: 1.2rem 2.5rem; /* More padding */
@@ -125,7 +125,7 @@
         }
         .message-box.show {
             opacity: 1;
-            transform: translate(-50%, -50%) scale(1); /* Pop-in effect */
+            transform: translateX(0) scale(1); /* Slide in from right */
         }
         .message-box.error {
             background-color: #ef4444; /* Red for error */
@@ -446,7 +446,7 @@
                 </div>
                 <div>
                     <label for="team1Players">Team 1 Players (one per line):</label>
-                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="Player A&#10;Player B&#10;Player C"></textarea>
+                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="  Player A&#10;  Player B&#10;  Player C"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -455,7 +455,7 @@
                 </div>
                 <div>
                     <label for="team2Players">Team 2 Players (one per line):</label>
-                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="Player X&#10;Player Y&#10;Player Z"></textarea>
+                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="  Player X&#10;  Player Y&#10;  Player Z"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -815,8 +815,9 @@
         <!-- Developer Info Section (NEW) -->
         <div id="developerInfoSection" class="hidden">
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Developer Information</h2>
-            <p>Developed by: Shariq Mohd</p>
-            <p>&copy; 2025 Shariq Mohd. All rights reserved.</p>
+            <p>Developed by: SM0786</p>
+            <p>Contact: testemail@gmail.com</p>
+            <p>&copy; 2025 SM0786. All rights reserved.</p>
             <button id="backToMainBtn">Back to Main</button>
         </div>
 
@@ -1863,7 +1864,7 @@
                     targetTeam.balls--;
                     break;
                 case 'ball':
-                    const strikerForBall = targetTeam.players[lastAction.strikerIndex];
+                    const strikerForBall = targetTarget.players[lastAction.strikerIndex];
                     strikerForBall.ballsFaced--;
                     currentBowler.ballsBowled--;
                     targetTeam.balls--;
