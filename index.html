@@ -43,13 +43,14 @@
         textarea,
         select {
             width: 100%;
-            padding: 1rem 2.5rem; /* Increased horizontal padding significantly again */
-            margin-bottom: 1.25rem; /* More space below inputs */
+            padding: 1.25rem 3rem; /* Increased vertical and horizontal padding for larger inputs */
+            margin-bottom: 1.5rem; /* More space below inputs */
             border: 1px solid #cbd5e1; /* Light gray border */
             border-radius: 0.75rem; /* More rounded corners for inputs */
-            font-size: 1rem;
+            font-size: 1.1rem; /* Slightly larger font size for readability */
             box-sizing: border-box; /* Include padding in width */
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            text-align: center; /* Center align text in input fields */
         }
         input[type="text"]:focus,
         input[type="number"]:focus,
@@ -446,7 +447,7 @@
                 </div>
                 <div>
                     <label for="team1Players">Team 1 Players (one per line):</label>
-                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="  Player A&#10;  Player B&#10;  Player C"></textarea>
+                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="Player A&#10;Player B&#10;Player C"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -455,7 +456,7 @@
                 </div>
                 <div>
                     <label for="team2Players">Team 2 Players (one per line):</label>
-                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="  Player X&#10;  Player Y&#10;  Player Z"></textarea>
+                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="Player X&#10;Player Y&#10;Player Z"></textarea>
                 </div>
 
                 <div class="mt-8">
@@ -902,7 +903,7 @@
         const addOtherWicketBtn = document.getElementById('addOtherWicketBtn');
 
         const addBallBtn = document.getElementById('addBallBtn');
-        const addWideBtn = document.getElementById('addWideBtn');
+        const addWideBtn = document.getElementById('addWideBtn'); // Corrected line
         const addNoBallBtn = document.getElementById('addNoBallBtn');
         const addByeBtn = document.getElementById('addByeBtn');
         const addLegByeBtn = document.getElementById('addLegByeBtn');
@@ -1864,7 +1865,7 @@
                     targetTeam.balls--;
                     break;
                 case 'ball':
-                    const strikerForBall = targetTarget.players[lastAction.strikerIndex];
+                    const strikerForBall = targetTeam.players[lastAction.strikerIndex];
                     strikerForBall.ballsFaced--;
                     currentBowler.ballsBowled--;
                     targetTeam.balls--;
