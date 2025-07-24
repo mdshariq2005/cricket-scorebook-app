@@ -318,8 +318,8 @@
         .app-logo {
             display: block;
             margin: 0 auto 1.8rem auto; /* Center the logo and add more margin below */
-            width: 90px; /* Slightly larger logo */
-            height: 90px;
+            width: 60px; /* Reduced logo size */
+            height: 60px; /* Reduced logo size */
             color: #3b82f6; /* Blue color for the logo */
         }
         /* New styles for team registration form */
@@ -2053,7 +2053,7 @@
                     }
 
                     updateScoreboardDisplay(); // This will now handle visibility of info boxes
-                    showMessageBox('Match state loaded from local storage.', 'info');
+                    // showMessageBox('Match state loaded from local storage.', 'info'); // Removed this message
                 } else {
                     console.log("No previous match state found in local storage. Starting new registration.");
                     newMatch(); // Start a fresh match if no state found
@@ -2133,7 +2133,7 @@
             bowlerSelect.disabled = false;
             populatePlayerDropdowns(); // Clear dropdowns
 
-            showMessageBox('New match started! Please register teams.', 'success');
+            // showMessageBox('New match started! Please register teams.', 'success'); // Removed this message
             updateScoreboardDisplay(); // Clear scoreboard display and handle info box visibility
 
             loadPastMatchesLocal(); // Reload past matches after a new match is started
