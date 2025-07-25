@@ -109,7 +109,8 @@
         #showDeveloperInfoBtn,
         #restartMatchBtn, /* Added restart button */
         #cancelMatchBtn, /* Added cancel button */
-        #confirmationModal button /* Apply base button style to modal buttons */
+        #confirmationModal button, /* Apply base button style to modal buttons */
+        #cancelReasonModal button /* Apply base button style to cancel reason modal buttons */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -875,6 +876,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- NEW: Cancellation Reason Modal -->
+        <div id="cancelReasonModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Cancel Match Reason</h3>
+                <div class="mb-4">
+                    <label for="cancellationReasonSelect" class="block text-gray-700 text-sm font-bold mb-2">Reason for Cancellation:</label>
+                    <select id="cancellationReasonSelect" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Select a reason</option>
+                        <option value="Rain">Rain</option>
+                        <option value="Bad Light">Bad Light</option>
+                        <option value="Ground Conditions">Ground Conditions</option>
+                        <option value="Team Forfeited">Team Forfeited</option>
+                        <option value="Other">Other (Specify in notes)</option>
+                    </select>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="confirmCancellationReasonBtn" class="bg-red-500 hover:bg-red-600 text-white">Confirm Cancellation</button>
+                    <button id="backFromCancelReasonBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Back</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -1009,6 +1033,13 @@
         const confirmYesBtn = document.getElementById('confirmYesBtn');
         const confirmNoBtn = document.getElementById('confirmNoBtn');
 
+        // NEW: Cancellation Reason Modal elements
+        const cancelReasonModal = document.getElementById('cancelReasonModal');
+        const cancellationReasonSelect = document.getElementById('cancellationReasonSelect');
+        const confirmCancellationReasonBtn = document.getElementById('confirmCancellationReasonBtn');
+        const backFromCancelReasonBtn = document.getElementById('backFromCancelReasonBtn');
+
+
         // Array of all main content sections to easily hide/show them
         const allSections = [
             teamRegistrationSection,
@@ -1071,6 +1102,7 @@
 
         let tossWinnerName = ''; // NEW: Stores the name of the team that won the toss
         let tossDecision = ''; // NEW: Stores the toss decision ('bat' or 'bowl')
+        let cancellationReason = ''; // NEW: Stores the reason for match cancellation
 
 
         // Function to show a message box
@@ -1785,7 +1817,7 @@
         }
 
         // Function to declare the winner and Man of the Match
-        async function declareWinner(status) { // Added status parameter
+        async function declareWinner(status, reason = null) { // Added status parameter and new reason parameter
             matchState = status; // Set matchState to 'completed' or 'cancelled'
             let resultMessage = '';
 
@@ -1794,9 +1826,10 @@
             const secondBattingTeam = (firstInningsTotalRuns === team1.runs) ? team2 : team1;
 
             if (status === 'Cancelled') {
-                //statusLabel = `<p class="text-md text-black mb-2">Result: </p>`;
-                resultMessage = `Match Cancelled!`; // Now explicitly setting the message for cancelled matches
+                cancellationReason = reason; // Store the reason
+                resultMessage = `Match Cancelled Reason: ${cancellationReason}`; // Now explicitly setting the message for cancelled matches
             } else { // status === 'Completed'
+                cancellationReason = ''; // Clear cancellation reason for completed matches
                 const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
 
                 if (targetChased) {
@@ -1814,7 +1847,7 @@
             const motmName = motmPlayer ? motmPlayer.name : 'Not Available As Match ' +matchState;
 
             // Save match details to localStorage immediately
-            saveMatchDetailsLocal(resultMessage, motmName, status); // Pass status to save function
+            saveMatchDetailsLocal(resultMessage, motmName, status, cancellationReason); // Pass status and reason to save function
             saveCurrentMatchStateToLocal(); // Save final state to local storage
 
             // Immediately show the match result (winner and difference)
@@ -2017,7 +2050,8 @@
                     matchDate: document.getElementById('matchDate').value,
                     matchTime: document.getElementById('matchTime').value,
                     tossWinnerName: tossWinnerName, // NEW: Save toss winner
-                    tossDecision: tossDecision // NEW: Save toss decision
+                    tossDecision: tossDecision, // NEW: Save toss decision
+                    cancellationReason: cancellationReason // NEW: Save cancellation reason
                 };
                 localStorage.setItem('currentCricketMatch', JSON.stringify(currentMatchState));
                 console.log("Current match state saved to local storage.");
@@ -2044,6 +2078,7 @@
                     lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1; // Load last completed bowler
                     tossWinnerName = loadedState.tossWinnerName || ''; // NEW: Load toss winner
                     tossDecision = loadedState.tossDecision || ''; // NEW: Load toss decision
+                    cancellationReason = loadedState.cancellationReason || ''; // NEW: Load cancellation reason
 
                     // Re-establish object references for currentBattingTeam and currentBowlingTeam
                     if (loadedState.currentBattingTeamName === team1.name) {
@@ -2176,6 +2211,7 @@
             lastCompletedBowlerIndex = -1; // Reset last completed bowler for new match
             tossWinnerName = ''; // NEW: Reset toss winner
             tossDecision = ''; // NEW: Reset toss decision
+            cancellationReason = ''; // NEW: Reset cancellation reason
 
             // Clear form fields
             teamRegistrationForm.reset();
@@ -2258,6 +2294,7 @@
             currentPartnershipRuns = 0;
             isFreeHit = false;
             lastCompletedBowlerIndex = -1;
+            cancellationReason = ''; // Reset cancellation reason on restart
 
             // Re-establish currentBattingTeam and currentBowlingTeam based on original toss
             // This logic needs to mirror the toss decision in proceedToMatchReadyBtn
@@ -2461,7 +2498,7 @@
         }
 
         // Function to save match details to localStorage
-        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName, status) { // Added status parameter
+        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName, status, cancellationReason = null) { // Added status parameter and cancellationReason
             try {
                 // Get existing matches or initialize an empty array
                 const existingMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
@@ -2522,7 +2559,8 @@
                     manOfTheMatch: manOfTheMatchName,
                     tossWinnerName: tossWinnerName, // Save toss winner for historical record
                     tossDecision: tossDecision, // Save toss decision for historical record
-                    status: status // NEW: Save match status
+                    status: status, // NEW: Save match status
+                    cancellationReason: cancellationReason // NEW: Save cancellation reason
                 };
 
                 existingMatches.unshift(matchData); // Add new match to the beginning
@@ -2564,6 +2602,7 @@
 
                     // Determine status text and color
                     let statusLabel = '';
+                    // Removed cancellationReasonDisplay as it's now part of match.result for cancelled matches
                     if (match.status === 'Cancelled') {
                         statusLabel = `<p class="text-md text-black mb-2">Status: Cancelled</p>`; // Black, not bold
                     } else {
@@ -2918,16 +2957,28 @@
 
         // NEW: Cancel Match button listener
         cancelMatchBtn.addEventListener('click', () => {
-            showConfirmationModal('Are you sure you want to cancel the current match? Its current progress will be saved as "Cancelled" in past match summaries.',
-                () => {
-                    declareWinner('Cancelled'); // Call declareWinner with 'Cancelled' status
-                    newMatch(); // Call newMatch to reset everything and go to registration page
-                    showMessageBox('Match cancelled and saved to past matches.', 'success');
-                },
-                () => {
-                    // No message on cancel
-                }
-            );
+            // Show the cancellation reason modal first
+            cancelReasonModal.classList.remove('hidden');
+            // Reset dropdown to default
+            cancellationReasonSelect.value = '';
+        });
+
+        // NEW: Confirm Cancellation Reason button listener
+        confirmCancellationReasonBtn.addEventListener('click', () => {
+            const selectedReason = cancellationReasonSelect.value;
+            if (!selectedReason) {
+                showMessageBox('Please select a cancellation reason.', 'error');
+                return;
+            }
+            cancelReasonModal.classList.add('hidden'); // Hide the reason modal
+            declareWinner('Cancelled', selectedReason); // Pass the selected reason
+            newMatch(); // Call newMatch to reset everything and go to registration page
+            showMessageBox('Match cancelled and saved to past matches.', 'success');
+        });
+
+        // NEW: Back from Cancel Reason button listener
+        backFromCancelReasonBtn.addEventListener('click', () => {
+            cancelReasonModal.classList.add('hidden'); // Just hide the modal
         });
 
 
