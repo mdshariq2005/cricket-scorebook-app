@@ -50,9 +50,7 @@
             font-size: 0.95rem; /* Slightly smaller font size for readability */
             box-sizing: border-box; /* Include padding in width */
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-            text-align: center; from here 
         }
-        text-align: center; from here 
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus, /* Added focus style for date input */
@@ -75,12 +73,12 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to shadow-lg */
             border: 1px solid #6495ED; /* Subtle border matching a slightly darker light blue */
             box-sizing: border-box; /* Ensure padding is included in element's total width and height */
-            /* Updated centering properties */
-            display: flex; /* Use flexbox for centering content */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            /* These properties center the *content* inside the button */
+            display: flex;
+            justify-content: center;
+            align-items: center;
             white-space: nowrap; /* Prevent text from wrapping */
-            margin: 0 auto; /* Center the button itself as a block element */
+            /* Removed margin: 0 auto; from here, as parent flex will handle centering */
         }
         button:hover {
             background-color: #6495ED; /* Slightly darker light blue on hover */
@@ -107,14 +105,13 @@
         #clearPastMatchesBtn,
         #backToMainBtn,
         #endMatchBtn,
-        #showDeveloperInfoBtn { /* Added #showDeveloperInfoBtn here */
+        #showDeveloperInfoBtn {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
         }
 
         /* Ensure score control buttons maintain their size or inherit the new default */
         .score-control-button {
-            /* Inherits general button styles, including flex centering */
             padding: 0.5rem 1rem; /* Slightly smaller padding for score controls */
         }
 
@@ -485,7 +482,7 @@
                     <input type="time" id="matchTime" name="matchTime" required>
                 </div>
 
-                <div class="text-center"> <!-- Centering div for the button -->
+                <div class="flex justify-center"> <!-- Changed from text-center to flex justify-center -->
                     <button type="submit">Register Teams</button>
                 </div>
             </form>
@@ -510,7 +507,7 @@
                         <option value="bowl">Bowl First</option>
                     </select>
                 </div>
-                <div class="text-center"> <!-- Centering div for the button -->
+                <div class="flex justify-center"> <!-- Changed from text-center to flex justify-center -->
                     <button id="proceedToMatchReadyBtn">Proceed to Match Ready</button>
                 </div>
             </div>
@@ -520,7 +517,9 @@
         <div id="matchReadySection" class="hidden bg-blue-50 p-6 rounded-lg shadow-md text-center mt-8">
             <h2 class="text-xl font-semibold text-blue-800 mb-4">Match Ready!</h2>
             <p id="registeredTeamsSummary" class="text-lg text-blue-700 mb-6"></p>
-            <button id="startMatchBtn">Start Match</button>
+            <div class="flex justify-center"> <!-- Added flex justify-center to center the button -->
+                <button id="startMatchBtn">Start Match</button>
+            </div>
         </div>
 
         <!-- Scoreboard Section (initially hidden) -->
@@ -812,7 +811,7 @@
                 </div>
             </div>
 
-            <div class="text-center mt-8">
+            <div class="flex justify-center mt-8 gap-4"> <!-- Changed from text-center to flex justify-center gap-4 -->
                 <button id="endMatchBtn" class="hidden">End Match</button>
                 <button id="newMatchBtn">New Match</button>
             </div>
@@ -824,7 +823,7 @@
             <ul id="pastMatchesList" class="past-matches-list">
                 <!-- Past matches will be loaded here from localStorage -->
             </ul>
-            <div class="text-center mt-4">
+            <div class="flex justify-center mt-4"> <!-- Changed from text-center to flex justify-center -->
                 <button id="clearPastMatchesBtn">Clear All Past Matches</button>
             </div>
         </div>
@@ -835,7 +834,9 @@
             <p>Developed by: SM0786</p>
             <p>Contact: testemail@gmail.com</p>
             <p>&copy; 2025 SM0786. All rights reserved.</p>
-            <button id="backToMainBtn">Back to Main</button>
+            <div class="flex justify-center"> <!-- Added flex justify-center to center the button -->
+                <button id="backToMainBtn">Back to Main</button>
+            </div>
         </div>
 
 
@@ -2722,7 +2723,7 @@
         // Event listeners for Developer Info page (NEW)
         // Add a button to the main app container to show developer info
         const developerInfoButtonContainer = document.createElement('div');
-        developerInfoButtonContainer.className = 'text-center mt-8';
+        developerInfoButtonContainer.className = 'flex justify-center mt-8'; // Changed from text-center to flex justify-center
         developerInfoButtonContainer.innerHTML = '<button id="showDeveloperInfoBtn">Developer Info</button>';
         document.querySelector('.app-container').appendChild(developerInfoButtonContainer);
         showDeveloperInfoBtn = document.getElementById('showDeveloperInfoBtn'); // Assign to the global variable
