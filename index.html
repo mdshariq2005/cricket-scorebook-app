@@ -50,6 +50,7 @@
             font-size: 0.95rem; /* Slightly smaller font size for readability */
             box-sizing: border-box; /* Include padding in width */
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            text-align: center; /* Center align text in input boxes */
         }
         input[type="text"]:focus,
         input[type="number"]:focus,
@@ -2744,27 +2745,31 @@
                 pastMatchesSection.classList.remove('hidden');
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
+                endMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'toss') {
                 tossSection.classList.remove('hidden');
                 pastMatchesSection.classList.remove('hidden');
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
+                endMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'teams_registered') {
                 matchReadySection.classList.remove('hidden');
                 pastMatchesSection.classList.remove('hidden');
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
+                endMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'innings1' || matchState === 'innings2') {
                 scoreboardSection.classList.remove('hidden');
                 newMatchBtn.classList.add('hidden'); // Hide new match button during innings
+                endMatchBtn.classList.add('hidden'); // Hide end match button during innings
             } else if (matchState === 'completed') {
                 scoreboardSection.classList.remove('hidden');
-                // If returning to a completed match, show the immediate result and End Match button
+                // If returning to a completed match, show the immediate result and New Match button
                 matchResultDisplay.classList.remove('hidden');
-                manOfTheMatchDisplay.classList.add('hidden');
-                finalScorecardsSection.classList.add('hidden');
-                endMatchBtn.classList.remove('hidden'); // Show end match button
-                newMatchBtn.classList.remove('hidden'); // Hide new match button
+                manOfTheMatchDisplay.classList.remove('hidden'); // Show MOTM and final scorecards
+                finalScorecardsSection.classList.remove('hidden');
+                endMatchBtn.classList.add('hidden'); // Hide end match button as summary is already shown
+                newMatchBtn.classList.remove('hidden'); // Show new match button
             }
             showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
             updateScoreboardDisplay(); // Ensure info boxes are correctly hidden/shown
