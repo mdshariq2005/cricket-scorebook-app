@@ -106,7 +106,11 @@
         #clearPastMatchesBtn,
         #backToMainBtn,
         #endMatchBtn,
-        #showDeveloperInfoBtn {
+        #showDeveloperInfoBtn,
+        #restartMatchBtn, /* Added restart button */
+        #cancelMatchBtn, /* Added cancel button */
+        #confirmationModal button /* Apply base button style to modal buttons */
+        {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
         }
@@ -637,6 +641,7 @@
                             <button id="switchStrikeBtn" class="score-control-button">Switch Strike</button>
                             <button id="undoBtn" class="score-control-button">Undo Last</button>
                             <button id="switchTeamBtn" class="score-control-button">Switch Batting Team</button>
+                            <button id="cancelMatchBtn" class="score-control-button bg-red-500 text-white hover:bg-red-600">Cancel Match</button> <!-- NEW -->
                         </div>
                     </div>
                 </div>
@@ -821,6 +826,7 @@
 
             <div class="flex justify-center mt-8 gap-4"> <!-- Changed from text-center to flex justify-center gap-4 -->
                 <button id="endMatchBtn" class="hidden">End Match</button>
+                <button id="restartMatchBtn" class="hidden">Restart Match</button> <!-- NEW -->
                 <button id="newMatchBtn">New Match</button>
             </div>
         </div>
@@ -853,10 +859,12 @@
 
         <!-- Custom Confirmation Modal -->
         <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
-            <div class="bg-white p-8 rounded-lg shadow-xl text-center">
-                <p id="confirmationMessage" class="text-xl font-semibold text-gray-800 mb-6"></p>
-                <button id="confirmYesBtn">Yes</button>
-                <button id="confirmNoBtn">No</button>
+            <div class="bg-white p-4 rounded-lg shadow-xl text-center max-w-sm w-full"> <!-- Reduced padding and added max-w-sm -->
+                <p id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></p> <!-- Smaller text and margin -->
+                <div class="flex justify-center gap-4">
+                    <button id="confirmYesBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Yes</button>
+                    <button id="confirmNoBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">No</button>
+                </div>
             </div>
         </div>
     </div>
@@ -924,7 +932,7 @@
         const add6RunsBtn = document.getElementById('add6RunsBtn');
         // New Wicket Buttons
         const addCaughtBtn = document.getElementById('addCaughtBtn');
-        const addBowledLbwBtn = document.getElementById('addBowledLbwBtn');
+        const addBowledLbwBtn = document.getElementById('addBowledLbwBtn'); // Corrected this line
         const addRunOutBtn = document.getElementById('addRunOutBtn');
         const addStumpedBtn = document.getElementById('addStumpedBtn');
         const addHitWicketBtn = document.getElementById('addHitWicketBtn');
@@ -940,6 +948,8 @@
         const switchTeamBtn = document.getElementById('switchTeamBtn');
         const newMatchBtn = document.getElementById('newMatchBtn');
         const endMatchBtn = document.getElementById('endMatchBtn'); // New: End Match button
+        const restartMatchBtn = document.getElementById('restartMatchBtn'); // NEW: Restart Match button
+        const cancelMatchBtn = document.getElementById('cancelMatchBtn'); // NEW: Cancel Match button
 
         const matchResultDisplay = document.getElementById('matchResultDisplay');
         const manOfTheMatchDisplay = document.getElementById('manOfTheMatchDisplay');
@@ -980,7 +990,7 @@
 
         // Developer Info elements (NEW)
         const developerInfoSection = document.getElementById('developerInfoSection');
-        let showDeveloperInfoBtn; // Declared here, initialized after its creation
+        var showDeveloperInfoBtn; // Declared here, initialized after its creation
 
         const backToMainBtn = document.getElementById('backToMainBtn'); // New button
 
@@ -1041,14 +1051,14 @@
         let currentBowlerIndex = -1; // Index of the current bowler in the bowling team's players array
 
         let totalOversPerInnings = 0;
-        let matchState = 'registration'; // 'registration', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed'
+        let matchState = 'registration'; // 'registration', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled'
         let firstInningsTotalRuns = 0;
 
         let lastAction = null; // Stores the last action for undo functionality
 
         let currentPartnershipRuns = 0; // New: Tracks runs scored by the current batting pair
-        let isFreeHit = false; // New: Free hit state
-        let lastCompletedBowlerIndex = -1; // New: Stores the index of the bowler who just completed an over
+        var isFreeHit = false; // New: Free hit state
+        var lastCompletedBowlerIndex = -1; // New: Stores the index of the bowler who just completed an over
 
         let tossWinnerName = ''; // NEW: Stores the name of the team that won the toss
         let tossDecision = ''; // NEW: Stores the toss decision ('bat' or 'bowl')
@@ -1079,7 +1089,7 @@
 
             const handleCancel = () => {
                 confirmationModal.classList.add('hidden');
-                if (onCancel) onCancel();
+                if (onCancel) onCancel(); // Only call onCancel if provided
             };
 
             // Store and add new listeners
@@ -1273,7 +1283,11 @@
                 playerSelection.classList.remove('hidden');
                 scoreControls.classList.remove('hidden');
                 liveScorePanel.classList.remove('hidden'); // Ensure live score panel is visible
-            } else if (matchState === 'completed') {
+                endMatchBtn.classList.add('hidden'); // Hide end match button during active play
+                restartMatchBtn.classList.remove('hidden'); // Show restart button during active play
+                cancelMatchBtn.classList.remove('hidden'); // Show cancel button during active play
+                newMatchBtn.classList.add('hidden'); // Hide new match button during active play
+            } else if (matchState === 'completed' || matchState === 'cancelled') { // Handle 'cancelled' state
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
                 tossInfoDisplay.classList.add('hidden'); // Hide toss info
@@ -1284,6 +1298,10 @@
                 playerSelection.classList.add('hidden'); // Ensure player selection is hidden
                 scoreControls.classList.add('hidden'); // Ensure score controls are hidden
                 liveScorePanel.classList.add('hidden'); // NEW: Hide the live score panel
+                endMatchBtn.classList.remove('hidden'); // Show end match button if completed/cancelled
+                restartMatchBtn.classList.remove('hidden'); // Show restart button if completed/cancelled
+                cancelMatchBtn.classList.add('hidden'); // Hide cancel button if completed/cancelled
+                newMatchBtn.classList.add('hidden'); // Hide new match button until 'End Match' is clicked
             } else { // registration, teams_registered, toss
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
@@ -1295,9 +1313,13 @@
                 playerSelection.classList.add('hidden');
                 scoreControls.classList.add('hidden');
                 liveScorePanel.classList.add('hidden'); // Hide the live score panel
+                endMatchBtn.classList.add('hidden');
+                restartMatchBtn.classList.add('hidden'); // Hide restart button
+                cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+                newMatchBtn.classList.remove('hidden'); // Show new match button
             }
 
-            // Only render live scorecards if match is not completed
+            // Only render live scorecards if match is not completed or cancelled
             if (matchState === 'innings1' || matchState === 'innings2') { // Only render if match is active
                 renderBatsmanScorecard(currentBattingTeam, liveBatsmanScorecardTable, liveBatsmanScorecardTeamName);
                 renderBowlerScorecard(currentBowlingTeam, liveBowlerScorecardTable, liveBowlerScorecardTeamName);
@@ -1308,8 +1330,8 @@
 
         // Function to add runs
         function addRuns(runs) {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBattingTeam.currentStrikerIndex === -1 || currentBowlerIndex === -1) {
@@ -1359,8 +1381,8 @@
 
         // Function to add a wicket
         function addWicket(dismissalType) {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBattingTeam.currentStrikerIndex === -1 || currentBowlerIndex === -1) {
@@ -1458,8 +1480,8 @@
 
         // Function to add a dot ball
         function addBall() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBattingTeam.currentStrikerIndex === -1 || currentBowlerIndex === -1) {
@@ -1497,8 +1519,8 @@
 
         // Functions for Extras
         function addWide() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBowlerIndex === -1) {
@@ -1532,8 +1554,8 @@
         }
 
         function addNoBall() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBowlerIndex === -1) {
@@ -1569,8 +1591,8 @@
         }
 
         function addBye() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBowlerIndex === -1) {
@@ -1605,8 +1627,8 @@
         }
 
         function addLegBye() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
             if (!currentBattingTeam || currentBowlerIndex === -1) {
@@ -1696,20 +1718,20 @@
             } else if (matchState === 'innings2') {
                 // Check for win condition immediately when target is surpassed
                 if (currentBattingTeam.runs > firstInningsTotalRuns) {
-                    declareWinner();
+                    declareWinner('Completed'); // Pass status 'Completed'
                     return; // Exit to prevent further score updates
                 }
 
                 if (isAllOut || allOversBowled) {
-                    declareWinner();
+                    declareWinner('Completed'); // Pass status 'Completed'
                 }
             }
         }
 
         // Function to switch the batting team
         function switchBattingTeam() {
-            if (matchState === 'completed') {
-                showMessageBox('Match is completed. Start a new match.', 'error');
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
                 return;
             }
 
@@ -1754,55 +1776,53 @@
         }
 
         // Function to declare the winner and Man of the Match
-        async function declareWinner() {
-            matchState = 'completed';
+        async function declareWinner(status) { // Added status parameter
+            matchState = status; // Set matchState to 'completed' or 'cancelled'
             let resultMessage = '';
 
             // Determine which team batted first and which batted second
-            // This logic needs to be based on `firstInningsTotalRuns` and the current `team1` and `team2` scores.
-            // If `firstInningsTotalRuns` was set from `team1.runs`, then team1 batted first.
-            // If `firstInningsTotalRuns` was set from `team2.runs`, then team2 batted first.
             const firstBattingTeam = (firstInningsTotalRuns === team1.runs) ? team1 : team2;
             const secondBattingTeam = (firstInningsTotalRuns === team1.runs) ? team2 : team1;
 
+            if (status === 'Cancelled') {
+                resultMessage = `Match Cancelled!`; // Now explicitly setting the message for cancelled matches
+            } else { // status === 'Completed'
+                const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
 
-            // Determine if the second batting team chased the target successfully
-            const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
-
-            if (targetChased) {
-                resultMessage = `${secondBattingTeam.name} wins by ${secondBattingTeam.players.length - 1 - secondBattingTeam.wickets} wickets!`;
-            } else if (firstInningsTotalRuns > secondBattingTeam.runs) {
-                // First batting team won (either by runs if second team all out/overs, or if target wasn't chased)
-                resultMessage = `${firstBattingTeam.name} wins by ${firstInningsTotalRuns - secondBattingTeam.runs} runs!`;
-            } else {
-                // Scores are tied
-                resultMessage = `Match Drawn!`;
+                if (targetChased) {
+                    resultMessage = `${secondBattingTeam.name} wins by ${secondBattingTeam.players.length - 1 - secondBattingTeam.wickets} wickets!`;
+                } else if (firstInningsTotalRuns > secondBattingTeam.runs) {
+                    resultMessage = `${firstBattingTeam.name} wins by ${firstInningsTotalRuns - secondBattingTeam.runs} runs!`;
+                } else {
+                    resultMessage = `Match Drawn!`;
+                }
             }
 
-            // Determine Man of the Match
-            const motmPlayer = determineManOfTheMatch();
+
+            // Determine Man of the Match (only for completed matches)
+            const motmPlayer = (status === 'Completed') ? determineManOfTheMatch() : null;
             const motmName = motmPlayer ? motmPlayer.name : 'N/A';
 
             // Save match details to localStorage immediately
-            saveMatchDetailsLocal(resultMessage, motmName);
+            saveMatchDetailsLocal(resultMessage, motmName, status); // Pass status to save function
             saveCurrentMatchStateToLocal(); // Save final state to local storage
-
-            // The visibility of live score elements is now handled by updateScoreboardDisplay()
-            // No need to explicitly hide them here.
 
             // Immediately show the match result (winner and difference)
             matchResultDisplay.textContent = resultMessage;
             matchResultDisplay.classList.remove('hidden');
 
-            // Keep other summary elements hidden until "End Match" button is clicked
+            // Keep other summary elements hidden until "End Match" button is clicked (or if cancelled)
             manOfTheMatchDisplay.classList.add('hidden');
             finalScorecardsSection.classList.add('hidden');
 
-            // Show End Match button and hide New Match button
+            // Show End Match button and restart, hide new match and cancel
             endMatchBtn.classList.remove('hidden');
+            restartMatchBtn.classList.remove('hidden'); // Show restart button
             newMatchBtn.classList.add('hidden'); // Hide New Match button
-            showMessageBox(`Match concluded! Click 'End Match' for full summary.`, 'success');
-            console.log('declareWinner(): Match concluded. End Match button unhidden. Summary not yet displayed.');
+            cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+
+            showMessageBox(`Match ${status.toLowerCase()}! Click 'End Match' for full summary or 'Restart Match'.`, 'success');
+            console.log(`declareWinner(): Match ${status.toLowerCase()}. End Match and Restart buttons unhidden. Summary not yet displayed.`);
 
             // Disable score controls
             Array.from(scoreControls.children).forEach(button => button.disabled = true);
@@ -2046,6 +2066,8 @@
                         newMatchBtn.classList.remove('hidden'); // New match button visible
                         clearPastMatchesBtn.classList.remove('hidden'); // Clear past matches button visible
                         endMatchBtn.classList.add('hidden'); // Hide end match button
+                        restartMatchBtn.classList.add('hidden'); // Hide restart button
+                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
                     } else if (matchState === 'toss') { // NEW: Handle toss state
                         hideAllSections();
                         tossSection.classList.remove('hidden');
@@ -2054,6 +2076,8 @@
                         newMatchBtn.classList.remove('hidden');
                         clearPastMatchesBtn.classList.remove('hidden');
                         endMatchBtn.classList.add('hidden');
+                        restartMatchBtn.classList.add('hidden'); // Hide restart button
+                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
                     } else if (matchState === 'teams_registered') {
                         hideAllSections();
                         matchReadySection.classList.remove('hidden');
@@ -2062,14 +2086,18 @@
                         newMatchBtn.classList.remove('hidden');
                         clearPastMatchesBtn.classList.remove('hidden');
                         endMatchBtn.classList.add('hidden');
+                        restartMatchBtn.classList.add('hidden'); // Hide restart button
+                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
                     } else if (matchState === 'innings1' || matchState === 'innings2') {
                         hideAllSections();
                         scoreboardSection.classList.remove('hidden');
                         showDeveloperInfoBtn.classList.remove('hidden'); // Always show dev info button
                         endMatchBtn.classList.add('hidden'); // Hide end match button if not completed
                         newMatchBtn.classList.add('hidden'); // Hide new match button during innings
+                        restartMatchBtn.classList.remove('hidden'); // Show restart button
+                        cancelMatchBtn.classList.remove('hidden'); // Show cancel button
                         console.log('loadCurrentMatchStateFromLocal(): End Match button hidden (innings in progress).');
-                    } else if (matchState === 'completed') {
+                    } else if (matchState === 'completed' || matchState === 'cancelled') {
                         hideAllSections();
                         scoreboardSection.classList.remove('hidden');
                         // Show result immediately, but hide other summary elements
@@ -2077,9 +2105,11 @@
                         matchResultDisplay.textContent = loadedState.result; // Display the saved result
                         manOfTheMatchDisplay.classList.add('hidden');
                         finalScorecardsSection.classList.add('hidden');
-                        endMatchBtn.classList.remove('hidden'); // Show end match button if completed
+                        endMatchBtn.classList.remove('hidden'); // Show end match button if completed/cancelled
+                        restartMatchBtn.classList.remove('hidden'); // Show restart button
                         newMatchBtn.classList.add('hidden'); // Hide new match button until 'End Match' is clicked
-                        console.log('loadCurrentMatchStateFromLocal(): End Match button unhidden (match completed), summary hidden.');
+                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+                        console.log('loadCurrentMatchStateFromLocal(): End Match button unhidden (match completed/cancelled), summary hidden.');
                         // Disable controls for completed match
                         Array.from(scoreControls.children).forEach(button => button.disabled = true);
                         strikerSelect.disabled = true;
@@ -2107,7 +2137,7 @@
         }
 
 
-        // Function to reset the match
+        // Function to reset the match to registration state
         function newMatch() {
             // Clear current match state from local storage
             localStorage.removeItem('currentCricketMatch');
@@ -2139,6 +2169,8 @@
             newMatchBtn.classList.remove('hidden'); // Ensure new match button is visible
             clearPastMatchesBtn.classList.remove('hidden'); // Ensure clear past matches button is visible
             endMatchBtn.classList.add('hidden'); // Hide end match button on new match
+            restartMatchBtn.classList.add('hidden'); // Hide restart button
+            cancelMatchBtn.classList.add('hidden'); // Hide cancel button
             console.log('newMatch(): End Match button hidden.');
 
 
@@ -2174,6 +2206,104 @@
             loadPastMatchesLocal(); // Reload past matches after a new match is started
         }
 
+        // NEW: Function to restart the current match with same teams and toss
+        function restartCurrentMatch() {
+            // Reset core match stats for both teams
+            [team1, team2].forEach(team => {
+                team.runs = 0;
+                team.wickets = 0;
+                team.overs = 0;
+                team.balls = 0;
+                team.totalWides = 0;
+                team.totalNoBalls = 0;
+                team.totalByes = 0;
+                team.totalLegByes = 0;
+                team.fallOfWickets = [];
+
+                // Reset player stats
+                team.players.forEach(player => {
+                    player.runsScored = 0;
+                    player.ballsFaced = 0;
+                    player.isOut = false;
+                    player.wicketsTaken = 0;
+                    player.runsConceded = 0;
+                    player.ballsBowled = 0;
+                    player.wides = 0;
+                    player.noBalls = 0;
+                    player.oversBowled = 0;
+                });
+            });
+
+            firstInningsTotalRuns = 0;
+            lastAction = null;
+            currentPartnershipRuns = 0;
+            isFreeHit = false;
+            lastCompletedBowlerIndex = -1;
+
+            // Re-establish currentBattingTeam and currentBowlingTeam based on original toss
+            // This logic needs to mirror the toss decision in proceedToMatchReadyBtn
+            let tempTeam1 = team1;
+            let tempTeam2 = team2;
+
+            if (tossWinnerName === tempTeam1.name) {
+                if (tossDecision === 'bat') {
+                    currentBattingTeam = tempTeam1;
+                    currentBowlingTeam = tempTeam2;
+                } else { // bowl
+                    currentBattingTeam = tempTeam2;
+                    currentBowlingTeam = tempTeam1;
+                }
+            } else { // team2 won toss
+                if (tossDecision === 'bat') {
+                    currentBattingTeam = tempTeam2;
+                    currentBowlingTeam = tempTeam1;
+                } else { // bowl
+                    currentBattingTeam = tempTeam1;
+                    currentBowlingTeam = tempTeam2;
+                }
+            }
+
+            // Set initial batsmen for the current batting team
+            if (currentBattingTeam.players.length >= 2) {
+                currentBattingTeam.currentStrikerIndex = 0;
+                currentBattingTeam.currentNonStrikerIndex = 1;
+            } else if (currentBattingTeam.players.length === 1) {
+                currentBattingTeam.currentStrikerIndex = 0;
+                currentBattingTeam.currentNonStrikerIndex = -1;
+            } else {
+                showMessageBox(`${currentBattingTeam.name} needs at least one player to start.`, 'error');
+                return; // Should not happen if teams were registered properly
+            }
+            currentBowlerIndex = -1; // Reset bowler for new innings
+
+            matchState = 'innings1'; // Set match state back to first innings
+
+            // Clear live scorecards
+            liveBatsmanScorecardTable.innerHTML = '';
+            liveBowlerScorecardTable.innerHTML = '';
+            liveFallOfWicketsList.innerHTML = '';
+
+            // Ensure controls are re-enabled
+            Array.from(scoreControls.children).forEach(button => button.disabled = false);
+            strikerSelect.disabled = false;
+            nonStrikerSelect.disabled = false;
+            bowlerSelect.disabled = false;
+
+            // Ensure correct sections are visible
+            hideAllSections();
+            scoreboardSection.classList.remove('hidden');
+            showDeveloperInfoBtn.classList.remove('hidden');
+            endMatchBtn.classList.add('hidden'); // Hide end match button
+            newMatchBtn.classList.add('hidden'); // Hide new match button
+            restartMatchBtn.classList.remove('hidden'); // Show restart button
+            cancelMatchBtn.classList.remove('hidden'); // Show cancel button
+
+            updateScoreboardDisplay();
+            saveCurrentMatchStateToLocal();
+            showMessageBox('Match restarted with same teams and toss!', 'success');
+        }
+
+
         // Function to render a batsman scorecard for a given team and table element
         function renderBatsmanScorecard(team, targetTable, teamNameElement) {
             targetTable.innerHTML = ''; // Clear previous rows
@@ -2204,7 +2334,7 @@
                             row.classList.add('bg-yellow-100');
                         }
                     } else {
-                        statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out';
+                        statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out';
                     }
 
                     runsCell.classList.add('text-right');
@@ -2309,7 +2439,7 @@
         }
 
         // Function to save match details to localStorage
-        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName) {
+        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName, status) { // Added status parameter
             try {
                 // Get existing matches or initialize an empty array
                 const existingMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
@@ -2333,9 +2463,9 @@
                             wicketsTaken: player.wicketsTaken,
                             runsConceded: player.runsConceded,
                             ballsBowled: player.ballsBowled,
-                            wides: player.wides,
-                            noBalls: player.noBalls,
-                            oversBowled: player.oversBowled
+                            wides: player.wides, // Keep original wides
+                            noBalls: player.noBalls, // Keep original noBalls
+                            oversBowled: player.oversBowled // Keep original oversBowled
                         })),
                         fallOfWickets: team1.fallOfWickets
                     },
@@ -2358,9 +2488,9 @@
                             wicketsTaken: player.wicketsTaken,
                             runsConceded: player.runsConceded,
                             ballsBowled: player.ballsBowled,
-                            wides: player.wides,
-                            noBalls: player.noBalls,
-                            oversBowled: player.oversBowled
+                            wides: player.wides, // Keep original wides
+                            noBalls: player.noBalls, // Keep original noBalls
+                            oversBowled: player.oversBowled // Keep original oversBowled
                         })),
                         fallOfWickets: team2.fallOfWickets
                     },
@@ -2369,7 +2499,8 @@
                     result: resultMessage,
                     manOfTheMatch: manOfTheMatchName,
                     tossWinnerName: tossWinnerName, // Save toss winner for historical record
-                    tossDecision: tossDecision // Save toss decision for historical record
+                    tossDecision: tossDecision, // Save toss decision for historical record
+                    status: status // NEW: Save match status
                 };
 
                 existingMatches.unshift(matchData); // Add new match to the beginning
@@ -2409,11 +2540,20 @@
                         ? `<p class="text-md text-gray-700 mb-2">${match.tossWinnerName} won the toss and chose to ${match.tossDecision} first.</p>`
                         : '';
 
+                    // Determine status text and color
+                    let statusLabel = '';
+                    if (match.status === 'Cancelled') {
+                        statusLabel = `<p class="text-md text-black mb-2">Status: Cancelled</p>`; // Black, not bold
+                    } else {
+                        statusLabel = `<p class="text-md text-black mb-2">Status: Completed</p>`; // Black, not bold
+                    }
+
                     // Create detailed HTML for each past match
                     listItem.innerHTML = `
                         <h4 class="text-lg font-bold text-gray-800">${match.team1.name} vs ${match.team2.name}</h4>
                         <p class="text-md text-gray-700 mb-2">Date & Time: ${displayDateTime}</p>
                         ${tossInfo}
+                        ${statusLabel} <!-- Display Status here -->
                         <p class="text-md text-gray-700 mb-2">${match.result}</p>
                         <p class="text-md text-gray-700 mb-2">Man of the Match: ${match.manOfTheMatch}</p>
                         <div class="past-match-details">
@@ -2505,7 +2645,7 @@
                     showMessageBox('All past match data cleared!', 'success');
                 },
                 () => {
-                    showMessageBox('Clear operation cancelled.', 'info');
+                    // No message on cancel
                 }
             );
         }
@@ -2604,6 +2744,8 @@
                 showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
                 newMatchBtn.classList.remove('hidden'); // New match button visible
                 clearPastMatchesBtn.classList.remove('hidden'); // Clear past matches button visible
+                restartMatchBtn.classList.add('hidden'); // Hide restart button
+                cancelMatchBtn.classList.add('hidden'); // Hide cancel button
 
                 populateTossDropdowns(); // Populate toss dropdowns with team names
 
@@ -2656,6 +2798,8 @@
             newMatchBtn.classList.remove('hidden');
             clearPastMatchesBtn.classList.remove('hidden');
             endMatchBtn.classList.add('hidden');
+            restartMatchBtn.classList.add('hidden'); // Hide restart button
+            cancelMatchBtn.classList.add('hidden'); // Hide cancel button
 
             showMessageBox('Toss completed! Match ready to start.', 'success');
             saveCurrentMatchStateToLocal();
@@ -2684,6 +2828,8 @@
                 showDeveloperInfoBtn.classList.remove('hidden'); // Ensure developer info button is visible
                 endMatchBtn.classList.add('hidden'); // Hide end match button at start
                 newMatchBtn.classList.add('hidden'); // Hide new match button during innings
+                restartMatchBtn.classList.remove('hidden'); // Show restart button
+                cancelMatchBtn.classList.remove('hidden'); // Show cancel button
                 console.log('startMatchBtn click: End Match button hidden.');
 
                 updateScoreboardDisplay();
@@ -2721,18 +2867,57 @@
         endMatchBtn.addEventListener('click', () => {
             console.log('End Match button clicked.');
             // When End Match button is clicked, ensure final scorecards are shown
-            if (matchState === 'completed') {
+            if (matchState === 'completed' || matchState === 'cancelled') {
                 hideAllSections();
                 scoreboardSection.classList.remove('hidden'); // Show the scoreboard section (which contains summary)
                 renderFinalScorecards(); // This will now explicitly show the summary elements
                 endMatchBtn.classList.add('hidden'); // Hide end match button after click
                 newMatchBtn.classList.remove('hidden'); // Keep new match button visible
+                restartMatchBtn.classList.remove('hidden'); // Keep restart button visible
                 // Controls are already disabled by declareWinner
                 updateScoreboardDisplay(); // Call updateScoreboardDisplay again to hide live info boxes
             } else {
-                showMessageBox('Match is not yet completed.', 'error');
+                showMessageBox('Match is not yet completed or cancelled.', 'error');
             }
         });
+
+        // NEW: Restart Match button listener
+        restartMatchBtn.addEventListener('click', () => {
+            showConfirmationModal('Are you sure you want to restart the current match? All current progress will be lost.',
+                () => {
+                    restartCurrentMatch(); // Call new function to restart with same teams/toss
+                },
+                () => {
+                    // No message on cancel
+                }
+            );
+        });
+
+        // NEW: Cancel Match button listener
+        cancelMatchBtn.addEventListener('click', () => {
+            showConfirmationModal('Are you sure you want to cancel the current match? Its current progress will be saved as "Cancelled" in past match summaries.',
+                () => {
+                    declareWinner('Cancelled'); // Call declareWinner with 'Cancelled' status
+                    // After declareWinner, the state will be 'cancelled', and loadCurrentMatchStateFromLocal
+                    // will handle showing the correct section (scoreboard with result)
+                    // We then need to explicitly go to the registration screen.
+                    hideAllSections();
+                    teamRegistrationSection.classList.remove('hidden');
+                    pastMatchesSection.classList.remove('hidden');
+                    showDeveloperInfoBtn.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
+                    clearPastMatchesBtn.classList.remove('hidden');
+                    restartMatchBtn.classList.add('hidden'); // Hide restart button
+                    cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+                    endMatchBtn.classList.add('hidden'); // Hide end match button
+                    showMessageBox('Match cancelled and saved to past matches.', 'success');
+                },
+                () => {
+                    // No message on cancel
+                }
+            );
+        });
+
 
         // Event listeners for Developer Info page (NEW)
         // Add a button to the main app container to show developer info
@@ -2748,6 +2933,8 @@
             showDeveloperInfoBtn.classList.add('hidden'); // Hide the button when on this page
             newMatchBtn.classList.remove('hidden'); // Ensure new match button is visible on dev info page
             clearPastMatchesBtn.classList.remove('hidden'); // Ensure clear past matches button is visible
+            restartMatchBtn.classList.add('hidden'); // Hide restart button
+            cancelMatchBtn.classList.add('hidden'); // Hide cancel button
         });
 
         backToMainBtn.addEventListener('click', () => {
@@ -2759,23 +2946,31 @@
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
                 endMatchBtn.classList.add('hidden'); // Ensure hidden
+                restartMatchBtn.classList.add('hidden'); // Ensure hidden
+                cancelMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'toss') {
                 tossSection.classList.remove('hidden');
                 pastMatchesSection.classList.remove('hidden');
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
                 endMatchBtn.classList.add('hidden'); // Ensure hidden
+                restartMatchBtn.classList.add('hidden'); // Ensure hidden
+                cancelMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'teams_registered') {
                 matchReadySection.classList.remove('hidden');
                 pastMatchesSection.classList.remove('hidden');
                 newMatchBtn.classList.remove('hidden');
                 clearPastMatchesBtn.classList.remove('hidden');
                 endMatchBtn.classList.add('hidden'); // Ensure hidden
+                restartMatchBtn.classList.add('hidden'); // Ensure hidden
+                cancelMatchBtn.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'innings1' || matchState === 'innings2') {
                 scoreboardSection.classList.remove('hidden');
                 newMatchBtn.classList.add('hidden'); // Hide new match button during innings
                 endMatchBtn.classList.add('hidden'); // Hide end match button during innings
-            } else if (matchState === 'completed') {
+                restartMatchBtn.classList.remove('hidden'); // Show restart button
+                cancelMatchBtn.classList.remove('hidden'); // Show cancel button
+            } else if (matchState === 'completed' || matchState === 'cancelled') {
                 scoreboardSection.classList.remove('hidden');
                 // If returning to a completed match, show the immediate result and New Match button
                 matchResultDisplay.classList.remove('hidden');
@@ -2783,6 +2978,8 @@
                 finalScorecardsSection.classList.remove('hidden');
                 endMatchBtn.classList.add('hidden'); // Hide end match button as summary is already shown
                 newMatchBtn.classList.remove('hidden'); // Show new match button
+                restartMatchBtn.classList.remove('hidden'); // Show restart button
+                cancelMatchBtn.classList.add('hidden'); // Hide cancel button
             }
             showDeveloperInfoBtn.classList.remove('hidden'); // Show the button when returning to main sections
             updateScoreboardDisplay(); // Ensure info boxes are correctly hidden/shown
