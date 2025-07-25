@@ -115,7 +115,9 @@
         #backBtnToss, /* Apply base button style to the new back button */
         #backBtnMatchReady, /* Apply base button style to the new back button */
         #backBtnMatchSummary, /* Apply base button style to the new back button */
-        #backBtnDeveloperInfo /* Apply base button style to the new back button */
+        #backBtnDeveloperInfo, /* Apply base button style to the new back button */
+        #wideExtraRunsModal button, /* Apply base button style to wide extra runs modal buttons */
+        #fielderSelectionModal button /* Apply base button style to fielder selection modal buttons */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -154,7 +156,7 @@
         /* Scoreboard specific styles */
         .team-score-card {
             background-color: #f8fafc; /* Lighter background */
-            border-radius: 1rem;
+            border-radius: 1.rem;
             padding: 1.8rem; /* More padding */
             text-align: center;
             box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.08); /* More subtle inner shadow */
@@ -562,13 +564,13 @@
             <h2 class="text-2xl font-semibold text-gray-700 mb-4">Select Playing XI</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team1PlayingXITitle">Team 1 Players</h3>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team1PlayingXITitle">Team 1 Players <span id="team1PlayingXICounter" class="text-sm text-gray-500">(0/11)</span></h3>
                     <div id="team1PlayersList" class="player-list-container">
                         <!-- Checkboxes for Team 1 players will be inserted here -->
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team2PlayingXITitle">Team 2 Players</h3>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team2PlayingXITitle">Team 2 Players <span id="team2PlayingXICounter" class="text-sm text-gray-500">(0/11)</span></h3>
                     <div id="team2PlayersList" class="player-list-container">
                         <!-- Checkboxes for Team 2 players will be inserted here -->
                     </div>
@@ -975,6 +977,61 @@
             </div>
         </div>
 
+        <!-- NEW: Wide Extra Runs Modal -->
+        <div id="wideExtraRunsModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Wide Ball: Extra Runs?</h3>
+                <div class="mb-4 flex flex-wrap justify-center gap-4"> <!-- Use flex for radio buttons -->
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="0" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500" checked>
+                        <span class="ml-2 text-gray-700">0 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="1" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">1 Extra Run</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="2" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">2 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="3" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">3 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="4" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">4 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="wideExtraRuns" value="6" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">6 Extra Runs</span>
+                    </label>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="confirmWideExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
+                    <button id="cancelWideExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Fielder Selection Modal -->
+        <div id="fielderSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4" id="fielderModalTitle">Select Fielder</h3>
+                <div class="mb-4">
+                    <label for="fielderSelect" class="block text-gray-700 text-sm font-bold mb-2">Fielder:</label>
+                    <select id="fielderSelect" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Select Fielder</option>
+                        <!-- Fielder options populated by JS -->
+                    </select>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="confirmFielderBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
+                    <button id="cancelFielderBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -1003,6 +1060,8 @@
         const team2PlayersList = document.getElementById('team2PlayersList');
         const confirmPlayingXIBtn = document.getElementById('confirmPlayingXIBtn');
         const backBtnPlayingXI = document.getElementById('backBtnPlayingXI'); // Renamed from backToRegistrationFromXI
+        const team1PlayingXICounter = document.getElementById('team1PlayingXICounter'); // NEW Counter
+        const team2PlayingXICounter = document.getElementById('team2PlayingXICounter'); // NEW Counter
 
 
         // Live Scoreboard elements
@@ -1130,6 +1189,19 @@
         const confirmCancellationReasonBtn = document.getElementById('confirmCancellationReasonBtn');
         const backFromCancelReasonBtn = document.getElementById('backFromCancelReasonBtn');
 
+        // NEW: Wide Extra Runs Modal elements
+        const wideExtraRunsModal = document.getElementById('wideExtraRunsModal');
+        // Removed wideExtraRunsInput as it's now radio buttons
+        const confirmWideExtraRunsBtn = document.getElementById('confirmWideExtraRunsBtn');
+        const cancelWideExtraRunsBtn = document.getElementById('cancelWideExtraRunsBtn');
+
+        // NEW: Fielder Selection Modal elements
+        const fielderSelectionModal = document.getElementById('fielderSelectionModal');
+        const fielderModalTitle = document.getElementById('fielderModalTitle');
+        const fielderSelect = document.getElementById('fielderSelect');
+        const confirmFielderBtn = document.getElementById('confirmFielderBtn');
+        const cancelFielderBtn = document.getElementById('cancelFielderBtn');
+
 
         // Array of all main content sections to easily hide/show them
         const allSections = [
@@ -1254,7 +1326,7 @@
                     // Find the original index of the player in the full players array
                     const originalIndex = currentBattingTeam.players.findIndex(p => p.name === player.name);
                     // Only add players who are not out
-                    if (!player.isOut) {
+                    if (!player.isOut) { // NEW: Filter out dismissed batsmen
                         const optionStriker = document.createElement('option');
                         optionStriker.value = originalIndex; // Use original index
                         optionStriker.textContent = player.name;
@@ -1547,7 +1619,7 @@
             saveCurrentMatchStateToLocal(); // Save changes to local storage
         }
 
-        // Function to add a wicket
+        // Function to add a wicket (now handles fielder selection)
         function addWicket(dismissalType) {
             if (matchState === 'completed' || matchState === 'cancelled') {
                 showMessageBox('Match is completed or cancelled. Start a new match or restart.', 'error');
@@ -1561,93 +1633,163 @@
             const striker = currentBattingTeam.players[currentBattingTeam.currentStrikerIndex];
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
 
+            // Determine the maximum wickets allowed for this team (all players in playing XI except one)
+            const maxWickets = getPlayingXIPlayers(currentBattingTeam).length - 1;
+
+            if (currentBattingTeam.wickets >= maxWickets) {
+                showMessageBox(`${currentBattingTeam.name} is already all out!`, 'error');
+                return;
+            }
+
+            // Handle Free Hit first
+            if (isFreeHit && dismissalType !== 'Run Out') { // Run Out is the only dismissal on a free hit
+                showMessageBox(`Wicket on Free Hit! ${striker.name} is not out (${dismissalType}), but ball counted.`, 'info');
+                striker.ballsFaced++; // Still counts as a ball faced
+                bowler.ballsBowled++; // Still counts as a ball bowled
+                currentBattingTeam.balls++; // Still counts as a ball in the over
+                // No wicket is recorded, no change to runs
+                lastAction = {
+                    type: 'freeHitWicketAttempt',
+                    strikerIndex: currentBattingTeam.currentStrikerIndex,
+                    bowlerIndex: currentBowlerIndex,
+                    team: currentBattingTeam === team1 ? 'team1' : 'team2',
+                    prevPartnershipRuns: currentPartnershipRuns,
+                    prevIsFreeHit: isFreeHit,
+                    dismissalType: dismissalType // Store for undo message
+                };
+                isFreeHit = false; // Free hit ends
+                checkInningsCompletion();
+                updateScoreboardDisplay();
+                saveCurrentMatchStateToLocal();
+                return;
+            }
+
             // If it's the first ball of a new over, clear the lastCompletedBowlerIndex restriction
             if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
                 lastCompletedBowlerIndex = -1;
             }
 
-            // Determine the maximum wickets allowed for this team (all players in playing XI except one)
-            const maxWickets = getPlayingXIPlayers(currentBattingTeam).length - 1;
+            // For Caught and Run Out, show fielder selection modal
+            if (dismissalType === 'Caught' || dismissalType === 'Run Out') {
+                fielderModalTitle.textContent = `Select Fielder for ${dismissalType}`;
+                fielderSelect.innerHTML = '<option value="">Select Fielder</option>';
 
-            if (currentBattingTeam.wickets < maxWickets) {
-                if (isFreeHit && dismissalType !== 'Run Out') { // Run Out is the only dismissal on a free hit
-                    showMessageBox(`Wicket on Free Hit! ${striker.name} is not out (${dismissalType}), but ball counted.`, 'info');
-                    striker.ballsFaced++; // Still counts as a ball faced
-                    bowler.ballsBowled++; // Still counts as a ball bowled
-                    currentBattingTeam.balls++; // Still counts as a ball in the over
-                    // No wicket is recorded, no change to runs
-                    lastAction = {
-                        type: 'freeHitWicketAttempt',
-                        strikerIndex: currentBattingTeam.currentStrikerIndex,
-                        bowlerIndex: currentBowlerIndex,
-                        team: currentBattingTeam === team1 ? 'team1' : 'team2',
-                        prevPartnershipRuns: currentPartnershipRuns,
-                        prevIsFreeHit: isFreeHit,
-                        dismissalType: dismissalType // Store for undo message
-                    };
-                    isFreeHit = false; // Free hit ends
-                } else {
-                    striker.isOut = true;
-                    currentBattingTeam.wickets++;
-                    if (dismissalType !== 'Run Out' && dismissalType !== 'Hit Wicket') { // Bowler gets credit for most wickets
-                        bowler.wicketsTaken++;
+                // Populate fielder dropdown with players from the bowling team's playing XI
+                getPlayingXIPlayers(currentBowlingTeam).forEach((player, index) => {
+                    const option = document.createElement('option');
+                    option.value = player.name;
+                    option.textContent = player.name;
+                    fielderSelect.appendChild(option);
+                });
+
+                fielderSelectionModal.classList.remove('hidden');
+
+                // Store current context for modal callbacks
+                fielderSelectionModal.currentDismissalType = dismissalType;
+                fielderSelectionModal.currentStriker = striker;
+                fielderSelectionModal.currentBowler = bowler;
+
+                // Remove previous listeners to prevent duplicates
+                confirmFielderBtn.removeEventListener('click', fielderSelectionModal.confirmListener);
+                cancelFielderBtn.removeEventListener('click', fielderSelectionModal.cancelListener);
+
+                // Add new listeners
+                fielderSelectionModal.confirmListener = () => {
+                    const selectedFielderName = fielderSelect.value;
+                    if (!selectedFielderName) {
+                        showMessageBox('Please select a fielder.', 'error');
+                        return;
                     }
-                    striker.ballsFaced++; // A wicket implies a ball bowled
-                    bowler.ballsBowled++;
-                    currentBattingTeam.balls++;
+                    processWicket(fielderSelectionModal.currentStriker, fielderSelectionModal.currentBowler, fielderSelectionModal.currentDismissalType, selectedFielderName);
+                    fielderSelectionModal.classList.add('hidden');
+                };
+                fielderSelectionModal.cancelListener = () => {
+                    fielderSelectionModal.classList.add('hidden');
+                    showMessageBox('Wicket action cancelled.', 'info');
+                };
 
-                    // Record fall of wicket
-                    currentBattingTeam.fallOfWickets.push({
-                        batsman: striker.name,
-                        score: `${currentBattingTeam.runs}/${currentBattingTeam.wickets}`,
-                        over: `${currentBattingTeam.overs}.${currentBattingTeam.balls}`,
-                        dismissalType: dismissalType
-                    });
+                confirmFielderBtn.addEventListener('click', fielderSelectionModal.confirmListener);
+                cancelFielderBtn.addEventListener('click', fielderSelectionModal.cancelListener);
 
-                    // Store previous partnership runs for undo
-                    lastAction = {
-                        type: 'wicket',
-                        batsmanOutIndex: currentBattingTeam.currentStrikerIndex,
-                        bowlerIndex: currentBowlerIndex,
-                        team: currentBattingTeam === team1 ? 'team1' : 'team2',
-                        previousStrikerIndex: currentBattingTeam.currentStrikerIndex,
-                        previousNonStrikerIndex: currentBattingTeam.currentNonStrikerIndex,
-                        prevPartnershipRuns: currentPartnershipRuns, // Store partnership before this action
-                        prevIsFreeHit: isFreeHit,
-                        dismissalType: dismissalType // Store dismissal type for undo
-                    };
-                    currentPartnershipRuns = 0; // Reset partnership on wicket
-
-                    // Select next batsman from playing XI
-                    let nextBatsmanIndex = -1;
-                    const battingXIPlayers = getPlayingXIPlayers(currentBattingTeam);
-                    for (let i = 0; i < battingXIPlayers.length; i++) {
-                        const player = battingXIPlayers[i];
-                        const originalPlayerIndex = currentBattingTeam.players.findIndex(p => p.name === player.name);
-                        if (!player.isOut && originalPlayerIndex !== currentBattingTeam.currentNonStrikerIndex) {
-                            nextBatsmanIndex = originalPlayerIndex;
-                            break;
-                        }
-                    }
-
-                    if (nextBatsmanIndex !== -1) {
-                        currentBattingTeam.currentStrikerIndex = nextBatsmanIndex;
-                        showMessageBox(`${striker.name} is out by ${dismissalType}! ${currentBattingTeam.players[nextBatsmanIndex].name} is new striker.`, 'success');
-                    } else {
-                        // All out scenario (no more available batsmen in playing XI)
-                        currentBattingTeam.currentStrikerIndex = -1;
-                        currentBattingTeam.currentNonStrikerIndex = -1;
-                        showMessageBox(`${striker.name} is out by ${dismissalType}! ${currentBattingTeam.name} All Out!`, 'success');
-                    }
-                    isFreeHit = false; // Free hit ends after a legal delivery (even if it's a wicket)
-                }
-                checkInningsCompletion();
-                updateScoreboardDisplay();
-                saveCurrentMatchStateToLocal(); // Save changes to local storage
             } else {
-                showMessageBox(`${currentBattingTeam.name} is already all out!`, 'error');
+                // For other dismissal types (Bowled/LBW, Stumped, Hit Wicket, Other), proceed directly
+                processWicket(striker, bowler, dismissalType);
             }
         }
+
+        // Helper function to process the wicket after fielder selection (if applicable)
+        function processWicket(striker, bowler, dismissalType, fielderName = null) {
+            striker.isOut = true;
+            currentBattingTeam.wickets++;
+            if (dismissalType !== 'Run Out' && dismissalType !== 'Hit Wicket') { // Bowler gets credit for most wickets
+                bowler.wicketsTaken++;
+            }
+            striker.ballsFaced++; // A wicket implies a ball bowled
+            bowler.ballsBowled++;
+            currentBattingTeam.balls++;
+
+            // Record fall of wicket
+            currentBattingTeam.fallOfWickets.push({
+                batsman: striker.name,
+                score: `${currentBattingTeam.runs}/${currentBattingTeam.wickets}`,
+                over: `${currentBattingTeam.overs}.${currentBattingTeam.balls}`,
+                dismissalType: dismissalType,
+                fielder: fielderName // Store fielder's name
+            });
+
+            // Store previous partnership runs for undo
+            lastAction = {
+                type: 'wicket',
+                batsmanOutIndex: currentBattingTeam.currentStrikerIndex,
+                bowlerIndex: currentBowlerIndex,
+                team: currentBattingTeam === team1 ? 'team1' : 'team2',
+                previousStrikerIndex: currentBattingTeam.currentStrikerIndex,
+                previousNonStrikerIndex: currentBattingTeam.currentNonStrikerIndex,
+                prevPartnershipRuns: currentPartnershipRuns, // Store partnership before this action
+                prevIsFreeHit: isFreeHit,
+                dismissalType: dismissalType, // Store dismissal type for undo
+                fielderName: fielderName // Store fielder for undo
+            };
+            currentPartnershipRuns = 0; // Reset partnership on wicket
+
+            // Select next batsman from playing XI
+            let nextBatsmanIndex = -1;
+            const battingXIPlayers = getPlayingXIPlayers(currentBattingTeam);
+            for (let i = 0; i < battingXIPlayers.length; i++) {
+                const player = battingXIPlayers[i];
+                const originalPlayerIndex = currentBattingTeam.players.findIndex(p => p.name === player.name);
+                if (!player.isOut && originalPlayerIndex !== currentBattingTeam.currentNonStrikerIndex) {
+                    nextBatsmanIndex = originalPlayerIndex;
+                    break;
+                }
+            }
+
+            if (nextBatsmanIndex !== -1) {
+                currentBattingTeam.currentStrikerIndex = nextBatsmanIndex;
+                let message = `${striker.name} is out by ${dismissalType}!`;
+                if (fielderName) {
+                    message += ` (Fielder: ${fielderName})`;
+                }
+                message += ` ${currentBattingTeam.players[nextBatsmanIndex].name} is new striker.`;
+                showMessageBox(message, 'success');
+            } else {
+                // All out scenario (no more available batsmen in playing XI)
+                currentBattingTeam.currentStrikerIndex = -1;
+                currentBattingTeam.currentNonStrikerIndex = -1;
+                let message = `${striker.name} is out by ${dismissalType}!`;
+                if (fielderName) {
+                    message += ` (Fielder: ${fielderName})`;
+                }
+                message += ` ${currentBattingTeam.name} All Out!`;
+                showMessageBox(message, 'success');
+            }
+            isFreeHit = false; // Free hit ends after a legal delivery (even if it's a wicket)
+
+            checkInningsCompletion();
+            updateScoreboardDisplay();
+            saveCurrentMatchStateToLocal(); // Save changes to local storage
+        }
+
 
         // Function to add a dot ball
         function addBall() {
@@ -1698,31 +1840,51 @@
                 showMessageBox('Please select bowler.', 'error');
                 return;
             }
+
+            // Ensure '0 Extra Runs' is selected by default when modal opens
+            document.querySelector('input[name="wideExtraRuns"][value="0"]').checked = true;
+            wideExtraRunsModal.classList.remove('hidden');
+
+            // Set up event listeners for modal buttons
+            confirmWideExtraRunsBtn.onclick = () => {
+                const selectedRadio = document.querySelector('input[name="wideExtraRuns"]:checked');
+                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0; // Default to 0 if no selection for some reason
+                processWide(extraRuns);
+                wideExtraRunsModal.classList.add('hidden');
+            };
+            cancelWideExtraRunsBtn.onclick = () => {
+                wideExtraRunsModal.classList.add('hidden');
+                showMessageBox('Wide ball action cancelled.', 'info');
+            };
+        }
+
+        // Helper function to process the wide after getting extra runs
+        function processWide(extraRuns) {
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+            const totalRunsAdded = 1 + extraRuns; // 1 for the wide itself, plus any extra runs
 
-            // Wide does not count as a legal delivery, so it doesn't clear lastCompletedBowlerIndex
-            // if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
-            //     lastCompletedBowlerIndex = -1; // This should NOT happen for extras
-            // }
+            currentBattingTeam.runs += totalRunsAdded;
+            currentBattingTeam.totalWides += 1; // Only count one wide event
+            bowler.runsConceded += totalRunsAdded;
+            bowler.wides += 1; // Only count one wide for the bowler
 
-            currentBattingTeam.runs += 1; // 1 run for wide
-            currentBattingTeam.totalWides += 1;
-            bowler.runsConceded += 1;
-            bowler.wides += 1;
-
-            // Store previous partnership runs for undo (partnership does not increase for extras not off bat)
             lastAction = {
                 type: 'wide',
                 bowlerIndex: currentBowlerIndex,
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 prevPartnershipRuns: currentPartnershipRuns,
-                prevIsFreeHit: isFreeHit
+                prevIsFreeHit: isFreeHit,
+                totalRunsAdded: totalRunsAdded, // Store total runs added for undo
+                extraRuns: extraRuns // Store extra runs for undo message
             };
+
             // Wide does not end a free hit, as it's not a legal delivery
             checkInningsCompletion(); // Wide doesn't count as a ball, but check innings completion
             updateScoreboardDisplay();
             saveCurrentMatchStateToLocal(); // Save changes to local storage
+            showMessageBox(`Wide ball recorded. ${totalRunsAdded} runs added.`, 'success');
         }
+
 
         function addNoBall() {
             if (matchState === 'completed' || matchState === 'cancelled') {
@@ -1928,7 +2090,7 @@
             let nextStriker = -1;
             let nextNonStriker = -1;
 
-            // Find first two available players from the playing XI
+            // Find first two available players from the playing XI who are NOT out
             const availableXIPlayers = nextBattingXI.filter(p => !p.isOut);
 
             if (availableXIPlayers.length >= 2) {
@@ -2094,7 +2256,7 @@
                     targetTeam.currentNonStrikerIndex = lastAction.previousNonStrikerIndex;
                     // Remove last fall of wicket entry
                     if (targetTeam.fallOfWickets.length > 0) {
-                        targetTeam.fallOfWickets.pop();
+                        targetTeam.fallOfWickets.pop(); // Remove the last wicket entry
                     }
                     break;
                 case 'freeHitWicketAttempt':
@@ -2111,9 +2273,10 @@
                     targetTeam.balls--;
                     break;
                 case 'wide':
-                    targetTeam.runs -= 1;
+                    // Revert total runs added for the wide
+                    targetTeam.runs -= lastAction.totalRunsAdded;
                     targetTeam.totalWides -= 1;
-                    currentBowler.runsConceded -= 1;
+                    currentBowler.runsConceded -= lastAction.totalRunsAdded;
                     currentBowler.wides -= 1;
                     break;
                 case 'noBall':
@@ -2633,7 +2796,12 @@
             if (team && team.fallOfWickets.length > 0) {
                 team.fallOfWickets.forEach(fow => {
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${fow.batsman} out (${fow.dismissalType}) at ${fow.score} in ${fow.over} overs`;
+                    let fowText = `${fow.batsman} out (${fow.dismissalType})`;
+                    if (fow.fielder) { // Include fielder if present
+                        fowText += ` by ${fow.fielder}`;
+                    }
+                    fowText += ` at ${fow.score} in ${fow.over} overs`;
+                    listItem.textContent = fowText;
                     targetList.appendChild(listItem);
                 });
             } else {
@@ -2838,7 +3006,14 @@
                                 </div>
                                 <h6>Fall of Wickets:</h6>
                                 <ul>
-                                    ${match.team1.fallOfWickets.map(fow => `<li>${fow.batsman} out (${fow.dismissalType}) at ${fow.score} in ${fow.over} overs</li>`).join('') || '<li>No wickets.</li>'}
+                                    ${match.team1.fallOfWickets.map(fow => {
+                                        let fowText = `${fow.batsman} out (${fow.dismissalType})`;
+                                        if (fow.fielder) {
+                                            fowText += ` by ${fow.fielder}`;
+                                        }
+                                        fowText += ` at ${fow.score} in ${fow.over} overs`;
+                                        return `<li>${fowText}</li>`;
+                                    }).join('') || '<li>No wickets.</li>'}
                                 </ul>
                             </div>
                             <div class="card">
@@ -2872,7 +3047,14 @@
                                 </div>
                                 <h6>Fall of Wickets:</h6>
                                 <ul>
-                                    ${match.team2.fallOfWickets.map(fow => `<li>${fow.batsman} out (${fow.dismissalType}) at ${fow.score} in ${fow.over} overs</li>`).join('') || '<li>No wickets.</li>'}
+                                    ${match.team2.fallOfWickets.map(fow => {
+                                        let fowText = `${fow.batsman} out (${fow.dismissalType})`;
+                                        if (fow.fielder) {
+                                            fowText += ` by ${fow.fielder}`;
+                                        }
+                                        fowText += ` at ${fow.score} in ${fow.over} overs`;
+                                        return `<li>${fowText}</li>`;
+                                    }).join('') || '<li>No wickets.</li>'}
                                 </ul>
                             </div>
                         </div>
@@ -2927,8 +3109,8 @@
             team1PlayersList.innerHTML = '';
             team2PlayersList.innerHTML = '';
 
-            team1PlayingXITitle.textContent = `${team1.name} Players (Select 11)`;
-            team2PlayingXITitle.textContent = `${team2.name} Players (Select 11)`;
+            team1PlayingXITitle.innerHTML = `Team 1 Players <span id="team1PlayingXICounter" class="text-sm text-gray-500">(${team1.playing11Names.length}/11)</span>`;
+            team2PlayingXITitle.innerHTML = `Team 2 Players <span id="team2PlayingXICounter" class="text-sm text-gray-500">(${team2.playing11Names.length}/11)</span>`;
 
             team1.players.forEach(player => {
                 const label = document.createElement('label');
@@ -2968,6 +3150,12 @@
                 }
             } else {
                 team.playing11Names = team.playing11Names.filter(name => name !== playerName);
+            }
+            // Update the counter immediately
+            if (team === team1) {
+                document.getElementById('team1PlayingXICounter').textContent = `(${team.playing11Names.length}/11)`;
+            } else {
+                document.getElementById('team2PlayingXICounter').textContent = `(${team.playing11Names.length}/11)`;
             }
             saveCurrentMatchStateToLocal(); // Save changes to local storage
         }
@@ -3410,6 +3598,7 @@
                 restartMatchBtn.classList.add('hidden'); // Ensure hidden
                 cancelMatchBtn.classList.add('hidden'); // Ensure hidden
                 backBtnMatchSummary.classList.add('hidden'); // Ensure hidden
+                registeredTeamsSummary.textContent = `${team1.name} vs ${team2.name} (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`; // Re-render summary
                 registerTeamsBtn.textContent = 'Register Teams'; // Set default text
             } else if (matchState === 'innings1' || matchState === 'innings2') {
                 scoreboardSection.classList.remove('hidden');
