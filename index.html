@@ -192,6 +192,7 @@
             font-weight: bold;
             color: #065f46;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid purple; /* Added for debugging */
         }
         .match-result.draw {
             background-color: #bfdbfe; /* Light blue for draw */
@@ -438,6 +439,9 @@
         }
         #tossSection .space-y-4 > div {
             margin-bottom: 1rem;
+        }
+        #matchResultMessageText {
+            background-color: lightblue; /* Added for debugging */
         }
     </style>
 </head>
@@ -705,7 +709,7 @@
 
             <!-- Match Result Display -->
             <div id="matchResultDisplay" class="match-result hidden">
-                Match Result will appear here!
+                <span class="font-bold">Result:</span> <span id="matchResultMessageText"></span>
             </div>
 
             <!-- Man of the Match Display -->
@@ -952,6 +956,7 @@
         const cancelMatchBtn = document.getElementById('cancelMatchBtn'); // NEW: Cancel Match button
 
         const matchResultDisplay = document.getElementById('matchResultDisplay');
+        const matchResultMessageText = document.getElementById('matchResultMessageText'); // NEW: Span for dynamic message
         const manOfTheMatchDisplay = document.getElementById('manOfTheMatchDisplay');
         const manOfTheMatchPlayer = document.getElementById('manOfTheMatchPlayer');
 
@@ -1785,6 +1790,7 @@
             const secondBattingTeam = (firstInningsTotalRuns === team1.runs) ? team2 : team1;
 
             if (status === 'Cancelled') {
+                //statusLabel = `<p class="text-md text-black mb-2">Result: </p>`;
                 resultMessage = `Match Cancelled!`; // Now explicitly setting the message for cancelled matches
             } else { // status === 'Completed'
                 const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
@@ -1801,15 +1807,20 @@
 
             // Determine Man of the Match (only for completed matches)
             const motmPlayer = (status === 'Completed') ? determineManOfTheMatch() : null;
-            const motmName = motmPlayer ? motmPlayer.name : 'N/A';
+            const motmName = motmPlayer ? motmPlayer.name : 'Not Available As Match ' + matchState;
 
             // Save match details to localStorage immediately
             saveMatchDetailsLocal(resultMessage, motmName, status); // Pass status to save function
             saveCurrentMatchStateToLocal(); // Save final state to local storage
 
             // Immediately show the match result (winner and difference)
-            matchResultDisplay.textContent = resultMessage;
+            console.log('declareWinner: matchResultDisplay before removing hidden:', matchResultDisplay.classList.contains('hidden'));
+            scoreboardSection.classList.remove('hidden'); // Ensure parent is visible
+            matchResultMessageText.textContent = resultMessage; // Update only the text span
             matchResultDisplay.classList.remove('hidden');
+            console.log('declareWinner: matchResultDisplay after removing hidden:', matchResultDisplay.classList.contains('hidden'));
+            console.log("declareWinner: matchResultDisplay computed style display:", window.getComputedStyle(matchResultDisplay).display);
+
 
             // Keep other summary elements hidden until "End Match" button is clicked (or if cancelled)
             manOfTheMatchDisplay.classList.add('hidden');
@@ -2101,8 +2112,11 @@
                         hideAllSections();
                         scoreboardSection.classList.remove('hidden');
                         // Show result immediately, but hide other summary elements
-                        matchResultDisplay.classList.remove('hidden');
-                        matchResultDisplay.textContent = loadedState.result; // Display the saved result
+                        console.log('loadCurrentMatchStateFromLocal: matchResultDisplay before removing hidden:', matchResultDisplay.classList.contains('hidden'));
+                        matchResultDisplay.classList.remove('hidden'); // <<< HERE IT IS! It does remove 'hidden'.
+                        console.log('loadCurrentMatchStateFromLocal: matchResultDisplay after removing hidden:', matchResultDisplay.classList.contains('hidden'));
+                        console.log("loadCurrentMatchStateFromLocal: matchResultDisplay computed style display:", window.getComputedStyle(matchResultDisplay).display);
+                        matchResultMessageText.textContent = loadedState.result; // Update only the text span
                         manOfTheMatchDisplay.classList.add('hidden');
                         finalScorecardsSection.classList.add('hidden');
                         endMatchBtn.classList.remove('hidden'); // Show end match button if completed/cancelled
@@ -2255,11 +2269,11 @@
                 }
             } else { // team2 won toss
                 if (tossDecision === 'bat') {
-                    currentBattingTeam = tempTeam2;
-                    currentBowlingTeam = tempTeam1;
+                    currentBattingTeam = team2;
+                    currentBowlingTeam = team1;
                 } else { // bowl
-                    currentBattingTeam = tempTeam1;
-                    currentBowlingTeam = tempTeam2;
+                    currentBattingTeam = team1;
+                    currentBowlingTeam = team2;
                 }
             }
 
@@ -2433,7 +2447,10 @@
 
             // Set result and Man of the Match from the saved data
             manOfTheMatchPlayer.textContent = lastMatch.manOfTheMatch;
+            console.log('renderFinalScorecards: matchResultDisplay before removing hidden:', matchResultDisplay.classList.contains('hidden'));
             matchResultDisplay.classList.remove('hidden'); // Already visible, but ensure
+            console.log('renderFinalScorecards: matchResultDisplay after removing hidden:', matchResultDisplay.classList.contains('hidden'));
+            console.log("renderFinalScorecards: matchResultDisplay computed style display:", window.getComputedStyle(matchResultDisplay).display);
             manOfTheMatchDisplay.classList.remove('hidden');
             finalScorecardsSection.classList.remove('hidden');
         }
@@ -2751,7 +2768,8 @@
 
                 showMessageBox('Teams registered! Now perform the toss.', 'success');
                 saveCurrentMatchStateToLocal(); // Save current state after registration
-            } catch (error) {
+            }
+            catch (error) {
                 console.error('Error registering teams:', error);
                 showMessageBox('An error occurred during team registration. Please try again.', 'error');
             }
@@ -2898,18 +2916,7 @@
             showConfirmationModal('Are you sure you want to cancel the current match? Its current progress will be saved as "Cancelled" in past match summaries.',
                 () => {
                     declareWinner('Cancelled'); // Call declareWinner with 'Cancelled' status
-                    // After declareWinner, the state will be 'cancelled', and loadCurrentMatchStateFromLocal
-                    // will handle showing the correct section (scoreboard with result)
-                    // We then need to explicitly go to the registration screen.
-                    hideAllSections();
-                    teamRegistrationSection.classList.remove('hidden');
-                    pastMatchesSection.classList.remove('hidden');
-                    showDeveloperInfoBtn.classList.remove('hidden');
-                    newMatchBtn.classList.remove('hidden');
-                    clearPastMatchesBtn.classList.remove('hidden');
-                    restartMatchBtn.classList.add('hidden'); // Hide restart button
-                    cancelMatchBtn.classList.add('hidden'); // Hide cancel button
-                    endMatchBtn.classList.add('hidden'); // Hide end match button
+                    newMatch(); // Call newMatch to reset everything and go to registration page
                     showMessageBox('Match cancelled and saved to past matches.', 'success');
                 },
                 () => {
