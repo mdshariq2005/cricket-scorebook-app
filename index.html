@@ -31,7 +31,7 @@
         /* Style for form labels */
         label {
             display: block;
-            margin-bottom: 0.6rem; /* Slightly more space */
+            /* Removed margin-bottom here to allow for more granular control with Tailwind classes */
             font-weight: 600;
             color: #2d3748; /* Darker text for labels */
         }
@@ -44,7 +44,7 @@
         select {
             width: 100%;
             padding: 0.75rem 1.5rem; /* Reduced padding for smaller inputs */
-            margin-bottom: 1rem; /* Reduced space below inputs */
+            /* Removed margin-bottom here to allow for more granular control with Tailwind classes */
             border: 1px solid #cbd5e1; /* Light gray border */
             border-radius: 0.75rem; /* More rounded corners for inputs */
             font-size: 0.95rem; /* Slightly smaller font size for readability */
@@ -575,15 +575,15 @@
                 <!-- Player Selection Dropdowns -->
                 <div id="playerSelection" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <div>
-                        <label for="strikerSelect">Striker:</label>
+                        <label for="strikerSelect" class="block mb-1">Striker:</label>
                         <select id="strikerSelect"></select>
                     </div>
                     <div>
-                        <label for="nonStrikerSelect">Non-Striker:</label>
+                        <label for="nonStrikerSelect" class="block mb-1">Non-Striker:</label>
                         <select id="nonStrikerSelect"></select>
                     </div>
                     <div>
-                        <label for="bowlerSelect">Current Bowler:</label>
+                        <label for="bowlerSelect" class="block mb-1">Current Bowler:</label>
                         <select id="bowlerSelect"></select>
                     </div>
                 </div>
@@ -1088,7 +1088,7 @@
         // Function to populate player dropdowns
         function populatePlayerDropdowns() {
             strikerSelect.innerHTML = '<option value="">Select Striker</option>';
-            nonStrikerSelect.innerHTML = '<option value="">Select Non-Striker</option>'; // Corrected this line
+            nonStrikerSelect.innerHTML = '<option value="">Select Non-Striker</option>';
             bowlerSelect.innerHTML = '<option value="">Select Bowler</option>';
 
             if (currentBattingTeam && currentBowlingTeam) {
@@ -1894,7 +1894,6 @@
                     targetTeam.balls--;
                     break;
                 case 'ball':
-                    // Corrected: Changed 'targetHteam' to 'targetTeam'
                     const strikerForBall = targetTeam.players[lastAction.strikerIndex];
                     strikerForBall.ballsFaced--;
                     currentBowler.ballsBowled--;
@@ -2201,7 +2200,6 @@
                             row.classList.add('bg-yellow-100');
                         }
                     } else {
-                        // Corrected: Changed 'p.name' to 'player.name'
                         statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out';
                     }
 
@@ -2735,7 +2733,7 @@
         // Event listeners for Developer Info page (NEW)
         // Add a button to the main app container to show developer info
         const developerInfoButtonContainer = document.createElement('div');
-        developerInfoButtonContainer.className = 'flex justify-center mt-8'; // Changed from text-center to flex justify-center
+        developerInfoButtonContainer.className = 'flex justify-center mt-8';
         developerInfoButtonContainer.innerHTML = '<button id="showDeveloperInfoBtn">Developer Info</button>';
         document.querySelector('.app-container').appendChild(developerInfoButtonContainer);
         showDeveloperInfoBtn = document.getElementById('showDeveloperInfoBtn'); // Assign to the global variable
