@@ -550,6 +550,7 @@
             <div class="mb-6 text-center">
                 <p class="text-xl font-bold text-gray-800" id="currentBattingTeamContainer">Current Batting: <span id="currentBattingTeam"></span></p>
                 <p class="text-lg text-gray-600" id="oversRemainingContainer">Overs Remaining: <span id="oversRemaining">N/A</span></p>
+                <p class="text-lg text-gray-600" id="tossInfoDisplay">Toss: <span id="tossWinnerInfo"></span> won the toss and chose to <span id="tossDecisionInfo"></span> first.</p> <!-- NEW TOSS INFO DISPLAY -->
                 <p class="text-lg text-gray-600 hidden" id="targetScoreDisplay">Target: <span id="targetScore">0</span> runs</p>
                 <p class="text-lg font-bold text-red-600 mt-2 hidden" id="freeHitDisplay">FREE HIT!</p>
 
@@ -891,6 +892,9 @@
         const currentBattingTeamDisplay = document.getElementById('currentBattingTeam');
         const oversRemainingContainer = document.getElementById('oversRemainingContainer'); // NEW ID
         const oversRemainingDisplay = document.getElementById('oversRemaining');
+        const tossInfoDisplay = document.getElementById('tossInfoDisplay'); // NEW: Toss Info Display
+        const tossWinnerInfo = document.getElementById('tossWinnerInfo'); // NEW: Toss Winner Info
+        const tossDecisionInfo = document.getElementById('tossDecisionInfo'); // NEW: Toss Decision Info
         const targetScoreDisplayElement = document.getElementById('targetScoreDisplay');
         const targetScoreElement = document.getElementById('targetScore');
         const freeHitDisplay = document.getElementById('freeHitDisplay'); // New: Free Hit display
@@ -1255,6 +1259,9 @@
             if (matchState === 'innings1' || matchState === 'innings2') {
                 currentBattingTeamContainer.classList.remove('hidden');
                 oversRemainingContainer.classList.remove('hidden');
+                tossInfoDisplay.classList.remove('hidden'); // Show toss info
+                tossWinnerInfo.textContent = tossWinnerName;
+                tossDecisionInfo.textContent = tossDecision;
                 currentOverInfoPanel.classList.remove('hidden');
                 partnershipInfoPanel.classList.remove('hidden');
                 liveScorecardsSection.classList.remove('hidden');
@@ -1265,6 +1272,7 @@
             } else if (matchState === 'completed') {
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
+                tossInfoDisplay.classList.add('hidden'); // Hide toss info
                 currentOverInfoPanel.classList.add('hidden');
                 partnershipInfoPanel.classList.add('hidden');
                 liveScorecardsSection.classList.add('hidden'); // Ensure live scorecards are hidden
@@ -1275,6 +1283,7 @@
             } else { // registration, teams_registered, toss
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
+                tossInfoDisplay.classList.add('hidden'); // Hide toss info
                 currentOverInfoPanel.classList.add('hidden');
                 partnershipInfoPanel.classList.add('hidden');
                 liveScorecardsSection.classList.add('hidden');
