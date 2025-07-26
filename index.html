@@ -124,7 +124,9 @@
         #backBtnDeveloperInfo, /* Apply base button style to the new back button */
         #wideExtraRunsModal button, /* Apply base button style to wide extra runs modal buttons */
         #noBallExtraRunsModal button, /* NEW: Apply base button style to no ball extra runs modal buttons */
-        #fielderSelectionModal button /* Apply base button style to fielder selection modal buttons */
+        #fielderSelectionModal button, /* Apply base button style to fielder selection modal buttons */
+        #confirmCaptainWkBtn, /* NEW */
+        #backBtnCaptainWk /* NEW */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -506,6 +508,25 @@
             border: 1px solid #94a3b8;
             accent-color: #3b82f6; /* Blue checkbox */
         }
+
+        /* NEW: Captain & Wicket Keeper Selection Section */
+        #captainWkSelectionSection {
+            background-color: #f0f8ff;
+            border: 1px solid #e0e7ff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        #captainWkSelectionSection h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        #captainWkSelectionSection .space-y-4 > div {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -588,6 +609,44 @@
                 <button id="confirmPlayingXIBtn">Confirm Playing XI</button>
             </div>
         </div>
+
+        <!-- NEW: Captain & Wicket Keeper Selection Section (initially hidden) -->
+        <div id="captainWkSelectionSection" class="hidden">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Select Captain & Wicket Keeper</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team1CaptainWkTitle">Team 1 (<span id="displayTeam1NameWk"></span>)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="team1CaptainSelect">Captain:</label>
+                            <select id="team1CaptainSelect" class="w-full"></select>
+                        </div>
+                        <div>
+                            <label for="team1WkSelect">Wicket Keeper:</label>
+                            <select id="team1WkSelect" class="w-full"></select>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3" id="team2CaptainWkTitle">Team 2 (<span id="displayTeam2NameWk"></span>)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="team2CaptainSelect">Captain:</label>
+                            <select id="team2CaptainSelect" class="w-full"></select>
+                        </div>
+                        <div>
+                            <label for="team2WkSelect">Wicket Keeper:</label>
+                            <select id="team2WkSelect" class="w-full"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center gap-4">
+                <button id="backBtnCaptainWk">Back</button>
+                <button id="confirmCaptainWkBtn">Confirm Captain & WK</button>
+            </div>
+        </div>
+
 
         <!-- Toss Section (NEW - initially hidden) -->
         <div id="tossSection" class="hidden">
@@ -1096,6 +1155,18 @@
         const proceedToMatchReadyBtn = document.getElementById('proceedToMatchReadyBtn');
         const backBtnToss = document.getElementById('backBtnToss'); // NEW Back button for Toss
 
+        // NEW: Captain & Wicket Keeper Selection elements
+        const captainWkSelectionSection = document.getElementById('captainWkSelectionSection');
+        const team1CaptainSelect = document.getElementById('team1CaptainSelect');
+        const team1WkSelect = document.getElementById('team1WkSelect');
+        const team2CaptainSelect = document.getElementById('team2CaptainSelect');
+        const team2WkSelect = document.getElementById('team2WkSelect');
+        const confirmCaptainWkBtn = document.getElementById('confirmCaptainWkBtn');
+        const backBtnCaptainWk = document.getElementById('backBtnCaptainWk');
+        const displayTeam1NameWk = document.getElementById('displayTeam1NameWk');
+        const displayTeam2NameWk = document.getElementById('displayTeam2NameWk');
+
+
         // NEW: Playing XI Selection elements
         const playingXISelectionSection = document.getElementById('playingXISelectionSection');
         const team1PlayingXITitle = document.getElementById('team1PlayingXITitle');
@@ -1239,7 +1310,7 @@
         const confirmWideExtraRunsBtn = document.getElementById('confirmWideExtraRunsBtn');
         const cancelWideExtraRunsBtn = document.getElementById('cancelWideExtraRunsBtn');
 
-        // NEW: No Ball Extra Runs Modal elements
+        // NEW: No Ball Extra Runs Modal (Duplicated and modified from Wide)
         const noBallExtraRunsModal = document.getElementById('noBallExtraRunsModal');
         const confirmNoBallExtraRunsBtn = document.getElementById('confirmNoBallExtraRunsBtn');
         const cancelNoBallExtraRunsBtn = document.getElementById('cancelNoBallExtraRunsBtn');
@@ -1255,9 +1326,10 @@
         // Array of all main content sections to easily hide/show them
         const allSections = [
             teamRegistrationSection,
+            captainWkSelectionSection, // NEW
+            playingXISelectionSection,
+            tossSection,
             matchReadySection,
-            tossSection, // Add toss section to the list
-            playingXISelectionSection, // NEW: Add playing XI selection section
             scoreboardSection,
             pastMatchesSection,
             developerInfoSection
@@ -1272,6 +1344,8 @@
         let team1 = {
             name: '',
             players: [], // Each player will be { name, runsScored, ballsFaced, isOut, wicketsTaken, runsConceded, ballsBowled, wides, noBalls, oversBowled }
+            captainName: '', // NEW
+            wicketKeeperName: '', // NEW
             playing11Names: [], // NEW: Array of names of players in the playing XI
             runs: 0,
             wickets: 0,
@@ -1288,6 +1362,8 @@
         let team2 = {
             name: '',
             players: [],
+            captainName: '', // NEW
+            wicketKeeperName: '', // NEW
             playing11Names: [], // NEW: Array of names of players in the playing XI
             runs: 0,
             wickets: 0,
@@ -1306,7 +1382,7 @@
         let currentBowlerIndex = -1; // Index of the current bowler in the bowling team's `players` array
 
         let totalOversPerInnings = 0;
-        let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled'
+        let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'captain_wk_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled'
         let firstInningsTotalRuns = 0;
 
         let lastAction = null; // Stores the last action for undo functionality
@@ -1374,18 +1450,24 @@
                 battingXI.forEach((player) => {
                     // Find the original index of the player in the full players array
                     const originalIndex = currentBattingTeam.players.findIndex(p => p.name === player.name);
-                    // Only add players who are not out
-                    if (!player.isOut) { // NEW: Filter out dismissed batsmen
-                        const optionStriker = document.createElement('option');
-                        optionStriker.value = originalIndex; // Use original index
-                        optionStriker.textContent = player.name;
-                        strikerSelect.appendChild(optionStriker);
-
-                        const optionNonStriker = document.createElement('option');
-                        optionNonStriker.value = originalIndex; // Use original index
-                        optionNonStriker.textContent = player.name;
-                        nonStrikerSelect.appendChild(optionNonStriker);
+                    
+                    const optionStriker = document.createElement('option');
+                    optionStriker.value = originalIndex; // Use original index
+                    optionStriker.textContent = player.name;
+                    if (player.isOut) { // If player is out, disable and add (Out) text
+                        optionStriker.disabled = true;
+                        optionStriker.textContent += ' (Out)';
                     }
+                    strikerSelect.appendChild(optionStriker);
+
+                    const optionNonStriker = document.createElement('option');
+                    optionNonStriker.value = originalIndex; // Use original index
+                    optionNonStriker.textContent = player.name;
+                    if (player.isOut) { // If player is out, disable and add (Out) text
+                        optionNonStriker.disabled = true;
+                        optionNonStriker.textContent += ' (Out)';
+                    }
+                    nonStrikerSelect.appendChild(optionNonStriker);
                 });
 
                 // Populate bowlers for the bowling team's Playing XI
@@ -1590,7 +1672,7 @@
                 cancelMatchBtn.classList.add('hidden'); // Hide cancel button if completed/cancelled
                 newMatchBtn.classList.add('hidden'); // Hide new match button until 'End Match' is clicked
                 backBtnMatchSummary.classList.remove('hidden'); // Show back to summary button
-            } else { // registration, teams_registered, toss, playing_xi_selection
+            } else { // registration, captain_wk_selection, teams_registered, toss, playing_xi_selection
                 currentBattingTeamContainer.classList.add('hidden');
                 oversRemainingContainer.classList.add('hidden');
                 tossInfoDisplay.classList.add('hidden'); // Hide toss info
@@ -2154,25 +2236,25 @@
 
             // Set initial batsmen for the new batting team from their playing XI
             const nextBattingXI = getPlayingXIPlayers(currentBattingTeam);
-            let nextStriker = -1;
-            let nextNonStriker = -1;
+            let nextBatsmanIndex = -1;
+            let nextNonStrikerIndex = -1;
 
             // Find first two available players from the playing XI who are NOT out
             const availableXIPlayers = nextBattingXI.filter(p => !p.isOut);
 
             if (availableXIPlayers.length >= 2) {
-                nextStriker = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[0].name);
-                nextNonStriker = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[1].name);
+                nextBatsmanIndex = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[0].name);
+                nextNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[1].name);
             } else if (availableXIPlayers.length === 1) {
-                nextStriker = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[0].name);
-                nextNonStriker = -1;
+                nextBatsmanIndex = currentBattingTeam.players.findIndex(p => p.name === availableXIPlayers[0].name);
+                nextNonStrikerIndex = -1;
             } else {
-                nextStriker = -1;
-                nextNonStriker = -1;
+                nextBatsmanIndex = -1;
+                nextNonStrikerIndex = -1;
             }
 
-            currentBattingTeam.currentStrikerIndex = nextStriker;
-            currentBattingTeam.currentNonStrikerIndex = nextNonStriker;
+            currentBattingTeam.currentStrikerIndex = nextBatsmanIndex;
+            currentBattingTeam.currentNonStrikerIndex = nextNonStrikerIndex;
 
             currentPartnershipRuns = 0; // Reset partnership when switching batting teams
             isFreeHit = false; // Reset free hit on innings switch
@@ -2491,7 +2573,7 @@
                         cancelMatchBtn.classList.add('hidden'); // Hide cancel button
                         backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
                         registerTeamsBtn.textContent = 'Register Teams'; // Default text
-                    } else if (matchState === 'playing_xi_selection') { // NEW: Handle playing XI selection state
+                    } else if (matchState === 'playing_xi_selection') { // Handle playing XI selection state
                         hideAllSections();
                         playingXISelectionSection.classList.remove('hidden');
                         renderPlayingXISelection(); // Render the checkboxes
@@ -2503,7 +2585,18 @@
                         cancelMatchBtn.classList.add('hidden'); // Hide cancel button
                         backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
                         registerTeamsBtn.textContent = 'Register Teams'; // Should not be directly visible, but set default
-                    } else if (matchState === 'toss') { // NEW: Handle toss state
+                    } else if (matchState === 'captain_wk_selection') { // Handle Captain/WK selection state
+                        hideAllSections();
+                        captainWkSelectionSection.classList.remove('hidden');
+                        renderCaptainWkSelection(); // Render the dropdowns
+                        showDeveloperInfoBtn.classList.remove('hidden');
+                        newMatchBtn.classList.remove('hidden');
+                        clearPastMatchesBtn.classList.remove('hidden');
+                        endMatchBtn.classList.add('hidden');
+                        restartMatchBtn.classList.add('hidden'); // Hide restart button
+                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+                        backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
+                    } else if (matchState === 'toss') { // Handle toss state
                         hideAllSections();
                         tossSection.classList.remove('hidden');
                         populateTossDropdowns(); // Populate toss dropdowns with team names
@@ -2519,7 +2612,7 @@
                     else if (matchState === 'teams_registered') {
                         hideAllSections();
                         matchReadySection.classList.remove('hidden');
-                        registeredTeamsSummary.textContent = `${team1.name} vs ${team2.name} (${totalOversPerInnings} Overs per innings) on ${loadedState.matchDate} at ${loadedState.matchTime}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`;
+                        registeredTeamsSummary.textContent = `${team1.name} (C: ${team1.captainName}, WK: ${team1.wicketKeeperName}) vs ${team2.name} (C: ${team2.captainName}, WK: ${team2.wicketKeeperName}) (${totalOversPerInnings} Overs per innings) on ${loadedState.matchDate} at ${loadedState.matchTime}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`;
                         showDeveloperInfoBtn.classList.remove('hidden');
                         newMatchBtn.classList.remove('hidden');
                         clearPastMatchesBtn.classList.remove('hidden');
@@ -2592,8 +2685,8 @@
             localStorage.removeItem('currentCricketMatch');
 
             // Reset game state
-            team1 = { name: '', players: [], playing11Names: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
-            team2 = { name: '', players: [], playing11Names: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
+            team1 = { name: '', players: [], captainName: '', wicketKeeperName: '', playing11Names: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
+            team2 = { name: '', players: [], captainName: '', wicketKeeperName: '', playing11Names: [], runs: 0, wickets: 0, overs: 0, balls: 0, totalWides: 0, totalNoBalls: 0, totalByes: 0, totalLegByes: 0, currentStrikerIndex: -1, currentNonStrikerIndex: -1, fallOfWickets: [] };
             currentBattingTeam = null;
             currentBowlingTeam = null;
             currentBowlerIndex = -1;
@@ -2928,6 +3021,8 @@
                     matchTime: document.getElementById('matchTime').value, // Get match time
                     team1: {
                         name: team1.name,
+                        captainName: team1.captainName, // NEW
+                        wicketKeeperName: team1.wicketKeeperName, // NEW
                         runs: team1.runs,
                         wickets: team1.wickets,
                         overs: team1.overs,
@@ -2950,6 +3045,8 @@
                     },
                     team2: {
                         name: team2.name,
+                        captainName: team2.captainName, // NEW
+                        wicketKeeperName: team2.wicketKeeperName, // NEW
                         runs: team2.runs,
                         wickets: team2.wickets,
                         overs: team2.overs,
@@ -3038,6 +3135,8 @@
                     listItem.innerHTML = `
                         <h4 class="text-lg font-bold text-gray-800">${match.team1.name} vs ${match.team2.name}</h4>
                         <p class="text-md text-gray-700 mb-2">Date & Time: ${displayDateTime}</p>
+                        <p class="text-md text-gray-700 mb-2">Team 1: C: ${match.team1.captainName || 'N/A'}, WK: ${match.team1.wicketKeeperName || 'N/A'}</p>
+                        <p class="text-md text-gray-700 mb-2">Team 2: C: ${match.team2.captainName || 'N/A'}, WK: ${match.team2.wicketKeeperName || 'N/A'}</p>
                         ${tossInfo}
                         ${statusLabel} <!-- Display Status here -->
                         <p class="text-md text-gray-700 mb-2">${match.result}</p>
@@ -3170,6 +3269,52 @@
             if (tossDecision) {
                 tossDecisionSelect.value = tossDecision;
             }
+        }
+
+        // NEW: Function to render Captain & Wicket Keeper selection dropdowns
+        function renderCaptainWkSelection() {
+            displayTeam1NameWk.textContent = team1.name;
+            displayTeam2NameWk.textContent = team2.name;
+
+            // Clear previous options
+            team1CaptainSelect.innerHTML = '<option value="">Select Captain</option>';
+            team1WkSelect.innerHTML = '<option value="">Select Wicket Keeper</option>';
+            team2CaptainSelect.innerHTML = '<option value="">Select Captain</option>';
+            team2WkSelect.innerHTML = '<option value="">Select Wicket Keeper</option>';
+
+            // Populate dropdowns with players from each team's Playing XI
+            const team1XI = getPlayingXIPlayers(team1);
+            const team2XI = getPlayingXIPlayers(team2);
+
+            team1XI.forEach(player => {
+                const opt1C = document.createElement('option');
+                opt1C.value = player.name;
+                opt1C.textContent = player.name;
+                team1CaptainSelect.appendChild(opt1C);
+
+                const opt1Wk = document.createElement('option');
+                opt1Wk.value = player.name;
+                opt1Wk.textContent = player.name;
+                team1WkSelect.appendChild(opt1Wk);
+            });
+
+            team2XI.forEach(player => {
+                const opt2C = document.createElement('option');
+                opt2C.value = player.name;
+                opt2C.textContent = player.name;
+                team2CaptainSelect.appendChild(opt2C);
+
+                const opt2Wk = document.createElement('option');
+                opt2Wk.value = player.name;
+                opt2Wk.textContent = player.name;
+                team2WkSelect.appendChild(opt2Wk);
+            });
+
+            // Set selected values if already stored
+            if (team1.captainName) team1CaptainSelect.value = team1.captainName;
+            if (team1.wicketKeeperName) team1WkSelect.value = team1.wicketKeeperName;
+            if (team2.captainName) team2CaptainSelect.value = team2.captainName;
+            if (team2.wicketKeeperName) team2WkSelect.value = team2.wicketKeeperName;
         }
 
         // NEW: Function to render Playing XI selection checkboxes
@@ -3338,7 +3483,60 @@
                 return;
             }
 
-            matchState = 'toss'; // Move to toss after playing XI selection
+            matchState = 'captain_wk_selection'; // Move to Captain/WK selection
+
+            hideAllSections();
+            captainWkSelectionSection.classList.remove('hidden');
+            renderCaptainWkSelection(); // Render the dropdowns for Captain/WK selection
+
+            showDeveloperInfoBtn.classList.remove('hidden');
+            newMatchBtn.classList.remove('hidden');
+            clearPastMatchesBtn.classList.remove('hidden');
+            endMatchBtn.classList.add('hidden');
+            restartMatchBtn.classList.add('hidden');
+            cancelMatchBtn.classList.add('hidden');
+            backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
+
+            showMessageBox('Playing XI confirmed! Now select your Captain and Wicket Keeper.', 'success');
+            saveCurrentMatchStateToLocal();
+        });
+
+        // NEW: Event listener for Confirm Captain & WK button
+        confirmCaptainWkBtn.addEventListener('click', () => {
+            const team1Cap = team1CaptainSelect.value;
+            const team1Wk = team1WkSelect.value;
+            const team2Cap = team2CaptainSelect.value;
+            const team2Wk = team2WkSelect.value;
+
+            if (!team1Cap || !team1Wk || !team2Cap || !team2Wk) {
+                showMessageBox('Please select a Captain and Wicket Keeper for both teams.', 'error');
+                return;
+            }
+            if (team1Cap === team1Wk) {
+                showMessageBox('Team 1 Captain and Wicket Keeper cannot be the same player.', 'error');
+                return;
+            }
+            if (team2Cap === team2Wk) {
+                showMessageBox('Team 2 Captain and Wicket Keeper cannot be the same player.', 'error');
+                return;
+            }
+
+            // Ensure Captain and WK are part of the Playing XI
+            if (!team1.playing11Names.includes(team1Cap) || !team1.playing11Names.includes(team1Wk)) {
+                showMessageBox('Team 1 Captain and Wicket Keeper must be part of the Playing XI.', 'error');
+                return;
+            }
+            if (!team2.playing11Names.includes(team2Cap) || !team2.playing11Names.includes(team2Wk)) {
+                showMessageBox('Team 2 Captain and Wicket Keeper must be part of the Playing XI.', 'error');
+                return;
+            }
+
+            team1.captainName = team1Cap;
+            team1.wicketKeeperName = team1Wk;
+            team2.captainName = team2Cap;
+            team2.wicketKeeperName = team2Wk;
+
+            matchState = 'toss'; // Move to toss after Captain/WK selection
 
             hideAllSections();
             tossSection.classList.remove('hidden');
@@ -3352,7 +3550,7 @@
             cancelMatchBtn.classList.add('hidden');
             backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
 
-            showMessageBox('Playing XI confirmed! Now perform the toss.', 'success');
+            showMessageBox('Captain and Wicket Keeper confirmed! Now perform the toss.', 'success');
             saveCurrentMatchStateToLocal();
         });
 
@@ -3392,7 +3590,7 @@
 
             hideAllSections();
             matchReadySection.classList.remove('hidden');
-            registeredTeamsSummary.textContent = `${team1.name} vs ${team2.name} (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`;
+            registeredTeamsSummary.textContent = `${team1.name} (C: ${team1.captainName}, WK: ${team1.wicketKeeperName}) vs ${team2.name} (C: ${team2.captainName}, WK: ${team2.wicketKeeperName}) (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`;
             showDeveloperInfoBtn.classList.remove('hidden');
             newMatchBtn.classList.remove('hidden');
             clearPastMatchesBtn.classList.remove('hidden');
@@ -3404,7 +3602,6 @@
             showMessageBox('Toss completed! Match ready to start.', 'success');
             saveCurrentMatchStateToLocal();
         });
-
 
         // NEW: Event listener for "Back" button from Playing XI Selection
         backBtnPlayingXI.addEventListener('click', () => {
@@ -3435,9 +3632,9 @@
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for "Back" button from Toss Section
-        backBtnToss.addEventListener('click', () => {
-            matchState = 'playing_xi_selection'; // Set match state back to playing XI selection
+        // NEW: Event listener for "Back" button from Captain/WK Selection
+        backBtnCaptainWk.addEventListener('click', () => {
+            matchState = 'playing_xi_selection'; // Set match state back to Playing XI selection
             hideAllSections();
             playingXISelectionSection.classList.remove('hidden');
             renderPlayingXISelection(); // Re-render checkboxes
@@ -3450,6 +3647,24 @@
             backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
 
             showMessageBox('Returned to Playing XI selection.', 'info');
+            saveCurrentMatchStateToLocal();
+        });
+
+        // NEW: Event listener for "Back" button from Toss Section
+        backBtnToss.addEventListener('click', () => {
+            matchState = 'captain_wk_selection'; // Set match state back to Captain/WK selection
+            hideAllSections();
+            captainWkSelectionSection.classList.remove('hidden');
+            renderCaptainWkSelection(); // Re-render dropdowns
+            showDeveloperInfoBtn.classList.remove('hidden');
+            newMatchBtn.classList.remove('hidden');
+            clearPastMatchesBtn.classList.remove('hidden');
+            endMatchBtn.classList.add('hidden');
+            restartMatchBtn.classList.add('hidden');
+            cancelMatchBtn.classList.add('hidden');
+            backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
+
+            showMessageBox('Returned to Captain & Wicket Keeper selection.', 'info');
             saveCurrentMatchStateToLocal();
         });
 
@@ -3635,7 +3850,7 @@
                 cancelMatchBtn.classList.add('hidden'); // Ensure hidden
                 backBtnMatchSummary.classList.add('hidden'); // Ensure hidden
                 registerTeamsBtn.textContent = 'Register Teams'; // Set default text
-            } else if (matchState === 'playing_xi_selection') { // NEW: Handle playing XI selection state
+            } else if (matchState === 'playing_xi_selection') { // Handle playing XI selection state
                 playingXISelectionSection.classList.remove('hidden');
                 renderPlayingXISelection(); // Re-render checkboxes to reflect current state
                 pastMatchesSection.classList.remove('hidden');
@@ -3646,6 +3861,16 @@
                 cancelMatchBtn.classList.add('hidden'); // Ensure hidden
                 backBtnMatchSummary.classList.add('hidden'); // Ensure hidden
                 registerTeamsBtn.textContent = 'Register Teams'; // Set default text
+            } else if (matchState === 'captain_wk_selection') { // Handle Captain/WK selection state
+                captainWkSelectionSection.classList.remove('hidden');
+                renderCaptainWkSelection(); // Re-render dropdowns
+                pastMatchesSection.classList.remove('hidden');
+                newMatchBtn.classList.remove('hidden');
+                clearPastMatchesBtn.classList.remove('hidden');
+                endMatchBtn.classList.add('hidden'); // Ensure hidden
+                restartMatchBtn.classList.add('hidden'); // Ensure hidden
+                cancelMatchBtn.classList.add('hidden'); // Ensure hidden
+                backBtnMatchSummary.classList.add('hidden'); // Ensure hidden
             } else if (matchState === 'toss') {
                 tossSection.classList.remove('hidden');
                 pastMatchesSection.classList.remove('hidden');
@@ -3666,7 +3891,7 @@
                 restartMatchBtn.classList.add('hidden'); // Ensure hidden
                 cancelMatchBtn.classList.add('hidden'); // Ensure hidden
                 backBtnMatchSummary.classList.add('hidden'); // Ensure hidden
-                registeredTeamsSummary.textContent = `${team1.name} vs ${team2.name} (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`; // Re-render summary
+                registeredTeamsSummary.textContent = `${team1.name} (C: ${team1.captainName}, WK: ${team1.wicketKeeperName}) vs ${team2.name} (C: ${team2.captainName}, WK: ${team2.wicketKeeperName}) (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`; // Re-render summary
                 registerTeamsBtn.textContent = 'Register Teams'; // Set default text
             } else if (matchState === 'innings1' || matchState === 'innings2') {
                 scoreboardSection.classList.remove('hidden');
