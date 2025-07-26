@@ -23,10 +23,15 @@
             background-color: #ffffff;
             border-radius: 1.5rem; /* More rounded corners */
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
-            padding: 2.5rem; /* Increased padding */
+            padding: 1.5rem; /* Reduced default padding for smaller screens */
             width: 100%;
             max-width: 950px; /* Slightly increased max width */
             margin-top: 20px; /* Space from top */
+        }
+        @media (min-width: 768px) { /* md breakpoint in Tailwind */
+            .app-container {
+                padding: 2.5rem; /* Restore larger padding for larger screens */
+            }
         }
         /* Style for form labels */
         label {
@@ -78,7 +83,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            white-space: nowrap; /* Prevent text from wrapping */
+            /* Removed: white-space: nowrap; */ /* Allow text to wrap */
+            text-align: center; /* Ensure text is centered when it wraps */
             /* Removed margin: 0 auto; from here, as parent flex will handle centering */
         }
         button:hover {
@@ -2518,8 +2524,8 @@
                         newMatchBtn.classList.remove('hidden');
                         clearPastMatchesBtn.classList.remove('hidden');
                         endMatchBtn.classList.add('hidden');
-                        restartMatchBtn.classList.add('hidden'); // Hide restart button
-                        cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+                        restartMatchBtn.classList.add('hidden');
+                        cancelMatchBtn.classList.add('hidden');
                         backBtnMatchSummary.classList.add('hidden'); // Hide back to summary button
                         registerTeamsBtn.textContent = 'Register Teams'; // Should not be directly visible, but set default
                     } else if (matchState === 'innings1' || matchState === 'innings2') {
