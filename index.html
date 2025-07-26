@@ -117,6 +117,7 @@
         #backBtnMatchSummary, /* Apply base button style to the new back button */
         #backBtnDeveloperInfo, /* Apply base button style to the new back button */
         #wideExtraRunsModal button, /* Apply base button style to wide extra runs modal buttons */
+        #noBallExtraRunsModal button, /* NEW: Apply base button style to no ball extra runs modal buttons */
         #fielderSelectionModal button /* Apply base button style to fielder selection modal buttons */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
@@ -1014,6 +1015,43 @@
             </div>
         </div>
 
+        <!-- NEW: No Ball Extra Runs Modal (Duplicated and modified from Wide) -->
+        <div id="noBallExtraRunsModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">No Ball: Extra Runs?</h3>
+                <div class="mb-4 flex flex-wrap justify-center gap-4"> <!-- Use flex for radio buttons -->
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="0" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500" checked>
+                        <span class="ml-2 text-gray-700">0 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="1" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">1 Extra Run</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="2" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">2 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="3" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">3 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="4" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">4 Extra Runs</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="noBallExtraRuns" value="6" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500">
+                        <span class="ml-2 text-gray-700">6 Extra Runs</span>
+                    </label>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="confirmNoBallExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
+                    <button id="cancelNoBallExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- NEW: Fielder Selection Modal -->
         <div id="fielderSelectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
@@ -1194,6 +1232,11 @@
         // Removed wideExtraRunsInput as it's now radio buttons
         const confirmWideExtraRunsBtn = document.getElementById('confirmWideExtraRunsBtn');
         const cancelWideExtraRunsBtn = document.getElementById('cancelWideExtraRunsBtn');
+
+        // NEW: No Ball Extra Runs Modal elements
+        const noBallExtraRunsModal = document.getElementById('noBallExtraRunsModal');
+        const confirmNoBallExtraRunsBtn = document.getElementById('confirmNoBallExtraRunsBtn');
+        const cancelNoBallExtraRunsBtn = document.getElementById('cancelNoBallExtraRunsBtn');
 
         // NEW: Fielder Selection Modal elements
         const fielderSelectionModal = document.getElementById('fielderSelectionModal');
@@ -1895,33 +1938,51 @@
                 showMessageBox('Please select bowler.', 'error');
                 return;
             }
+
+            // Ensure '0 Extra Runs' is selected by default when modal opens
+            document.querySelector('input[name="noBallExtraRuns"][value="0"]').checked = true;
+            noBallExtraRunsModal.classList.remove('hidden');
+
+            // Set up event listeners for modal buttons
+            confirmNoBallExtraRunsBtn.onclick = () => {
+                const selectedRadio = document.querySelector('input[name="noBallExtraRuns"]:checked');
+                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0; // Default to 0 if no selection for some reason
+                processNoBall(extraRuns);
+                noBallExtraRunsModal.classList.add('hidden');
+            };
+            cancelNoBallExtraRunsBtn.onclick = () => {
+                noBallExtraRunsModal.classList.add('hidden');
+                showMessageBox('No Ball action cancelled.', 'info');
+            };
+        }
+
+        // Helper function to process the no ball after getting extra runs
+        function processNoBall(extraRuns) {
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
+            const totalRunsAdded = 1 + extraRuns; // 1 for the no ball itself, plus any extra runs
 
-            // No ball does not count as a legal delivery, so it doesn't clear lastCompletedBowlerIndex
-            // if (currentBattingTeam.balls === 0 && lastCompletedBowlerIndex !== -1) {
-            //     lastCompletedBowlerIndex = -1; // This should NOT happen for extras
-            // }
+            currentBattingTeam.runs += totalRunsAdded;
+            currentBattingTeam.totalNoBalls += 1; // Only count one no ball event
+            bowler.runsConceded += totalRunsAdded;
+            bowler.noBalls += 1; // Only count one no ball for the bowler
 
-            currentBattingTeam.runs += 1; // 1 run for no ball
-            currentBattingTeam.totalNoBalls += 1;
-            bowler.runsConceded += 1;
-            bowler.noBalls += 1;
-
-            // Store previous partnership runs for undo (partnership does not increase for extras not off bat)
             lastAction = {
                 type: 'noBall',
                 bowlerIndex: currentBowlerIndex,
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 prevPartnershipRuns: currentPartnershipRuns,
-                prevIsFreeHit: isFreeHit
+                prevIsFreeHit: isFreeHit,
+                totalRunsAdded: totalRunsAdded, // Store total runs added for undo
+                extraRuns: extraRuns // Store extra runs for undo message
             };
             isFreeHit = true; // Set free hit for the next ball
-            showMessageBox('No Ball! Free Hit on next delivery!', 'info');
+            showMessageBox(`No Ball recorded. ${totalRunsAdded} runs added. Free Hit on next delivery!`, 'info');
 
             checkInningsCompletion(); // No ball doesn't count as a ball, but check innings completion
             updateScoreboardDisplay();
             saveCurrentMatchStateToLocal(); // Save changes to local storage
         }
+
 
         function addBye() {
             if (matchState === 'completed' || matchState === 'cancelled') {
@@ -2280,9 +2341,10 @@
                     currentBowler.wides -= 1;
                     break;
                 case 'noBall':
-                    targetTeam.runs -= 1;
+                    // Revert total runs added for the no ball
+                    targetTeam.runs -= lastAction.totalRunsAdded;
                     targetTeam.totalNoBalls -= 1;
-                    currentBowler.runsConceded -= 1;
+                    currentBowler.runsConceded -= lastAction.totalRunsAdded;
                     currentBowler.noBalls -= 1;
                     break;
                 case 'bye':
