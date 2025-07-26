@@ -126,7 +126,8 @@
         #noBallExtraRunsModal button, /* NEW: Apply base button style to no ball extra runs modal buttons */
         #fielderSelectionModal button, /* Apply base button style to fielder selection modal buttons */
         #confirmCaptainWkBtn, /* NEW */
-        #backBtnCaptainWk /* NEW */
+        #backBtnCaptainWk, /* NEW */
+        #resetAllBtn /* NEW */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -581,8 +582,9 @@
                     <input type="time" id="matchTime" name="matchTime" required>
                 </div>
 
-                <div class="flex justify-center"> <!-- Changed from text-center to flex justify-center -->
+                <div class="flex justify-center gap-4"> <!-- Changed from text-center to flex justify-center -->
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
+                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button> <!-- MOVED RESET ALL BUTTON -->
                 </div>
             </form>
         </div>
@@ -1177,6 +1179,7 @@
         const backBtnPlayingXI = document.getElementById('backBtnPlayingXI'); // Renamed from backToRegistrationFromXI
         const team1PlayingXICounter = document.getElementById('team1PlayingXICounter'); // NEW Counter
         const team2PlayingXICounter = document.getElementById('team2PlayingXICounter'); // NEW Counter
+        const resetAllBtn = document.getElementById('resetAllBtn'); // NEW: Reset All button
 
 
         // Live Scoreboard elements
@@ -3815,6 +3818,20 @@
             cancelMatchBtn.classList.add('hidden');
             backBtnMatchSummary.classList.add('hidden'); // Hide itself
             showMessageBox('Returned to Past Matches.', 'info');
+        });
+
+        // NEW: Reset All button listener (MOVED)
+        resetAllBtn.addEventListener('click', () => {
+            showConfirmationModal('Are you sure you want to reset all team and player data? This will start a completely new match registration.',
+                () => {
+                    newMatch(); // Reuse the newMatch function for a full reset
+                    registerTeamsBtn.textContent = 'Register Teams'; // Ensure button text is reset
+                    showMessageBox('All data reset. Please register new teams.', 'info');
+                },
+                () => {
+                    // No message on cancel
+                }
+            );
         });
 
 
