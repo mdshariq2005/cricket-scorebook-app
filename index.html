@@ -3743,7 +3743,7 @@
             // A more robust solution would involve pushing states onto a stack.
             // For now, let's just make it return to 'registration' unless a match is active.
 
-            // A simple approach: if a match is active or completed, return to scoreboard, else to registration.
+            // A simple approach: if a match is active or completed, return to the scoreboard, else to registration.
             if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
                 matchState = 'scoreboard'; // Return to scoreboard
             } else {
