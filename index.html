@@ -381,28 +381,9 @@
             margin-bottom: 1.5rem;
             text-align: center; /* Center the title */
         }
-        /* Updated styling for registration form layout */
-        #teamRegistrationForm .grid-cols-1 {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem; /* Increased gap for better spacing */
+        #teamRegistrationForm .space-y-4 > div {
+            margin-bottom: 1rem; /* Adjust spacing between form groups */
         }
-        @media (min-width: 768px) {
-            #teamRegistrationForm .md\:grid-cols-2 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        #teamRegistrationForm .form-group {
-            margin-bottom: 0; /* Remove default margin as grid handles spacing */
-        }
-        #teamRegistrationForm label {
-            margin-bottom: 0.5rem; /* Space between label and input */
-        }
-        #teamRegistrationForm textarea {
-            min-height: 100px; /* Ensure textarea has a decent starting height */
-            resize: vertical; /* Allow vertical resizing */
-        }
-
 
         /* Styles for the new live score panel */
         .live-score-panel {
@@ -567,46 +548,43 @@
 
         <!-- Team Registration Section -->
         <div id="teamRegistrationSection">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Team Registration</h2>
-            <form id="teamRegistrationForm" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                <!-- Team 1 Details -->
-                <div class="form-group">
-                    <label for="team1Name" class="mb-2">Team 1 Name:</label>
-                    <input type="text" id="team1Name" name="team1Name" placeholder="e.g., Lions" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Team Registration</h2>
+            <form id="teamRegistrationForm" class="space-y-4">
+                <div>
+                    <label for="team1Name">Team 1 Name:</label>
+                    <input type="text" id="team1Name" name="team1Name" placeholder="e.g., Lions" required>
                 </div>
-                <div class="form-group">
-                    <label for="team1Players" class="mb-2">Team 1 Players (one per line):</label>
-                    <textarea id="team1Players" name="team1Players" rows="6" placeholder="Player A&#10;Player B&#10;Player C" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-                </div>
-
-                <!-- Team 2 Details -->
-                <div class="form-group">
-                    <label for="team2Name" class="mb-2">Team 2 Name:</label>
-                    <input type="text" id="team2Name" name="team2Name" placeholder="e.g., Tigers" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                </div>
-                <div class="form-group">
-                    <label for="team2Players" class="mb-2">Team 2 Players (one per line):</label>
-                    <textarea id="team2Players" name="team2Players" rows="6" placeholder="Player X&#10;Player Y&#10;Player Z" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                <div>
+                    <label for="team1Players">Team 1 Players (one per line):</label>
+                    <textarea id="team1Players" name="team1Players" rows="4" placeholder="Player A&#10;Player B&#10;Player C"></textarea>
                 </div>
 
-                <!-- Match Details -->
-                <div class="form-group md:col-span-2"> <!-- Spans two columns on medium screens and up -->
-                    <label for="totalOvers" class="mb-2">Total Overs per Innings:</label>
-                    <input type="number" id="totalOvers" name="totalOvers" placeholder="e.g., 20" min="1" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <div class="mt-8">
+                    <label for="team2Name">Team 2 Name:</label>
+                    <input type="text" id="team2Name" name="team2Name" placeholder="e.g., Tigers" required>
+                </div>
+                <div>
+                    <label for="team2Players">Team 2 Players (one per line):</label>
+                    <textarea id="team2Players" name="team2Players" rows="4" placeholder="Player X&#10;Player Y&#10;Player Z"></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="matchDate" class="mb-2">Match Date:</label>
-                    <input type="date" id="matchDate" name="matchDate" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                </div>
-                <div class="form-group">
-                    <label for="matchTime" class="mb-2">Match Time:</label>
-                    <input type="time" id="matchTime" name="matchTime" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <div class="mt-8">
+                    <label for="totalOvers">Total Overs per Innings:</label>
+                    <input type="number" id="totalOvers" name="totalOvers" placeholder="e.g., 20" min="1" required>
                 </div>
 
-                <div class="flex justify-center gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
+                <div class="mt-8">
+                    <label for="matchDate">Match Date:</label>
+                    <input type="date" id="matchDate" name="matchDate" required>
+                </div>
+                <div class="mt-8">
+                    <label for="matchTime">Match Time:</label>
+                    <input type="time" id="matchTime" name="matchTime" required>
+                </div>
+
+                <div class="flex justify-center gap-4"> <!-- Changed from text-center to flex justify-center -->
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
-                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
+                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button> <!-- MOVED RESET ALL BUTTON -->
                 </div>
             </form>
         </div>
@@ -2441,7 +2419,7 @@
                     targetTeam.balls--;
                     break;
                 case 'ball':
-                    const strikerForBall = targetTarget.players[lastAction.strikerIndex];
+                    const strikerForBall = targetTeam.players[lastAction.strikerIndex];
                     strikerForBall.ballsFaced--;
                     currentBowler.ballsBowled--;
                     targetTeam.balls--;
