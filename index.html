@@ -113,6 +113,7 @@
         #developerInfoBtn, /* Changed from showDeveloperInfoBtn */
         #restartMatchBtn, /* Added restart button */
         #cancelMatchBtn, /* Added cancel button */
+        #endMatchBtn, /* NEW: End Match button */
         #confirmationModal button, /* Apply base button style to modal buttons */
         #cancelReasonModal button, /* Apply base button style to cancel reason modal buttons */
         #confirmPlayingXIBtn, /* Apply base button style to playing XI confirmation button */
@@ -126,7 +127,10 @@
         #fielderSelectionModal button, /* Apply base button style to fielder selection modal buttons */
         #confirmCaptainWkBtn, /* NEW */
         #backBtnCaptainWk, /* NEW */
-        #resetAllBtn /* NEW */
+        #resetAllBtn, /* NEW */
+        #showPastMatchesBtn, /* NEW */
+        #backBtnPastMatches, /* NEW */
+        #goToLiveScoreBtn /* NEW */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -612,9 +616,13 @@
                     <input type="time" id="matchTime" name="matchTime" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
 
-                <div class="flex justify-center gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
+                <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
                     <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
+                    <button type="button" id="showPastMatchesBtn">Past Match Summary</button> <!-- NEW BUTTON -->
+                    <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button> <!-- NEW BUTTON -->
+                    <!-- Developer Info Button (Now only present in main app container) -->
+                    <button id="developerInfoBtn">Developer Info</button>
                 </div>
             </form>
         </div>
@@ -826,6 +834,7 @@
                             <button id="undoBtn" class="score-control-button">Undo Last</button>
                             <button id="switchTeamBtn" class="score-control-button">Switch Batting Team</button>
                             <button id="cancelMatchBtn" class="score-control-button bg-red-500 text-white hover:bg-red-600">Cancel Match</button> <!-- NEW -->
+                            <button id="endMatchBtn" class="score-control-button bg-blue-500 text-white hover:bg-blue-600">End Match</button> <!-- NEW -->
                         </div>
                     </div>
                 </div>
@@ -1021,8 +1030,9 @@
             <ul id="pastMatchesList" class="past-matches-list">
                 <!-- Past matches will be loaded here from localStorage -->
             </ul>
-            <div class="flex justify-center mt-4"> <!-- Changed from text-center to flex justify-center -->
+            <div class="flex justify-center flex-wrap gap-4 mt-4"> <!-- Changed from text-center to flex justify-center -->
                 <button id="clearPastMatchesBtn">Clear All Past Matches</button>
+                <button id="backBtnPastMatches">Back to Main</button> <!-- NEW BUTTON -->
             </div>
         </div>
 
@@ -1035,11 +1045,6 @@
             <div class="flex justify-center"> <!-- Added flex justify-center to center the button -->
                 <button id="backBtnDeveloperInfo">Back to Main</button>
             </div>
-        </div>
-
-        <!-- Developer Info Button (Always present in main app container) -->
-        <div class="flex justify-center mt-8">
-            <button id="developerInfoBtn">Developer Info</button>
         </div>
 
 
@@ -1278,7 +1283,7 @@
         const undoBtn = document.getElementById('undoBtn');
         const switchTeamBtn = document.getElementById('switchTeamBtn');
         const newMatchBtn = document.getElementById('newMatchBtn');
-        // const endMatchBtn = document.getElementById('endMatchBtn'); // Removed: End Match button
+        const endMatchBtn = document.getElementById('endMatchBtn'); // NEW: End Match button
         const restartMatchBtn = document.getElementById('restartMatchBtn'); // NEW: Restart Match button
         const cancelMatchBtn = document.getElementById('cancelMatchBtn'); // NEW: Cancel Match button
 
@@ -1309,13 +1314,15 @@
         const finalTeam1BowlerScorecardTable = document.getElementById('finalTeam1BowlerScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1FOWList = document.getElementById('finalTeam1FOWList');
         const finalTeam2BatsmanScorecardTable = document.getElementById('finalTeam2BatsmanScorecard').getElementsByTagName('tbody')[0];
-        const finalTeam2BowlerScorecardTable = document.getElementById('finalTeam2BowlerScorecard').getElementsByTagName('tbody')[0];
+        const finalTeam2BowlerScorecardTable = document.getElementById('finalTeam2BowlerScorecard').getElementsByTagName('tbody')[0]; // Corrected this line
         const finalTeam2FOWList = document.getElementById('finalTeam2FOWList');
 
         // Past Matches elements
         const pastMatchesSection = document.getElementById('pastMatchesSection');
         const pastMatchesList = document.getElementById('pastMatchesList');
         const clearPastMatchesBtn = document.getElementById('clearPastMatchesBtn');
+        const showPastMatchesBtn = document.getElementById('showPastMatchesBtn'); // NEW: Show Past Matches button
+        const backBtnPastMatches = document.getElementById('backBtnPastMatches'); // NEW: Back to Main button on Past Match Summary
 
         // New UI elements for live score page
         const currentOverInfoPanel = document.getElementById('currentOverInfoPanel'); // NEW ID
@@ -1358,6 +1365,9 @@
         const fielderSelect = document.getElementById('fielderSelect');
         const confirmFielderBtn = document.getElementById('confirmFielderBtn');
         const cancelFielderBtn = document.getElementById('cancelFielderBtn');
+
+        // NEW: Go to Live Score button
+        const goToLiveScoreBtn = document.getElementById('goToLiveScoreBtn');
 
 
         // Array of all main content sections to easily hide/show them
@@ -1477,9 +1487,23 @@
         function updateUIForMatchState() {
             hideAllSections(); // Hide all sections first
 
-            // Hide developer info button by default, then show it if not on developer info page
-            developerInfoBtn.classList.add('hidden');
-            backBtnDeveloperInfo.classList.add('hidden'); // Also hide the back button
+            // Hide all buttons by default
+            const allButtons = [
+                registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn, // Added goToLiveScoreBtn
+                confirmPlayingXIBtn, backBtnPlayingXI,
+                confirmCaptainWkBtn, backBtnCaptainWk,
+                proceedToMatchReadyBtn, backBtnToss,
+                startMatchBtn, backBtnMatchReady,
+                add1RunBtn, add2RunsBtn, add4RunsBtn, add6RunsBtn,
+                addCaughtBtn, addBowledLbwBtn, addRunOutBtn, addStumpedBtn, addHitWicketBtn, addOtherWicketBtn,
+                addWideBtn, addNoBallBtn, addByeBtn, addLegByeBtn, addBallBtn,
+                switchStrikeBtn, undoBtn, switchTeamBtn, cancelMatchBtn, endMatchBtn,
+                newMatchBtn, restartMatchBtn, backBtnMatchSummary,
+                clearPastMatchesBtn, backBtnPastMatches,
+                developerInfoBtn, backBtnDeveloperInfo
+            ];
+            allButtons.forEach(button => button.classList.add('hidden'));
+
 
             // Hide all score-related info panels and controls by default for non-scoreboard states
             currentBattingTeamContainer.classList.add('hidden');
@@ -1498,40 +1522,56 @@
             matchResultDisplay.classList.add('hidden');
             manOfTheMatchDisplay.classList.add('hidden');
             finalScorecardsSection.classList.add('hidden');
-            restartMatchBtn.classList.add('hidden');
-            cancelMatchBtn.classList.add('hidden');
-            newMatchBtn.classList.add('hidden');
-            backBtnMatchSummary.classList.add('hidden');
 
 
             switch (matchState) {
                 case 'registration':
                     teamRegistrationSection.classList.remove('hidden');
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
+                    registerTeamsBtn.classList.remove('hidden');
+                    resetAllBtn.classList.remove('hidden');
+                    showPastMatchesBtn.classList.remove('hidden');
+                    developerInfoBtn.classList.remove('hidden'); // Only show on registration page
+                    newMatchBtn.classList.remove('hidden');
+
+                    // Check if there's an ongoing match to enable "Go to Live Score"
+                    try {
+                        const storedState = localStorage.getItem('currentCricketMatch');
+                        if (storedState) {
+                            const loadedState = JSON.parse(storedState);
+                            if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
+                                goToLiveScoreBtn.classList.remove('hidden');
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error checking for ongoing match state:", e);
+                    }
                     break;
                 case 'playing_xi_selection':
                     playingXISelectionSection.classList.remove('hidden');
+                    confirmPlayingXIBtn.classList.remove('hidden');
+                    backBtnPlayingXI.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
                     renderPlayingXISelection(); // Render checkboxes for playing XI
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
                     break;
                 case 'captain_wk_selection':
                     captainWkSelectionSection.classList.remove('hidden');
+                    confirmCaptainWkBtn.classList.remove('hidden');
+                    backBtnCaptainWk.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
                     renderCaptainWkSelection(); // Render dropdowns for Captain/WK
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
                     break;
                 case 'toss':
                     tossSection.classList.remove('hidden');
+                    proceedToMatchReadyBtn.classList.remove('hidden');
+                    backBtnToss.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
                     populateTossDropdowns(); // Populate toss dropdowns
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
                     break;
                 case 'teams_registered':
                     matchReadySection.classList.remove('hidden');
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
+                    startMatchBtn.classList.remove('hidden');
+                    backBtnMatchReady.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
                     break;
                 case 'innings1':
                 case 'innings2':
@@ -1548,7 +1588,13 @@
                     liveFOWSection.classList.remove('hidden');
                     restartMatchBtn.classList.remove('hidden'); // Show restart button during active play
                     cancelMatchBtn.classList.remove('hidden'); // Show cancel button during active play
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
+                    endMatchBtn.classList.remove('hidden'); // Show End Match button during active play
+                    newMatchBtn.classList.remove('hidden'); // Show new match button
+                    // Show all score control buttons
+                    add1RunBtn.classList.remove('hidden'); add2RunsBtn.classList.remove('hidden'); add4RunsBtn.classList.remove('hidden'); add6RunsBtn.classList.remove('hidden');
+                    addCaughtBtn.classList.remove('hidden'); addBowledLbwBtn.classList.remove('hidden'); addRunOutBtn.classList.remove('hidden'); addStumpedBtn.classList.remove('hidden'); addHitWicketBtn.classList.remove('hidden'); addOtherWicketBtn.classList.remove('hidden');
+                    addWideBtn.classList.remove('hidden'); addNoBallBtn.classList.remove('hidden'); addByeBtn.classList.remove('hidden'); addLegByeBtn.classList.remove('hidden'); addBallBtn.classList.remove('hidden');
+                    switchStrikeBtn.classList.remove('hidden'); undoBtn.classList.remove('hidden'); switchTeamBtn.classList.remove('hidden');
                     updateScoreboardDisplay(); // Ensure scoreboard is updated
                     break;
                 case 'completed':
@@ -1557,11 +1603,9 @@
                     matchResultDisplay.classList.remove('hidden');
                     manOfTheMatchDisplay.classList.remove('hidden');
                     finalScorecardsSection.classList.remove('hidden');
-                    renderFinalScorecards(); // Render final scorecards
-                    restartMatchBtn.classList.remove('hidden'); // Show restart button
-                    newMatchBtn.classList.remove('hidden'); // Show new match button
                     backBtnMatchSummary.classList.remove('hidden'); // Show back to summary button
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
+                    newMatchBtn.classList.remove('hidden'); // Show new match button
+                    renderFinalScorecards(); // Render final scorecards
 
                     // Disable score controls and player selectors when match is completed/cancelled
                     Array.from(scoreControls.children).forEach(button => button.disabled = true);
@@ -1571,19 +1615,22 @@
                     break;
                 case 'past_matches':
                     pastMatchesSection.classList.remove('hidden');
+                    clearPastMatchesBtn.classList.remove('hidden');
+                    backBtnPastMatches.classList.remove('hidden'); // Show the new button
+                    newMatchBtn.classList.remove('hidden');
                     loadPastMatchesLocal(); // Ensure past matches are loaded
-                    developerInfoBtn.classList.remove('hidden'); // Show developer info button
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
                     break;
                 case 'developer_info':
                     developerInfoSection.classList.remove('hidden');
-                    developerInfoBtn.classList.add('hidden'); // Hide developer info button when on its page
-                    backBtnDeveloperInfo.classList.remove('hidden'); // Show back button on developer info page
+                    backBtnDeveloperInfo.classList.remove('hidden');
                     break;
                 default:
                     teamRegistrationSection.classList.remove('hidden'); // Default to registration
-                    developerInfoBtn.classList.remove('hidden');
-                    newMatchBtn.classList.remove('hidden'); // Show New Match button
+                    registerTeamsBtn.classList.remove('hidden');
+                    resetAllBtn.classList.remove('hidden');
+                    showPastMatchesBtn.classList.remove('hidden');
+                    developerInfoBtn.classList.remove('hidden'); // Only show on registration page
+                    newMatchBtn.classList.remove('hidden');
                     break;
             }
         }
@@ -1971,7 +2018,7 @@
                 score: `${currentBattingTeam.runs}/${currentBattingTeam.wickets}`,
                 over: `${currentBattingTeam.overs}.${currentBattingTeam.balls}`,
                 dismissalType: dismissalType,
-                fielder: fielderName // Store fielder's name
+                fielder: fielderName
             });
 
             // Store previous partnership runs for undo
@@ -2451,10 +2498,11 @@
             liveScorecardsSection.classList.add('hidden');
             liveFOWSection.classList.add('hidden');
 
-            restartMatchBtn.classList.remove('hidden'); // Show restart button
+            restartMatchBtn.classList.add('hidden'); // HIDE RESTART BUTTON WHEN MATCH IS CONCLUDED
             newMatchBtn.classList.remove('hidden'); // Show new match button
             backBtnMatchSummary.classList.remove('hidden'); // Show back to summary button
             cancelMatchBtn.classList.add('hidden'); // Hide cancel button
+            endMatchBtn.classList.add('hidden'); // Hide End Match button
 
             showMessageBox(`Match ${status.toLowerCase()}! Full summary displayed.`, 'success');
             console.log(`declareWinner(): Match ${status.toLowerCase()}. Summary displayed.`);
@@ -3667,8 +3715,6 @@
         });
         clearPastMatchesBtn.addEventListener('click', clearAllPastMatches); // New button listener
         
-        // Removed: endMatchBtn.addEventListener('click', ...); // This button is now removed
-
         // NEW: Restart Match button listener
         restartMatchBtn.addEventListener('click', () => {
             showConfirmationModal('Are you sure you want to restart the current match? All current progress will be lost.',
@@ -3698,13 +3744,24 @@
             }
             cancelReasonModal.classList.add('hidden'); // Hide the reason modal
             declareWinner('Cancelled', selectedReason); // Pass the selected reason
-            // newMatch(); // Removed: Don't call newMatch here, let declareWinner handle UI
             showMessageBox('Match cancelled and saved to past matches.', 'success');
         });
 
         // NEW: Back from Cancel Reason button listener
         backFromCancelReasonBtn.addEventListener('click', () => {
             cancelReasonModal.classList.add('hidden'); // Just hide the modal
+        });
+
+        // NEW: End Match button listener
+        endMatchBtn.addEventListener('click', () => {
+            showConfirmationModal('Are you sure you want to end the match?',
+                () => {
+                    declareWinner('Completed'); // Conclude the match as completed
+                },
+                () => {
+                    // No message on cancel
+                }
+            );
         });
 
         // NEW: Back button from Match Summary (Final Scorecards Section)
@@ -3728,6 +3785,72 @@
             );
         });
 
+        // NEW: Event listener for "Past Match Summary" button on Team Registration page
+        showPastMatchesBtn.addEventListener('click', () => {
+            matchState = 'past_matches';
+            updateUIForMatchState();
+            showMessageBox('Viewing past match summaries.', 'info');
+        });
+
+        // NEW: Event listener for "Back to Main" button on Past Match Summary page
+        backBtnPastMatches.addEventListener('click', () => {
+            matchState = 'registration'; // Return to registration page
+            updateUIForMatchState();
+            showMessageBox('Returned to Main Registration.', 'info');
+        });
+
+        // NEW: Event listener for "Go to Live Score" button
+        goToLiveScoreBtn.addEventListener('click', () => {
+            try {
+                const storedState = localStorage.getItem('currentCricketMatch');
+                if (storedState) {
+                    const loadedState = JSON.parse(storedState);
+                    if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
+                        // Restore the loaded state to global variables
+                        team1 = loadedState.team1;
+                        team2 = loadedState.team2;
+                        totalOversPerInnings = loadedState.totalOversPerInnings;
+                        matchState = loadedState.matchState;
+                        firstInningsTotalRuns = loadedState.firstInningsTotalRuns;
+                        currentPartnershipRuns = loadedState.currentPartnershipRuns;
+                        isFreeHit = loadedState.isFreeHit || false;
+                        lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1;
+                        tossWinnerName = loadedState.tossWinnerName || '';
+                        tossDecision = loadedState.tossDecision || '';
+                        cancellationReason = loadedState.cancellationReason || '';
+
+                        // Re-establish object references for currentBattingTeam and currentBowlingTeam
+                        if (loadedState.currentBattingTeamName === team1.name) {
+                            currentBattingTeam = team1;
+                            currentBowlingTeam = team2;
+                        } else if (loadedState.currentBattingTeamName === team2.name) {
+                            currentBattingTeam = team2;
+                            currentBowlingTeam = team1;
+                        } else {
+                            currentBattingTeam = null;
+                            currentBowlingTeam = null;
+                        }
+
+                        currentBowlerIndex = loadedState.currentBowlerIndex;
+                        if (currentBattingTeam) {
+                            currentBattingTeam.currentStrikerIndex = loadedState.currentStrikerIndex;
+                            currentBattingTeam.currentNonStrikerIndex = loadedState.currentNonStrikerIndex;
+                        }
+                        
+                        updateUIForMatchState(); // Update UI to show the scoreboard
+                        showMessageBox('Resuming live match.', 'info');
+                    } else {
+                        showMessageBox('No active match to resume.', 'error');
+                    }
+                } else {
+                    showMessageBox('No saved match to resume.', 'error');
+                }
+            } catch (e) {
+                console.error("Error resuming match:", e);
+                showMessageBox('Failed to resume match.', 'error');
+            }
+        });
+
 
         // Event listeners for Developer Info page (NEW)
         developerInfoBtn.addEventListener('click', () => {
@@ -3743,7 +3866,7 @@
             // A more robust solution would involve pushing states onto a stack.
             // For now, let's just make it return to 'registration' unless a match is active.
 
-            // A simple approach: if a match is active or completed, return to the scoreboard, else to registration.
+            // A simple approach: if a match is active or completed, return to scoreboard, else to registration.
             if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
                 matchState = 'scoreboard'; // Return to scoreboard
             } else {
