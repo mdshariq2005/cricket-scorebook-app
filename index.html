@@ -620,7 +620,6 @@
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
                     <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
                     <button type="button" id="showPastMatchesBtn">Past Match Summary</button> <!-- NEW BUTTON -->
-                    <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button> <!-- NEW BUTTON -->
                     <!-- Developer Info Button (Now only present in main app container) -->
                     <button id="developerInfoBtn">Developer Info</button>
                 </div>
@@ -1032,6 +1031,7 @@
             </ul>
             <div class="flex justify-center flex-wrap gap-4 mt-4"> <!-- Changed from text-center to flex justify-center -->
                 <button id="clearPastMatchesBtn">Clear All Past Matches</button>
+                <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button> <!-- Moved button -->
                 <button id="backBtnPastMatches">Back to Main</button> <!-- NEW BUTTON -->
             </div>
         </div>
@@ -1489,7 +1489,7 @@
 
             // Hide all buttons by default
             const allButtons = [
-                registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn, // Added goToLiveScoreBtn
+                registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn,
                 confirmPlayingXIBtn, backBtnPlayingXI,
                 confirmCaptainWkBtn, backBtnCaptainWk,
                 proceedToMatchReadyBtn, backBtnToss,
@@ -1508,7 +1508,7 @@
             // Hide all score-related info panels and controls by default for non-scoreboard states
             currentBattingTeamContainer.classList.add('hidden');
             oversRemainingContainer.classList.add('hidden');
-            tossInfoDisplay.classList.add('hidden');
+            tossInfoDisplay.classList.add('hidden'); // Ensure hidden by default
             targetScoreDisplayElement.classList.add('hidden');
             chasingInfoDisplay.classList.add('hidden');
             freeHitDisplay.classList.add('hidden');
@@ -1532,19 +1532,7 @@
                     showPastMatchesBtn.classList.remove('hidden');
                     developerInfoBtn.classList.remove('hidden'); // Only show on registration page
                     newMatchBtn.classList.remove('hidden');
-
-                    // Check if there's an ongoing match to enable "Go to Live Score"
-                    try {
-                        const storedState = localStorage.getItem('currentCricketMatch');
-                        if (storedState) {
-                            const loadedState = JSON.parse(storedState);
-                            if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
-                                goToLiveScoreBtn.classList.remove('hidden');
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Error checking for ongoing match state:", e);
-                    }
+                    // goToLiveScoreBtn is now handled in 'past_matches' case
                     break;
                 case 'playing_xi_selection':
                     playingXISelectionSection.classList.remove('hidden');
@@ -1578,7 +1566,7 @@
                     scoreboardSection.classList.remove('hidden');
                     currentBattingTeamContainer.classList.remove('hidden');
                     oversRemainingContainer.classList.remove('hidden');
-                    tossInfoDisplay.classList.remove('hidden');
+                    // tossInfoDisplay.classList.remove('hidden'); // This is now handled in updateScoreboardDisplay()
                     currentOverInfoPanel.classList.remove('hidden');
                     partnershipInfoPanel.classList.remove('hidden');
                     playerSelection.classList.remove('hidden');
@@ -1619,6 +1607,19 @@
                     backBtnPastMatches.classList.remove('hidden'); // Show the new button
                     newMatchBtn.classList.remove('hidden');
                     loadPastMatchesLocal(); // Ensure past matches are loaded
+
+                    // Show "Go to Live Score" button if an active match exists
+                    try {
+                        const storedState = localStorage.getItem('currentCricketMatch');
+                        if (storedState) {
+                            const loadedState = JSON.parse(storedState);
+                            if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
+                                goToLiveScoreBtn.classList.remove('hidden');
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error checking for ongoing match state:", e);
+                    }
                     break;
                 case 'developer_info':
                     developerInfoSection.classList.remove('hidden');
@@ -1836,6 +1837,16 @@
             } else {
                 freeHitDisplay.classList.add('hidden');
             }
+
+            // Update Toss Info Display (FIXED: Ensure visibility is handled here)
+            if (tossWinnerName && tossDecision) {
+                tossWinnerInfo.textContent = tossWinnerName;
+                tossDecisionInfo.textContent = tossDecision;
+                tossInfoDisplay.classList.remove('hidden'); // Ensure it's visible
+            } else {
+                tossInfoDisplay.classList.add('hidden'); // Hide if toss info is missing
+            }
+
 
             // Only render live scorecards if match is active and playing XI is selected
             if ((matchState === 'innings1' || matchState === 'innings2') && currentBattingTeam.playing11Names.length === 11) {
@@ -2942,6 +2953,7 @@
                             row.classList.add('bg-yellow-100');
                         }
                     } else {
+                        // FIX: Changed 'p.name' to 'player.name' here
                         statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out';
                     }
 
@@ -3205,9 +3217,9 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${team1PlayingXI.map(p => {
-                                                const sr = p.ballsFaced > 0 ? ((p.runsScored / p.ballsFaced) * 100).toFixed(2) : '0.00';
-                                                return `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td class="text-right">${sr}</td><td>${p.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                            ${team1PlayingXI.map(player => { // FIX: Changed 'p' to 'player'
+                                                const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
+                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`; // FIX: Changed 'p.name' to 'player.name'
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3246,9 +3258,9 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${team2PlayingXI.map(p => {
-                                                const sr = p.ballsFaced > 0 ? ((p.runsScored / p.ballsFaced) * 100).toFixed(2) : '0.00';
-                                                return `<tr><td>${p.name}</td><td class="text-right">${p.runsScored}</td><td class="text-right">${p.ballsFaced}</td><td class="text-right">${sr}</td><td>${p.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === p.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                            ${team2PlayingXI.map(player => { // FIX: Changed 'p' to 'player'
+                                                const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
+                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`; // FIX: Changed 'p.name' to 'player.name'
                                             }).join('')}
                                         </tbody>
                                     </table>
