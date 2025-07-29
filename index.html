@@ -3554,14 +3554,15 @@
                 showMessageBox('Please select a Captain and Wicket Keeper for both teams.', 'error');
                 return;
             }
-            if (team1Cap === team1Wk) {
-                showMessageBox('Team 1 Captain and Wicket Keeper cannot be the same player.', 'error');
-                return;
-            }
-            if (team2Cap === team2Wk) {
-                showMessageBox('Team 2 Captain and Wicket Keeper cannot be the same player.', 'error');
-                return;
-            }
+            // Removed validation: Captain and Wicket Keeper can now be the same person.
+            // if (team1Cap === team1Wk) {
+            //     showMessageBox('Team 1 Captain and Wicket Keeper cannot be the same player.', 'error');
+            //     return;
+            // }
+            // if (team2Cap === team2Wk) {
+            //     showMessageBox('Team 2 Captain and Wicket Keeper cannot be the same player.', 'error');
+            //     return;
+            // }
 
             // Ensure Captain and WK are part of the Playing XI
             if (!team1.playing11Names.includes(team1Cap) || !team1.playing11Names.includes(team1Wk)) {
