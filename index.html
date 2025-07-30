@@ -1702,7 +1702,7 @@
         strikerSelect.addEventListener('change', (event) => {
             const newStrikerIndex = parseInt(event.target.value);
             // Ensure the selected index is valid and corresponds to a player in the playing XI
-            if (newStrikerIndex !== -1 && !currentBattingTeam.playing11Names.includes(currentBattingTeam.players[newStriakerIndex].name)) {
+            if (newStrikerIndex !== -1 && !currentBattingTeam.playing11Names.includes(currentBattingTeam.players[newStrikerIndex].name)) {
                 showMessageBox('Selected player is not in the Playing XI.', 'error');
                 strikerSelect.value = currentBattingTeam.currentStrikerIndex !== -1 ? currentBattingTeam.currentStrikerIndex : '';
                 return;
@@ -3040,29 +3040,41 @@
 
         // Function to render all final scorecards after the match ends
         function renderFinalScorecards() {
+            console.log("renderFinalScorecards() called."); // Debugging log
             // Retrieve the last saved match data to ensure we display the correct summary
-            const storedMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
+            const storedMatchesRaw = localStorage.getItem('cricketMatches');
+            console.log("Retrieving matches from localStorage:", storedMatchesRaw); // Debugging log
+            const storedMatches = storedMatchesRaw ? JSON.parse(storedMatchesRaw) : [];
+            console.log("Stored matches (parsed):", storedMatches); // Debugging log
+
             const lastMatch = storedMatches.length > 0 ? storedMatches[0] : null;
+            console.log("Last match found:", lastMatch); // Debugging log
 
             if (!lastMatch) {
                 console.warn("No last match data found to render final scorecards.");
                 return;
             }
-            console.log("Rendering final scorecards for match:", lastMatch); // Debugging log
 
             finalTeam1NameDisplay.textContent = lastMatch.team1.name;
             finalTeam2NameDisplay.textContent = lastMatch.team2.name;
 
             // Use the data from lastMatch for rendering, ensuring only playing XI are shown
-            const team1ForFinal = { ...lastMatch.team1, players: lastMatch.team1.players.filter(p => lastMatch.team1.playing11Names.includes(p.name)) };
-            const team2ForFinal = { ...lastMatch.team2, players: lastMatch.team2.players.filter(p => lastMatch.team2.playing11Names.includes(p.name)) };
+            // Create deep copies to avoid modifying the original stored data
+            const team1ForFinal = JSON.parse(JSON.stringify(lastMatch.team1));
+            const team2ForFinal = JSON.parse(JSON.stringify(lastMatch.team2));
+
+            // Filter players to only include those in the playing XI for display purposes
+            team1ForFinal.players = team1ForFinal.players.filter(p => team1ForFinal.playing11Names.includes(p.name));
+            team2ForFinal.players = team2ForFinal.players.filter(p => team2ForFinal.playing11Names.includes(p.name));
 
 
             renderBatsmanScorecard(team1ForFinal, finalTeam1BatsmanScorecardTable);
+            // IMPORTANT: Bowler scorecard for Team 1 shows bowlers from Team 2
             renderBowlerScorecard(team2ForFinal, finalTeam1BowlerScorecardTable);
             renderFallOfWickets(team1ForFinal, finalTeam1FOWList);
 
             renderBatsmanScorecard(team2ForFinal, finalTeam2BatsmanScorecardTable);
+            // IMPORTANT: Bowler scorecard for Team 2 shows bowlers from Team 1
             renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable);
             renderFallOfWickets(team2ForFinal, finalTeam2FOWList);
 
@@ -3074,6 +3086,7 @@
             matchResultDisplay.classList.remove('hidden');
             manOfTheMatchDisplay.classList.remove('hidden');
             finalScorecardsSection.classList.remove('hidden');
+            console.log("Final scorecards rendered successfully."); // Debugging log
         }
 
         // Function to save match details to localStorage
@@ -3191,8 +3204,9 @@
                         statusLabel = `<p class="text-md text-black mb-2">Status: Completed</p>`;
                     }
 
-                    const team1PlayingXI = match.team1.players.filter(p => match.team1.playing11Names.includes(p.name));
-                    const team2PlayingXI = match.team2.players.filter(p => match.team2.playing11Names.includes(p.name));
+                    // Ensure players are filtered by playing11Names before mapping for display
+                    const team1PlayersForDisplay = match.team1.players.filter(p => match.team1.playing11Names.includes(p.name));
+                    const team2PlayersForDisplay = match.team2.players.filter(p => match.team2.playing11Names.includes(p.name));
 
 
                     listItem.innerHTML = `
@@ -3214,7 +3228,7 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${team1PlayingXI.map(player => {
+                                            ${team1PlayersForDisplay.map(player => {
                                                 const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
                                                 return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : (player.ballsFaced > 0 ? 'Not Out' : 'Did not bat')}</td></tr>`;
                                             }).join('')}
@@ -3226,7 +3240,7 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th><th>Econ</th></tr></thead>
                                         <tbody>
-                                            ${team2PlayingXI.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
+                                            ${team2PlayersForDisplay.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
                                                 const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
                                                 const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
                                                 return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
@@ -3255,7 +3269,7 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>R</th><th>B</th><th>SR</th><th>Status</th></tr></thead>
                                         <tbody>
-                                            ${team2PlayingXI.map(player => {
+                                            ${team2PlayersForDisplay.map(player => {
                                                 const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
                                                 return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : (player.ballsFaced > 0 ? 'Not Out' : 'Did not bat')}</td></tr>`;
                                             }).join('')}
@@ -3267,7 +3281,7 @@
                                     <table>
                                         <thead><tr><th>Name</th><th>O</th><th>R</th><th>W</th><th>WD</th><th>NB</th><th>Econ</th></tr></thead>
                                         <tbody>
-                                            ${team1PlayingXI.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
+                                            ${team1PlayersForDisplay.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
                                                 const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
                                                 const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
                                                 return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${econ}</td></tr>`;
@@ -3762,6 +3776,7 @@
 
         // NEW: End Match button listener (for summary acknowledgement)
         endMatchSummaryBtn.addEventListener('click', () => {
+            console.log("End Match button clicked. Current matchState:", matchState); // Debugging log
             if (matchState === 'completed' || matchState === 'cancelled') {
                 // Display the match result, Man of the Match, and final scorecards
                 matchResultDisplay.classList.remove('hidden');
@@ -3769,16 +3784,13 @@
                 finalScorecardsSection.classList.remove('hidden');
 
                 // Populate the details from the last saved match
-                const storedMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
-                const lastMatch = storedMatches.length > 0 ? storedMatches[0] : null;
-                if (lastMatch) {
-                    matchResultMessageText.textContent = lastMatch.result;
-                    manOfTheMatchPlayer.textContent = lastMatch.manOfTheMatch;
-                    renderFinalScorecards(); // Re-render to ensure data is fresh
-                }
+                renderFinalScorecards(); // Re-render to ensure data is fresh
 
                 endMatchSummaryBtn.classList.add('hidden'); // Hide the button itself
                 showMessageBox('Match summary displayed.', 'info');
+            } else {
+                console.warn("End Match button clicked but matchState is not 'completed' or 'cancelled'. Current state:", matchState);
+                showMessageBox('Match is not yet completed or cancelled. Cannot display final summary.', 'error');
             }
         });
 
