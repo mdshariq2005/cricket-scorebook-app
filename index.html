@@ -614,7 +614,7 @@
                 </div>
                 <div class="form-group">
                     <label for="matchTime" class="mb-2">Match Time:</label>
-                    <input type="time" id="matchTime" name="matchTime" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <input type="time" id="matchTime" name="matchTime" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-400">
                 </div>
 
                 <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
@@ -3067,16 +3067,25 @@
             team1ForFinal.players = team1ForFinal.players.filter(p => team1ForFinal.playing11Names.includes(p.name));
             team2ForFinal.players = team2ForFinal.players.filter(p => team2ForFinal.playing11Names.includes(p.name));
 
+            try {
+                renderBatsmanScorecard(team1ForFinal, finalTeam1BatsmanScorecardTable);
+            } catch (e) { console.error("Error rendering finalTeam1BatsmanScorecard:", e); }
+            try {
+                renderBowlerScorecard(team2ForFinal, finalTeam1BowlerScorecardTable); // Bowlers from Team 2 bowled to Team 1
+            } catch (e) { console.error("Error rendering finalTeam1BowlerScorecard:", e); }
+            try {
+                renderFallOfWickets(team1ForFinal, finalTeam1FOWList);
+            } catch (e) { console.error("Error rendering finalTeam1FOWList:", e); }
 
-            renderBatsmanScorecard(team1ForFinal, finalTeam1BatsmanScorecardTable);
-            // IMPORTANT: Bowler scorecard for Team 1 shows bowlers from Team 2
-            renderBowlerScorecard(team2ForFinal, finalTeam1BowlerScorecardTable);
-            renderFallOfWickets(team1ForFinal, finalTeam1FOWList);
-
-            renderBatsmanScorecard(team2ForFinal, finalTeam2BatsmanScorecardTable);
-            // IMPORTANT: Bowler scorecard for Team 2 shows bowlers from Team 1
-            renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable);
-            renderFallOfWickets(team2ForFinal, finalTeam2FOWList);
+            try {
+                renderBatsmanScorecard(team2ForFinal, finalTeam2BatsmanScorecardTable);
+            } catch (e) { console.error("Error rendering finalTeam2BatsmanScorecard:", e); }
+            try {
+                renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable); // Bowlers from Team 1 bowled to Team 2
+            } catch (e) { console.error("Error rendering finalTeam2BowlerScorecard:", e); }
+            try {
+                renderFallOfWickets(team2ForFinal, finalTeam2FOWList);
+            } catch (e) { console.error("Error rendering finalTeam2FOWList:", e); }
 
             // Set result and Man of the Match from the saved data
             manOfTheMatchPlayer.textContent = lastMatch.manOfTheMatch;
@@ -3284,7 +3293,7 @@
                                             ${team1PlayersForDisplay.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
                                                 const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
                                                 const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
-                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${econ}</td></tr>`;
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3776,15 +3785,23 @@
 
         // NEW: End Match button listener (for summary acknowledgement)
         endMatchSummaryBtn.addEventListener('click', () => {
-            console.log("End Match button clicked. Current matchState:", matchState); // Debugging log
+            console.log("End Match button clicked. Current matchState:", matchState); // Existing Debugging log
+            // Add another log to be absolutely sure of the state right before the if condition
+            console.log("Debug: matchState before condition check:", matchState, "Type:", typeof matchState); // NEW DEBUG LOG
             if (matchState === 'completed' || matchState === 'cancelled') {
+                console.log("Match state is completed or cancelled. Attempting to render final scorecards."); // Existing Debugging log
                 // Display the match result, Man of the Match, and final scorecards
                 matchResultDisplay.classList.remove('hidden');
                 manOfTheMatchDisplay.classList.remove('hidden');
                 finalScorecardsSection.classList.remove('hidden');
 
-                // Populate the details from the last saved match
-                renderFinalScorecards(); // Re-render to ensure data is fresh
+                try {
+                    // Populate the details from the last saved match
+                    renderFinalScorecards(); // Re-render to ensure data is fresh
+                } catch (error) {
+                    console.error("Error calling renderFinalScorecards:", error); // Catch any errors here
+                    showMessageBox('An error occurred while displaying match summary.', 'error');
+                }
 
                 endMatchSummaryBtn.classList.add('hidden'); // Hide the button itself
                 showMessageBox('Match summary displayed.', 'info');
@@ -3804,105 +3821,4 @@
 
         // Reset All button listener
         resetAllBtn.addEventListener('click', () => {
-            showConfirmationModal('Are you sure you want to reset all team and player data? This will start a completely new match registration.',
-                () => {
-                    newMatch();
-                    registerTeamsBtn.textContent = 'Register Teams';
-                    showMessageBox('All data reset. Please register new teams.', 'info');
-                },
-                () => {
-                }
-            );
-        });
-
-        // Event listener for "Past Match Summary" button on Team Registration page
-        showPastMatchesBtn.addEventListener('click', () => {
-            matchState = 'past_matches';
-            updateUIForMatchState();
-            showMessageBox('Viewing past match summaries.', 'info');
-        });
-
-        // Event listener for "Back to Main" button on Past Match Summary page
-        backBtnPastMatches.addEventListener('click', () => {
-            matchState = 'registration';
-            teamRegistrationForm.reset();
-            updateUIForMatchState();
-            showMessageBox('Returned to Main Registration. Form cleared.', 'info');
-        });
-
-        // Event listener for "Go to Live Score" button
-        goToLiveScoreBtn.addEventListener('click', () => {
-            try {
-                const storedState = localStorage.getItem('currentCricketMatch');
-                if (storedState) {
-                    const loadedState = JSON.parse(storedState);
-                    if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
-                        team1 = loadedState.team1;
-                        team2 = loadedState.team2;
-                        totalOversPerInnings = loadedState.totalOversPerInnings;
-                        matchState = loadedState.matchState;
-                        firstInningsTotalRuns = loadedState.firstInningsTotalRuns;
-                        currentPartnershipRuns = loadedState.currentPartnershipRuns;
-                        isFreeHit = loadedState.isFreeHit || false;
-                        lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1;
-                        tossWinnerName = loadedState.tossWinnerName || '';
-                        tossDecision = loadedState.tossDecision || '';
-                        cancellationReason = loadedState.cancellationReason || '';
-
-                        if (loadedState.currentBattingTeamName === team1.name) {
-                            currentBattingTeam = team1;
-                            currentBowlingTeam = team2;
-                        } else if (loadedState.currentBattingTeamName === team2.name) {
-                            currentBattingTeam = team2;
-                            currentBowlingTeam = team1;
-                        } else {
-                            currentBattingTeam = null;
-                            currentBowlingTeam = null;
-                        }
-
-                        currentBowlerIndex = loadedState.currentBowlerIndex;
-                        if (currentBattingTeam) {
-                            currentBattingTeam.currentStrikerIndex = loadedState.currentStrikerIndex;
-                            currentBattingTeam.currentNonStrikerIndex = loadedState.currentNonStrikerIndex;
-                        }
-
-                        updateUIForMatchState();
-                        showMessageBox('Resuming live match.', 'info');
-                    } else {
-                        showMessageBox('No active match to resume.', 'error');
-                    }
-                } else {
-                    showMessageBox('No saved match to resume.', 'error');
-                }
-            } catch (e) {
-                console.error("Error resuming match:", e);
-                showMessageBox('Failed to resume match.', 'error');
-            }
-        });
-
-
-        // Event listeners for Developer Info page
-        developerInfoBtn.addEventListener('click', () => {
-            matchState = 'developer_info';
-            updateUIForMatchState();
-        });
-
-        backBtnDeveloperInfo.addEventListener('click', () => {
-            if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
-                matchState = 'scoreboard';
-            } else {
-                matchState = 'registration';
-            }
-            updateUIForMatchState();
-            showMessageBox('Returned to previous section.', 'info');
-        });
-
-
-        // Initial load of past matches and current match state when the page loads
-        window.onload = () => {
-            loadCurrentMatchStateFromLocal();
-            loadPastMatchesLocal();
-        };
-    </script>
-</body>
-</html>
+            showConfirmationModal('Are you sure you want to reset all team and player data? T
