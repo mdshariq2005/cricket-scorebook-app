@@ -1698,7 +1698,7 @@
         strikerSelect.addEventListener('change', (event) => {
             const newStrikerIndex = parseInt(event.target.value);
             // Ensure the selected index is valid and corresponds to a player in the playing XI
-            if (newStrikerIndex !== -1 && !currentBattingTeam.playing11Names.includes(currentBattingTeam.players[newStrikerIndex].name)) {
+            if (newStrikerIndex !== -1 && !currentBattingTeam.playing11Names.includes(currentBattingTeam.players[newStriakerIndex].name)) {
                 showMessageBox('Selected player is not in the Playing XI.', 'error');
                 strikerSelect.value = currentBattingTeam.currentStrikerIndex !== -1 ? currentBattingTeam.currentStrikerIndex : '';
                 return;
@@ -2947,13 +2947,29 @@
                     // Determine status based on context (live vs. final scorecard)
                     if (isLive) {
                         const originalPlayerIndex = team.players.findIndex(p => p.name === player.name);
-                        statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : (originalPlayerIndex === team.currentStrikerIndex ? 'Batting (Striker)' : (originalPlayerIndex === team.currentNonStrikerIndex ? 'Batting (Non-Striker)' : 'Yet to Bat'));
+                        if (player.isOut) {
+                            statusCell.textContent = `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})`;
+                        } else if (originalPlayerIndex === team.currentStrikerIndex) {
+                            statusCell.textContent = 'Batting (Striker)';
+                        } else if (originalPlayerIndex === team.currentNonStrikerIndex) {
+                            statusCell.textContent = 'Batting (Non-Striker)';
+                        } else if (player.ballsFaced === 0) { // If not out, not current batsman, and faced 0 balls
+                            statusCell.textContent = 'Did not bat';
+                        } else { // Not out, faced balls, not current batsman (e.g., retired not out, or already batted)
+                            statusCell.textContent = 'Not Out';
+                        }
                         // Highlight current batsmen only in live scorecard
                         if (originalPlayerIndex === team.currentStrikerIndex || originalPlayerIndex === team.currentNonStrikerIndex) {
                             row.classList.add('bg-yellow-100');
                         }
-                    } else {
-                        statusCell.textContent = player.isOut ? `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out';
+                    } else { // For final scorecard (isLive is false)
+                        if (player.isOut) {
+                            statusCell.textContent = `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})`;
+                        } else if (player.ballsFaced === 0) { // If not out and faced 0 balls
+                            statusCell.textContent = 'Did not bat';
+                        } else { // Not out and faced balls
+                            statusCell.textContent = 'Not Out';
+                        }
                     }
 
                     runsCell.classList.add('text-right');
@@ -3218,7 +3234,7 @@
                                         <tbody>
                                             ${team1PlayingXI.map(player => {
                                                 const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
-                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team1.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : (player.ballsFaced > 0 ? 'Not Out' : 'Did not bat')}</td></tr>`;
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3259,7 +3275,7 @@
                                         <tbody>
                                             ${team2PlayingXI.map(player => {
                                                 const sr = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
-                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : 'Not Out'}</td></tr>`;
+                                                return `<tr><td>${player.name}</td><td class="text-right">${player.runsScored}</td><td class="text-right">${player.ballsFaced}</td><td class="text-right">${sr}</td><td>${player.isOut ? `Out (${match.team2.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})` : (player.ballsFaced > 0 ? 'Not Out' : 'Did not bat')}</td></tr>`;
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3683,7 +3699,15 @@
                 const battingXI = getPlayingXIPlayers(currentBattingTeam);
                 if (battingXI.length >= 2) {
                     currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
-                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[1].name);
+                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name); // Initialize non-striker to first player, will be updated later
+                    // Find the second player in playing XI who is not the striker
+                    const secondPlayer = battingXI.find(p => p.name !== battingXI[0].name);
+                    if (secondPlayer) {
+                        currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === secondPlayer.name);
+                    } else {
+                        currentBattingTeam.currentNonStrikerIndex = -1; // Only one player available
+                    }
+
                 } else if (battingXI.length === 1) {
                     currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
                     currentBattingTeam.currentNonStrikerIndex = -1;
