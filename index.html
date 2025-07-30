@@ -110,27 +110,28 @@
         #startMatchBtn,
         #newMatchBtn,
         #clearPastMatchesBtn,
-        #developerInfoBtn, /* Changed from showDeveloperInfoBtn */
-        #restartMatchBtn, /* Added restart button */
-        #cancelMatchBtn, /* Added cancel button */
-        #endMatchBtn, /* NEW: End Match button */
-        #confirmationModal button, /* Apply base button style to modal buttons */
-        #cancelReasonModal button, /* Apply base button style to cancel reason modal buttons */
-        #confirmPlayingXIBtn, /* Apply base button style to playing XI confirmation button */
-        #backBtnPlayingXI, /* Apply base button style to the new back button */
-        #backBtnToss, /* Apply base button style to the new back button */
-        #backBtnMatchReady, /* Apply base button style to the new back button */
-        #backBtnMatchSummary, /* Apply base button style to the new back button */
-        #backBtnDeveloperInfo, /* Apply base button style to the new back button */
-        #wideExtraRunsModal button, /* Apply base button style to wide extra runs modal buttons */
-        #noBallExtraRunsModal button, /* NEW: Apply base button style to no ball extra runs modal buttons */
-        #fielderSelectionModal button, /* Apply base button style to fielder selection modal buttons */
-        #confirmCaptainWkBtn, /* NEW */
-        #backBtnCaptainWk, /* NEW */
-        #resetAllBtn, /* NEW */
-        #showPastMatchesBtn, /* NEW */
-        #backBtnPastMatches, /* NEW */
-        #goToLiveScoreBtn /* NEW */
+        #developerInfoBtn,
+        #restartMatchBtn,
+        #cancelMatchBtn,
+        #concludeMatchBtn, /* Renamed from endMatchBtn */
+        #endMatchSummaryBtn, /* NEW button for summary */
+        #confirmationModal button,
+        #cancelReasonModal button,
+        #confirmPlayingXIBtn,
+        #backBtnPlayingXI,
+        #backBtnToss,
+        #backBtnMatchReady,
+        #backBtnMatchSummary,
+        #backBtnDeveloperInfo,
+        #wideExtraRunsModal button,
+        #noBallExtraRunsModal button,
+        #fielderSelectionModal button,
+        #confirmCaptainWkBtn,
+        #backBtnCaptainWk,
+        #resetAllBtn,
+        #showPastMatchesBtn,
+        #backBtnPastMatches,
+        #goToLiveScoreBtn
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -619,8 +620,7 @@
                 <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
                     <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
-                    <button type="button" id="showPastMatchesBtn">Past Match Summary</button> <!-- NEW BUTTON -->
-                    <!-- Developer Info Button (Now only present in main app container) -->
+                    <button type="button" id="showPastMatchesBtn">Past Match Summary</button>
                     <button id="developerInfoBtn">Developer Info</button>
                 </div>
             </form>
@@ -706,7 +706,7 @@
                         <option value="bowl">Bowl First</option>
                     </select>
                 </div>
-                <div class="flex justify-center gap-4"> <!-- Added gap-4 for spacing -->
+                <div class="flex justify-center gap-4">
                     <button id="backBtnToss">Back</button>
                     <button id="proceedToMatchReadyBtn">Proceed to Match Ready</button>
                 </div>
@@ -718,7 +718,7 @@
         <div id="matchReadySection" class="hidden bg-blue-50 p-6 rounded-lg shadow-md text-center mt-8">
             <h2 class="text-xl font-semibold text-blue-800 mb-4">Match Ready!</h2>
             <p id="registeredTeamsSummary" class="text-lg text-blue-700 mb-6"></p>
-            <div class="flex justify-center gap-4"> <!-- Added gap-4 for spacing -->
+            <div class="flex justify-center gap-4">
                 <button id="backBtnMatchReady">Back</button>
                 <button id="startMatchBtn">Start Match</button>
             </div>
@@ -749,7 +749,7 @@
             <div class="mb-6 text-center">
                 <p class="text-xl font-bold text-gray-800" id="currentBattingTeamContainer">Current Batting: <span id="currentBattingTeam"></span></p>
                 <p class="text-lg text-gray-600" id="oversRemainingContainer">Overs Remaining: <span id="oversRemaining">N/A</span></p>
-                <p class="text-lg text-gray-600" id="tossInfoDisplay">Toss: <span id="tossWinnerInfo"></span> won the toss and chose to <span id="tossDecisionInfo"></span> first.</p> <!-- NEW TOSS INFO DISPLAY -->
+                <p class="text-lg text-gray-600" id="tossInfoDisplay">Toss: <span id="tossWinnerInfo"></span> won the toss and chose to <span id="tossDecisionInfo"></span> first.</p>
                 <p class="text-lg text-gray-600 hidden" id="targetScoreDisplay">Target: <span id="targetScore">0</span> runs</p>
                 <p class="text-lg font-bold text-red-600 mt-2 hidden" id="freeHitDisplay">FREE HIT!</p>
 
@@ -832,8 +832,8 @@
                             <button id="switchStrikeBtn" class="score-control-button">Switch Strike</button>
                             <button id="undoBtn" class="score-control-button">Undo Last</button>
                             <button id="switchTeamBtn" class="score-control-button">Switch Batting Team</button>
-                            <button id="cancelMatchBtn" class="score-control-button bg-red-500 text-white hover:bg-red-600">Cancel Match</button> <!-- NEW -->
-                            <button id="endMatchBtn" class="score-control-button bg-blue-500 text-white hover:bg-blue-600">End Match</button> <!-- NEW -->
+                            <button id="cancelMatchBtn" class="score-control-button bg-red-500 text-white hover:bg-red-600">Cancel Match</button>
+                            <button id="concludeMatchBtn" class="score-control-button bg-blue-500 text-white hover:bg-blue-600">Conclude Match</button> <!-- Renamed from endMatchBtn -->
                         </div>
                     </div>
                 </div>
@@ -852,7 +852,7 @@
                                     <th>Batsman</th>
                                     <th class="text-right">Runs</th>
                                     <th class="text-right">Balls</th>
-                                    <th class="text-right">SR</th> <!-- Added Strike Rate header -->
+                                    <th class="text-right">SR</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -876,7 +876,7 @@
                                     <th class="text-right">Wickets</th>
                                     <th class="text-right">WD</th>
                                     <th class="text-right">NB</th>
-                                    <th class="text-right">Econ</th> <!-- Added Economy header -->
+                                    <th class="text-right">Econ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -888,7 +888,7 @@
             </div>
 
             <!-- Fall of Wickets Section (Live) -->
-            <div class="mt-8 min-w-0" id="liveFOW"> <!-- Added min-w-0 here -->
+            <div class="mt-8 min-w-0" id="liveFOW">
                 <h3 class="text-xl font-semibold text-gray-700 mb-3">Fall of Wickets (<span id="fowTeamName"></span>)</h3>
                 <ul id="fallOfWicketsList" class="fall-of-wickets-list">
                     <!-- Fall of wickets will be inserted here by JavaScript -->
@@ -903,6 +903,11 @@
             <!-- Man of the Match Display -->
             <div id="manOfTheMatchDisplay" class="man-of-the-match hidden">
                 Man of the Match: <span id="manOfTheMatchPlayer"></span>
+            </div>
+
+            <!-- NEW: End Match button for summary (initially hidden) -->
+            <div class="flex justify-center mt-4">
+                <button id="endMatchSummaryBtn" class="hidden bg-blue-500 text-white hover:bg-blue-600">End Match</button>
             </div>
 
             <!-- Final Scorecards Section (initially hidden) -->
@@ -922,7 +927,7 @@
                                             <th>Batsman</th>
                                             <th class="text-right">Runs</th>
                                             <th class="text-right">Balls</th>
-                                            <th class="text-right">SR</th> <!-- Added Strike Rate header -->
+                                            <th class="text-right">SR</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -944,7 +949,7 @@
                                             <th class="text-right">Wickets</th>
                                             <th class="text-right">WD</th>
                                             <th class="text-right">NB</th>
-                                            <th class="text-right">Econ</th> <!-- Added Economy header -->
+                                            <th class="text-right">Econ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -975,7 +980,7 @@
                                             <th>Batsman</th>
                                             <th class="text-right">Runs</th>
                                             <th class="text-right">Balls</th>
-                                            <th class="text-right">SR</th> <!-- Added Strike Rate header -->
+                                            <th class="text-right">SR</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -997,7 +1002,7 @@
                                             <th class="text-right">Wickets</th>
                                             <th class="text-right">WD</th>
                                             <th class="text-right">NB</th>
-                                            <th class="text-right">Econ</th> <!-- Added Economy header -->
+                                            <th class="text-right">Econ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1016,9 +1021,9 @@
                 </div>
             </div>
 
-            <div class="flex justify-center mt-8 gap-4"> <!-- Changed from text-center to flex justify-center gap-4 -->
+            <div class="flex justify-center mt-8 gap-4">
                 <button id="backBtnMatchSummary">Back to Past Matches</button>
-                <button id="restartMatchBtn">Restart Match</button> <!-- NEW -->
+                <button id="restartMatchBtn">Restart Match</button>
                 <button id="newMatchBtn">New Match</button>
             </div>
         </div>
@@ -1029,10 +1034,10 @@
             <ul id="pastMatchesList" class="past-matches-list">
                 <!-- Past matches will be loaded here from localStorage -->
             </ul>
-            <div class="flex justify-center flex-wrap gap-4 mt-4"> <!-- Changed from text-center to flex justify-center -->
+            <div class="flex justify-center flex-wrap gap-4 mt-4">
                 <button id="clearPastMatchesBtn">Clear All Past Matches</button>
-                <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button> <!-- Moved button -->
-                <button id="backBtnPastMatches">Back to Main</button> <!-- NEW BUTTON -->
+                <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button>
+                <button id="backBtnPastMatches">Back to Main</button>
             </div>
         </div>
 
@@ -1042,7 +1047,7 @@
             <p>Developed by: SM0786</p>
             <p>Contact: testemail@gmail.com</p>
             <p>&copy; 2025 SM0786. All rights reserved.</p>
-            <div class="flex justify-center"> <!-- Added flex justify-center to center the button -->
+            <div class="flex justify-center">
                 <button id="backBtnDeveloperInfo">Back to Main</button>
             </div>
         </div>
@@ -1053,8 +1058,8 @@
 
         <!-- Custom Confirmation Modal -->
         <div id="confirmationModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
-            <div class="bg-white p-4 rounded-lg shadow-xl text-center max-w-sm w-full"> <!-- Reduced padding and added max-w-sm -->
-                <p id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></p> <!-- Smaller text and margin -->
+            <div class="bg-white p-4 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <p id="confirmationMessage" class="text-lg font-semibold text-gray-800 mb-4"></p>
                 <div class="flex justify-center gap-4">
                     <button id="confirmYesBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Yes</button>
                     <button id="confirmNoBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">No</button>
@@ -1088,7 +1093,7 @@
         <div id="wideExtraRunsModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Wide Ball: Extra Runs?</h3>
-                <div class="mb-4 flex flex-wrap justify-center gap-4"> <!-- Use flex for radio buttons -->
+                <div class="mb-4 flex flex-wrap justify-center gap-4">
                     <label class="inline-flex items-center">
                         <input type="radio" name="wideExtraRuns" value="0" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500" checked>
                         <span class="ml-2 text-gray-700">0 Extra Runs</span>
@@ -1125,7 +1130,7 @@
         <div id="noBallExtraRunsModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">No Ball: Extra Runs?</h3>
-                <div class="mb-4 flex flex-wrap justify-center gap-4"> <!-- Use flex for radio buttons -->
+                <div class="mb-4 flex flex-wrap justify-center gap-4">
                     <label class="inline-flex items-center">
                         <input type="radio" name="noBallExtraRuns" value="0" class="h-5 w-5 text-blue-600 border-gray-300 rounded-full focus:ring-blue-500" checked>
                         <span class="ml-2 text-gray-700">0 Extra Runs</span>
@@ -1183,20 +1188,20 @@
         const teamRegistrationSection = document.getElementById('teamRegistrationSection');
         const scoreboardSection = document.getElementById('scoreboardSection');
         const teamRegistrationForm = document.getElementById('teamRegistrationForm');
-        const registerTeamsBtn = document.getElementById('registerTeamsBtn'); // Get the submit button
+        const registerTeamsBtn = document.getElementById('registerTeamsBtn');
         const messageBox = document.getElementById('messageBox');
-        const matchReadySection = document.getElementById('matchReadySection'); // New
-        const startMatchBtn = document.getElementById('startMatchBtn'); // New
-        const registeredTeamsSummary = document.getElementById('registeredTeamsSummary'); // New
+        const matchReadySection = document.getElementById('matchReadySection');
+        const startMatchBtn = document.getElementById('startMatchBtn');
+        const registeredTeamsSummary = document.getElementById('registeredTeamsSummary');
 
-        // Toss Section elements (NEW)
+        // Toss Section elements
         const tossSection = document.getElementById('tossSection');
         const tossWinnerSelect = document.getElementById('tossWinner');
         const tossDecisionSelect = document.getElementById('tossDecision');
         const proceedToMatchReadyBtn = document.getElementById('proceedToMatchReadyBtn');
-        const backBtnToss = document.getElementById('backBtnToss'); // NEW Back button for Toss
+        const backBtnToss = document.getElementById('backBtnToss');
 
-        // NEW: Captain & Wicket Keeper Selection elements
+        // Captain & Wicket Keeper Selection elements
         const captainWkSelectionSection = document.getElementById('captainWkSelectionSection');
         const team1CaptainSelect = document.getElementById('team1CaptainSelect');
         const team1WkSelect = document.getElementById('team1WkSelect');
@@ -1207,19 +1212,17 @@
         const displayTeam1NameWk = document.getElementById('displayTeam1NameWk');
         const displayTeam2NameWk = document.getElementById('displayTeam2NameWk');
 
-
-        // NEW: Playing XI Selection elements
+        // Playing XI Selection elements
         const playingXISelectionSection = document.getElementById('playingXISelectionSection');
         const team1PlayingXITitle = document.getElementById('team1PlayingXITitle');
         const team2PlayingXITitle = document.getElementById('team2PlayingXITitle');
         const team1PlayersList = document.getElementById('team1PlayersList');
         const team2PlayersList = document.getElementById('team2PlayersList');
         const confirmPlayingXIBtn = document.getElementById('confirmPlayingXIBtn');
-        const backBtnPlayingXI = document.getElementById('backBtnPlayingXI'); // Renamed from backToRegistrationFromXI
-        const team1PlayingXICounter = document.getElementById('team1PlayingXICounter'); // NEW Counter
-        const team2PlayingXICounter = document.getElementById('team2PlayingXICounter'); // NEW Counter
-        const resetAllBtn = document.getElementById('resetAllBtn'); // NEW: Reset All button
-
+        const backBtnPlayingXI = document.getElementById('backBtnPlayingXI');
+        const team1PlayingXICounter = document.getElementById('team1PlayingXICounter');
+        const team2PlayingXICounter = document.getElementById('team2PlayingXICounter');
+        const resetAllBtn = document.getElementById('resetAllBtn');
 
         // Live Scoreboard elements
         const displayTeam1Name = document.getElementById('displayTeam1Name');
@@ -1236,23 +1239,22 @@
         const team2ExtrasDisplay = document.getElementById('team2Extras');
         const team2Card = document.getElementById('team2Card');
 
-        const currentBattingTeamContainer = document.getElementById('currentBattingTeamContainer'); // NEW ID
+        const currentBattingTeamContainer = document.getElementById('currentBattingTeamContainer');
         const currentBattingTeamDisplay = document.getElementById('currentBattingTeam');
-        const oversRemainingContainer = document.getElementById('oversRemainingContainer'); // NEW ID
+        const oversRemainingContainer = document.getElementById('oversRemainingContainer');
         const oversRemainingDisplay = document.getElementById('oversRemaining');
-        const tossInfoDisplay = document.getElementById('tossInfoDisplay'); // NEW: Toss Info Display
-        const tossWinnerInfo = document.getElementById('tossWinnerInfo'); // NEW: Toss Winner Info
-        const tossDecisionInfo = document.getElementById('tossDecisionInfo'); // NEW: Toss Decision Info
+        const tossInfoDisplay = document.getElementById('tossInfoDisplay');
+        const tossWinnerInfo = document.getElementById('tossWinnerInfo');
+        const tossDecisionInfo = document.getElementById('tossDecisionInfo');
         const targetScoreDisplayElement = document.getElementById('targetScoreDisplay');
         const targetScoreElement = document.getElementById('targetScore');
-        const freeHitDisplay = document.getElementById('freeHitDisplay'); // New: Free Hit display
+        const freeHitDisplay = document.getElementById('freeHitDisplay');
 
-        // NEW: Chasing info elements
+        // Chasing info elements
         const chasingInfoDisplay = document.getElementById('chasingInfoDisplay');
         const runsRequiredDisplay = document.getElementById('runsRequired');
         const ballsRemainingDisplay = document.getElementById('ballsRemaining');
         const wicketsRemainingDisplay = document.getElementById('wicketsRemaining');
-
 
         // Player selection dropdowns
         const playerSelection = document.getElementById('playerSelection');
@@ -1266,16 +1268,15 @@
         const add2RunsBtn = document.getElementById('add2RunsBtn');
         const add4RunsBtn = document.getElementById('add4RunsBtn');
         const add6RunsBtn = document.getElementById('add6RunsBtn');
-        // New Wicket Buttons
         const addCaughtBtn = document.getElementById('addCaughtBtn');
-        const addBowledLbwBtn = document.getElementById('addBowledLbwBtn'); // Corrected this line
+        const addBowledLbwBtn = document.getElementById('addBowledLbwBtn');
         const addRunOutBtn = document.getElementById('addRunOutBtn');
         const addStumpedBtn = document.getElementById('addStumpedBtn');
         const addHitWicketBtn = document.getElementById('addHitWicketBtn');
         const addOtherWicketBtn = document.getElementById('addOtherWicketBtn');
 
         const addBallBtn = document.getElementById('addBallBtn');
-        const addWideBtn = document.getElementById('addWideBtn'); // Corrected line
+        const addWideBtn = document.getElementById('addWideBtn');
         const addNoBallBtn = document.getElementById('addNoBallBtn');
         const addByeBtn = document.getElementById('addByeBtn');
         const addLegByeBtn = document.getElementById('addLegByeBtn');
@@ -1283,17 +1284,17 @@
         const undoBtn = document.getElementById('undoBtn');
         const switchTeamBtn = document.getElementById('switchTeamBtn');
         const newMatchBtn = document.getElementById('newMatchBtn');
-        const endMatchBtn = document.getElementById('endMatchBtn'); // NEW: End Match button
-        const restartMatchBtn = document.getElementById('restartMatchBtn'); // NEW: Restart Match button
-        const cancelMatchBtn = document.getElementById('cancelMatchBtn'); // NEW: Cancel Match button
+        const concludeMatchBtn = document.getElementById('concludeMatchBtn'); // Renamed
+        const restartMatchBtn = document.getElementById('restartMatchBtn');
+        const cancelMatchBtn = document.getElementById('cancelMatchBtn');
+        const endMatchSummaryBtn = document.getElementById('endMatchSummaryBtn'); // NEW button for summary
 
         const matchResultDisplay = document.getElementById('matchResultDisplay');
-        const matchResultMessageText = document.getElementById('matchResultMessageText'); // NEW: Span for dynamic message
+        const matchResultMessageText = document.getElementById('matchResultMessageText');
         const manOfTheMatchDisplay = document.getElementById('manOfTheMatchDisplay');
         const manOfTheMatchPlayer = document.getElementById('manOfTheMatchPlayer');
-        const backBtnMatchReady = document.getElementById('backBtnMatchReady'); // NEW Back button for Match Ready
-        const backBtnMatchSummary = document.getElementById('backBtnMatchSummary'); // NEW Back button for Match Summary
-
+        const backBtnMatchReady = document.getElementById('backBtnMatchReady');
+        const backBtnMatchSummary = document.getElementById('backBtnMatchSummary');
 
         // Live Scorecard tables
         const liveBatsmanScorecardTable = document.getElementById('batsmanScorecard').getElementsByTagName('tbody')[0];
@@ -1304,7 +1305,7 @@
         const liveFowTeamName = document.getElementById('fowTeamName');
         const liveScorecardsSection = document.getElementById('liveScorecards');
         const liveFOWSection = document.getElementById('liveFOW');
-        const liveScorePanel = document.querySelector('.live-score-panel'); // NEW: Reference to the live score panel
+        const liveScorePanel = document.querySelector('.live-score-panel');
 
         // Final Scorecards elements
         const finalScorecardsSection = document.getElementById('finalScorecardsSection');
@@ -1314,27 +1315,26 @@
         const finalTeam1BowlerScorecardTable = document.getElementById('finalTeam1BowlerScorecard').getElementsByTagName('tbody')[0];
         const finalTeam1FOWList = document.getElementById('finalTeam1FOWList');
         const finalTeam2BatsmanScorecardTable = document.getElementById('finalTeam2BatsmanScorecard').getElementsByTagName('tbody')[0];
-        const finalTeam2BowlerScorecardTable = document.getElementById('finalTeam2BowlerScorecard').getElementsByTagName('tbody')[0]; // Corrected this line
+        const finalTeam2BowlerScorecardTable = document.getElementById('finalTeam2BowlerScorecard').getElementsByTagName('tbody')[0];
         const finalTeam2FOWList = document.getElementById('finalTeam2FOWList');
 
         // Past Matches elements
         const pastMatchesSection = document.getElementById('pastMatchesSection');
         const pastMatchesList = document.getElementById('pastMatchesList');
         const clearPastMatchesBtn = document.getElementById('clearPastMatchesBtn');
-        const showPastMatchesBtn = document.getElementById('showPastMatchesBtn'); // NEW: Show Past Matches button
-        const backBtnPastMatches = document.getElementById('backBtnPastMatches'); // NEW: Back to Main button on Past Match Summary
+        const showPastMatchesBtn = document.getElementById('showPastMatchesBtn');
+        const backBtnPastMatches = document.getElementById('backBtnPastMatches');
 
         // New UI elements for live score page
-        const currentOverInfoPanel = document.getElementById('currentOverInfoPanel'); // NEW ID
+        const currentOverInfoPanel = document.getElementById('currentOverInfoPanel');
         const currentOverBallsDisplay = document.getElementById('currentOverBallsDisplay');
-        const partnershipInfoPanel = document.getElementById('partnershipInfoPanel'); // NEW ID
+        const partnershipInfoPanel = document.getElementById('partnershipInfoPanel');
         const partnershipRunsDisplay = document.getElementById('partnershipRunsDisplay');
 
-        // Developer Info elements (NEW)
+        // Developer Info elements
         const developerInfoSection = document.getElementById('developerInfoSection');
-        const developerInfoBtn = document.getElementById('developerInfoBtn'); // Now directly referenced
-
-        const backBtnDeveloperInfo = document.getElementById('backBtnDeveloperInfo'); // Renamed from backToMainBtn
+        const developerInfoBtn = document.getElementById('developerInfoBtn');
+        const backBtnDeveloperInfo = document.getElementById('backBtnDeveloperInfo');
 
         // Custom Confirmation Modal elements
         const confirmationModal = document.getElementById('confirmationModal');
@@ -1342,38 +1342,37 @@
         const confirmYesBtn = document.getElementById('confirmYesBtn');
         const confirmNoBtn = document.getElementById('confirmNoBtn');
 
-        // NEW: Cancellation Reason Modal elements
+        // Cancellation Reason Modal elements
         const cancelReasonModal = document.getElementById('cancelReasonModal');
         const cancellationReasonSelect = document.getElementById('cancellationReasonSelect');
         const confirmCancellationReasonBtn = document.getElementById('confirmCancellationReasonBtn');
         const backFromCancelReasonBtn = document.getElementById('backFromCancelReasonBtn');
 
-        // NEW: Wide Extra Runs Modal elements
+        // Wide Extra Runs Modal elements
         const wideExtraRunsModal = document.getElementById('wideExtraRunsModal');
-        // Removed wideExtraRunsInput as it's now radio buttons
         const confirmWideExtraRunsBtn = document.getElementById('confirmWideExtraRunsBtn');
         const cancelWideExtraRunsBtn = document.getElementById('cancelWideExtraRunsBtn');
 
-        // NEW: No Ball Extra Runs Modal (Duplicated and modified from Wide)
+        // No Ball Extra Runs Modal
         const noBallExtraRunsModal = document.getElementById('noBallExtraRunsModal');
         const confirmNoBallExtraRunsBtn = document.getElementById('confirmNoBallExtraRunsBtn');
         const cancelNoBallExtraRunsBtn = document.getElementById('cancelNoBallExtraRunsBtn');
 
-        // NEW: Fielder Selection Modal elements
+        // Fielder Selection Modal elements
         const fielderSelectionModal = document.getElementById('fielderSelectionModal');
         const fielderModalTitle = document.getElementById('fielderModalTitle');
         const fielderSelect = document.getElementById('fielderSelect');
         const confirmFielderBtn = document.getElementById('confirmFielderBtn');
         const cancelFielderBtn = document.getElementById('cancelFielderBtn');
 
-        // NEW: Go to Live Score button
+        // Go to Live Score button
         const goToLiveScoreBtn = document.getElementById('goToLiveScoreBtn');
 
 
         // Array of all main content sections to easily hide/show them
         const allSections = [
             teamRegistrationSection,
-            captainWkSelectionSection, // NEW
+            captainWkSelectionSection,
             playingXISelectionSection,
             tossSection,
             matchReadySection,
@@ -1391,27 +1390,9 @@
         let team1 = {
             name: '',
             players: [], // Each player will be { name, runsScored, ballsFaced, isOut, wicketsTaken, runsConceded, ballsBowled, wides, noBalls, oversBowled }
-            captainName: '', // NEW
-            wicketKeeperName: '', // NEW
-            playing11Names: [], // NEW: Array of names of players in the playing XI
-            runs: 0,
-            wickets: 0,
-            overs: 0,
-            balls: 0,
-            totalWides: 0,
-            totalNoBalls: 0,
-            totalByes: 0,
-            totalLegByes: 0,
-            currentStrikerIndex: -1, // Index in the `players` array
-            currentNonStrikerIndex: -1, // Index in the `players` array
-            fallOfWickets: [] // [{ batsman: 'Name', score: 'X/Y', over: 'A.B', dismissalType: 'Caught' }]
-        };
-        let team2 = {
-            name: '',
-            players: [],
-            captainName: '', // NEW
-            wicketKeeperName: '', // NEW
-            playing11Names: [], // NEW: Array of names of players in the playing XI
+            captainName: '',
+            wicketKeeperName: '',
+            playing11Names: [],
             runs: 0,
             wickets: 0,
             overs: 0,
@@ -1424,31 +1405,49 @@
             currentNonStrikerIndex: -1,
             fallOfWickets: []
         };
-        let currentBattingTeam = null; // Reference to the currently batting team object
-        let currentBowlingTeam = null; // Reference to the currently bowling team object
-        let currentBowlerIndex = -1; // Index of the current bowler in the bowling team's `players` array
+        let team2 = {
+            name: '',
+            players: [],
+            captainName: '',
+            wicketKeeperName: '',
+            playing11Names: [],
+            runs: 0,
+            wickets: 0,
+            overs: 0,
+            balls: 0,
+            totalWides: 0,
+            totalNoBalls: 0,
+            totalByes: 0,
+            totalLegByes: 0,
+            currentStrikerIndex: -1,
+            currentNonStrikerIndex: -1,
+            fallOfWickets: []
+        };
+        let currentBattingTeam = null;
+        let currentBowlingTeam = null;
+        let currentBowlerIndex = -1;
 
         let totalOversPerInnings = 0;
         let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'captain_wk_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled'
         let firstInningsTotalRuns = 0;
 
-        let lastAction = null; // Stores the last action for undo functionality
+        let lastAction = null;
 
-        let currentPartnershipRuns = 0; // New: Tracks runs scored by the current batting pair
-        var isFreeHit = false; // New: Free hit state
-        var lastCompletedBowlerIndex = -1; // New: Stores the index of the bowler who just completed an over
+        let currentPartnershipRuns = 0;
+        var isFreeHit = false;
+        var lastCompletedBowlerIndex = -1;
 
-        let tossWinnerName = ''; // NEW: Stores the name of the team that won the toss
-        let tossDecision = ''; // NEW: Stores the toss decision ('bat' or 'bowl')
-        let cancellationReason = ''; // NEW: Stores the reason for match cancellation
+        let tossWinnerName = '';
+        let tossDecision = '';
+        let cancellationReason = '';
 
 
         // Function to show a message box
         function showMessageBox(message, type = 'success') {
             messageBox.textContent = message;
-            messageBox.className = `message-box show ${type}`; // Add show and type class
+            messageBox.className = `message-box show ${type}`;
             setTimeout(() => {
-                messageBox.classList.remove('show'); // Hide after 3 seconds
+                messageBox.classList.remove('show');
             }, 3000);
         }
 
@@ -1468,7 +1467,7 @@
 
             const handleCancel = () => {
                 confirmationModal.classList.add('hidden');
-                if (onCancel) onCancel(); // Only call onCancel if provided
+                if (onCancel) onCancel();
             };
 
             // Store and add new listeners
@@ -1485,7 +1484,7 @@
 
         // Function to update the UI based on the current matchState
         function updateUIForMatchState() {
-            hideAllSections(); // Hide all sections first
+            hideAllSections();
 
             // Hide all buttons by default
             const allButtons = [
@@ -1497,10 +1496,11 @@
                 add1RunBtn, add2RunsBtn, add4RunsBtn, add6RunsBtn,
                 addCaughtBtn, addBowledLbwBtn, addRunOutBtn, addStumpedBtn, addHitWicketBtn, addOtherWicketBtn,
                 addWideBtn, addNoBallBtn, addByeBtn, addLegByeBtn, addBallBtn,
-                switchStrikeBtn, undoBtn, switchTeamBtn, cancelMatchBtn, endMatchBtn,
+                switchStrikeBtn, undoBtn, switchTeamBtn, cancelMatchBtn, concludeMatchBtn, // Renamed
                 newMatchBtn, restartMatchBtn, backBtnMatchSummary,
                 clearPastMatchesBtn, backBtnPastMatches,
-                developerInfoBtn, backBtnDeveloperInfo
+                developerInfoBtn, backBtnDeveloperInfo,
+                endMatchSummaryBtn // NEW button
             ];
             allButtons.forEach(button => button.classList.add('hidden'));
 
@@ -1508,7 +1508,7 @@
             // Hide all score-related info panels and controls by default for non-scoreboard states
             currentBattingTeamContainer.classList.add('hidden');
             oversRemainingContainer.classList.add('hidden');
-            tossInfoDisplay.classList.add('hidden'); // Ensure hidden by default
+            tossInfoDisplay.classList.add('hidden');
             targetScoreDisplayElement.classList.add('hidden');
             chasingInfoDisplay.classList.add('hidden');
             freeHitDisplay.classList.add('hidden');
@@ -1519,9 +1519,9 @@
             liveScorePanel.classList.add('hidden');
             liveScorecardsSection.classList.add('hidden');
             liveFOWSection.classList.add('hidden');
-            matchResultDisplay.classList.add('hidden');
-            manOfTheMatchDisplay.classList.add('hidden');
-            finalScorecardsSection.classList.add('hidden');
+            matchResultDisplay.classList.add('hidden'); // Initially hidden
+            manOfTheMatchDisplay.classList.add('hidden'); // Initially hidden
+            finalScorecardsSection.classList.add('hidden'); // Initially hidden
 
 
             switch (matchState) {
@@ -1530,30 +1530,29 @@
                     registerTeamsBtn.classList.remove('hidden');
                     resetAllBtn.classList.remove('hidden');
                     showPastMatchesBtn.classList.remove('hidden');
-                    developerInfoBtn.classList.remove('hidden'); // Only show on registration page
+                    developerInfoBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    // goToLiveScoreBtn is now handled in 'past_matches' case
                     break;
                 case 'playing_xi_selection':
                     playingXISelectionSection.classList.remove('hidden');
                     confirmPlayingXIBtn.classList.remove('hidden');
                     backBtnPlayingXI.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    renderPlayingXISelection(); // Render checkboxes for playing XI
+                    renderPlayingXISelection();
                     break;
                 case 'captain_wk_selection':
                     captainWkSelectionSection.classList.remove('hidden');
                     confirmCaptainWkBtn.classList.remove('hidden');
                     backBtnCaptainWk.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    renderCaptainWkSelection(); // Render dropdowns for Captain/WK
+                    renderCaptainWkSelection();
                     break;
                 case 'toss':
                     tossSection.classList.remove('hidden');
                     proceedToMatchReadyBtn.classList.remove('hidden');
                     backBtnToss.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    populateTossDropdowns(); // Populate toss dropdowns
+                    populateTossDropdowns();
                     break;
                 case 'teams_registered':
                     matchReadySection.classList.remove('hidden');
@@ -1566,7 +1565,6 @@
                     scoreboardSection.classList.remove('hidden');
                     currentBattingTeamContainer.classList.remove('hidden');
                     oversRemainingContainer.classList.remove('hidden');
-                    // tossInfoDisplay.classList.remove('hidden'); // This is now handled in updateScoreboardDisplay()
                     currentOverInfoPanel.classList.remove('hidden');
                     partnershipInfoPanel.classList.remove('hidden');
                     playerSelection.classList.remove('hidden');
@@ -1574,26 +1572,32 @@
                     liveScorePanel.classList.remove('hidden');
                     liveScorecardsSection.classList.remove('hidden');
                     liveFOWSection.classList.remove('hidden');
-                    restartMatchBtn.classList.remove('hidden'); // Show restart button during active play
-                    cancelMatchBtn.classList.remove('hidden'); // Show cancel button during active play
-                    endMatchBtn.classList.remove('hidden'); // Show End Match button during active play
-                    newMatchBtn.classList.remove('hidden'); // Show new match button
+                    restartMatchBtn.classList.remove('hidden');
+                    cancelMatchBtn.classList.remove('hidden');
+                    concludeMatchBtn.classList.remove('hidden'); // Show Conclude Match button during active play
+                    newMatchBtn.classList.remove('hidden');
+                    // Hide the new End Match button during live play
+                    endMatchSummaryBtn.classList.add('hidden');
                     // Show all score control buttons
                     add1RunBtn.classList.remove('hidden'); add2RunsBtn.classList.remove('hidden'); add4RunsBtn.classList.remove('hidden'); add6RunsBtn.classList.remove('hidden');
                     addCaughtBtn.classList.remove('hidden'); addBowledLbwBtn.classList.remove('hidden'); addRunOutBtn.classList.remove('hidden'); addStumpedBtn.classList.remove('hidden'); addHitWicketBtn.classList.remove('hidden'); addOtherWicketBtn.classList.remove('hidden');
                     addWideBtn.classList.remove('hidden'); addNoBallBtn.classList.remove('hidden'); addByeBtn.classList.remove('hidden'); addLegByeBtn.classList.remove('hidden'); addBallBtn.classList.remove('hidden');
                     switchStrikeBtn.classList.remove('hidden'); undoBtn.classList.remove('hidden'); switchTeamBtn.classList.remove('hidden');
-                    updateScoreboardDisplay(); // Ensure scoreboard is updated
+                    updateScoreboardDisplay();
                     break;
                 case 'completed':
                 case 'cancelled':
                     scoreboardSection.classList.remove('hidden');
-                    matchResultDisplay.classList.remove('hidden');
-                    manOfTheMatchDisplay.classList.remove('hidden');
-                    finalScorecardsSection.classList.remove('hidden');
-                    backBtnMatchSummary.classList.remove('hidden'); // Show back to summary button
-                    newMatchBtn.classList.remove('hidden'); // Show new match button
-                    renderFinalScorecards(); // Render final scorecards
+                    // matchResultDisplay.classList.remove('hidden'); // Now shown by button click
+                    // manOfTheMatchDisplay.classList.remove('hidden'); // Now shown by button click
+                    // finalScorecardsSection.classList.remove('hidden'); // Now shown by button click
+                    backBtnMatchSummary.classList.remove('hidden');
+                    newMatchBtn.classList.remove('hidden');
+                    // Show the new End Match button for summary acknowledgement
+                    endMatchSummaryBtn.classList.remove('hidden');
+                    // Hide the Conclude Match button as the match is over
+                    concludeMatchBtn.classList.add('hidden');
+                    // renderFinalScorecards(); // Now called by button click
 
                     // Disable score controls and player selectors when match is completed/cancelled
                     Array.from(scoreControls.children).forEach(button => button.disabled = true);
@@ -1604,9 +1608,9 @@
                 case 'past_matches':
                     pastMatchesSection.classList.remove('hidden');
                     clearPastMatchesBtn.classList.remove('hidden');
-                    backBtnPastMatches.classList.remove('hidden'); // Show the new button
+                    backBtnPastMatches.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    loadPastMatchesLocal(); // Ensure past matches are loaded
+                    loadPastMatchesLocal();
 
                     // Show "Go to Live Score" button if an active match exists
                     try {
@@ -1626,11 +1630,11 @@
                     backBtnDeveloperInfo.classList.remove('hidden');
                     break;
                 default:
-                    teamRegistrationSection.classList.remove('hidden'); // Default to registration
+                    teamRegistrationSection.classList.remove('hidden');
                     registerTeamsBtn.classList.remove('hidden');
                     resetAllBtn.classList.remove('hidden');
                     showPastMatchesBtn.classList.remove('hidden');
-                    developerInfoBtn.classList.remove('hidden'); // Only show on registration page
+                    developerInfoBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
                     break;
             }
@@ -1651,20 +1655,20 @@
                 battingXI.forEach((player) => {
                     // Find the original index of the player in the full players array
                     const originalIndex = currentBattingTeam.players.findIndex(p => p.name === player.name);
-                    
+
                     const optionStriker = document.createElement('option');
-                    optionStriker.value = originalIndex; // Use original index
+                    optionStriker.value = originalIndex;
                     optionStriker.textContent = player.name;
-                    if (player.isOut) { // If player is out, disable and add (Out) text
+                    if (player.isOut) {
                         optionStriker.disabled = true;
                         optionStriker.textContent += ' (Out)';
                     }
                     strikerSelect.appendChild(optionStriker);
 
                     const optionNonStriker = document.createElement('option');
-                    optionNonStriker.value = originalIndex; // Use original index
+                    optionNonStriker.value = originalIndex;
                     optionNonStriker.textContent = player.name;
-                    if (player.isOut) { // If player is out, disable and add (Out) text
+                    if (player.isOut) {
                         optionNonStriker.disabled = true;
                         optionNonStriker.textContent += ' (Out)';
                     }
@@ -1676,13 +1680,13 @@
                     // Find the original index of the player in the full players array
                     const originalIndex = currentBowlingTeam.players.findIndex(p => p.name === player.name);
                     const optionBowler = document.createElement('option');
-                    optionBowler.value = originalIndex; // Use original index
+                    optionBowler.value = originalIndex;
                     optionBowler.textContent = player.name;
                     // Disable the last bowler if it's a new over (currentBattingTeam.balls === 0)
                     // and the bowler's original index matches the lastCompletedBowlerIndex
                     if (originalIndex === lastCompletedBowlerIndex && currentBattingTeam.balls === 0) {
                         optionBowler.disabled = true;
-                        optionBowler.textContent += ' (Last Over)'; // Add a visual cue
+                        optionBowler.textContent += ' (Last Over)';
                     }
                     bowlerSelect.appendChild(optionBowler);
                 });
@@ -1711,7 +1715,7 @@
             currentBattingTeam.currentStrikerIndex = newStrikerIndex;
             showMessageBox(`${currentBattingTeam.players[newStrikerIndex].name} is now the Striker.`, 'success');
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         });
 
         nonStrikerSelect.addEventListener('change', (event) => {
@@ -1730,7 +1734,7 @@
             currentBattingTeam.currentNonStrikerIndex = newNonStrikerIndex;
             showMessageBox(`${currentBattingTeam.players[newNonStrikerIndex].name} is now the Non-Striker.`, 'success');
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         });
 
         bowlerSelect.addEventListener('change', (event) => {
@@ -1745,9 +1749,9 @@
             // Check if it's the start of a new over AND the selected bowler is the one who just bowled
             if (currentBattingTeam.balls === 0 && newBowlerIndex === lastCompletedBowlerIndex) {
                 showMessageBox('This bowler cannot bowl the next over. Please select a different bowler.', 'error');
-                bowlerSelect.value = ''; // Reset dropdown to empty
-                currentBowlerIndex = -1; // Ensure no bowler is selected
-                return; // Stop further execution
+                bowlerSelect.value = '';
+                currentBowlerIndex = -1;
+                return;
             }
 
             // If a valid bowler is selected (either not the previous bowler, or it's not the start of a new over)
@@ -1785,7 +1789,7 @@
                 team2Card.classList.add('active');
                 currentBattingTeamDisplay.textContent = team2.name;
             } else {
-                currentBattingTeamDisplay.textContent = 'N/A'; // No team batting yet
+                currentBattingTeamDisplay.textContent = 'N/A';
             }
 
             // Update overs remaining
@@ -1801,7 +1805,7 @@
                     const remainingBalls = ballsRemainingOverall % 6;
                     oversRemainingDisplay.textContent = `${remainingOvers}.${remainingBalls}`;
                 } else {
-                    oversRemainingDisplay.textContent = '0.0'; // Should not happen if logic is correct
+                    oversRemainingDisplay.textContent = '0.0';
                 }
             } else {
                 oversRemainingDisplay.textContent = 'N/A';
@@ -1814,17 +1818,17 @@
 
                 const runsNeeded = (firstInningsTotalRuns + 1) - currentBattingTeam.runs;
                 const ballsLeft = (totalOversPerInnings * 6) - (currentBattingTeam.overs * 6 + currentBattingTeam.balls);
-                const wicketsLeft = (getPlayingXIPlayers(currentBattingTeam).length - 1) - currentBattingTeam.wickets; // Use playing XI length
+                const wicketsLeft = (getPlayingXIPlayers(currentBattingTeam).length - 1) - currentBattingTeam.wickets;
 
-                runsRequiredDisplay.textContent = Math.max(0, runsNeeded); // Ensure non-negative
-                ballsRemainingDisplay.textContent = Math.max(0, ballsLeft); // Ensure non-negative
-                wicketsRemainingDisplay.textContent = Math.max(0, wicketsLeft); // Ensure non-negative
+                runsRequiredDisplay.textContent = Math.max(0, runsNeeded);
+                ballsRemainingDisplay.textContent = Math.max(0, ballsLeft);
+                wicketsRemainingDisplay.textContent = Math.max(0, wicketsLeft);
 
                 chasingInfoDisplay.classList.remove('hidden');
 
             } else {
                 targetScoreDisplayElement.classList.add('hidden');
-                chasingInfoDisplay.classList.add('hidden'); // Hide chasing info if not innings 2
+                chasingInfoDisplay.classList.add('hidden');
             }
 
             // Update new UI elements
@@ -1838,22 +1842,22 @@
                 freeHitDisplay.classList.add('hidden');
             }
 
-            // Update Toss Info Display (FIXED: Ensure visibility is handled here)
+            // Update Toss Info Display
             if (tossWinnerName && tossDecision) {
                 tossWinnerInfo.textContent = tossWinnerName;
                 tossDecisionInfo.textContent = tossDecision;
-                tossInfoDisplay.classList.remove('hidden'); // Ensure it's visible
+                tossInfoDisplay.classList.remove('hidden');
             } else {
-                tossInfoDisplay.classList.add('hidden'); // Hide if toss info is missing
+                tossInfoDisplay.classList.add('hidden');
             }
 
 
             // Only render live scorecards if match is active and playing XI is selected
             if ((matchState === 'innings1' || matchState === 'innings2') && currentBattingTeam.playing11Names.length === 11) {
-                renderBatsmanScorecard(currentBattingTeam, liveBatsmanScorecardTable, liveBatsmanScorecardTeamName, true); // Pass true for live
-                renderBowlerScorecard(currentBowlingTeam, liveBowlerScorecardTable, liveBowlerScorecardTeamName, true); // Pass true for live
+                renderBatsmanScorecard(currentBattingTeam, liveBatsmanScorecardTable, liveBatsmanScorecardTeamName, true);
+                renderBowlerScorecard(currentBowlingTeam, liveBowlerScorecardTable, liveBowlerScorecardTeamName, true);
                 renderFallOfWickets(currentBattingTeam, liveFallOfWicketsList, liveFowTeamName);
-                populatePlayerDropdowns(); // Re-populate dropdowns to update selected players
+                populatePlayerDropdowns();
             }
         }
 
@@ -1880,7 +1884,7 @@
             striker.ballsFaced++;
             currentBattingTeam.runs += runs;
             bowler.runsConceded += runs;
-            currentBattingTeam.balls++; // A run implies a ball bowled
+            currentBattingTeam.balls++;
             bowler.ballsBowled++;
 
             // Store previous partnership runs for undo
@@ -1890,11 +1894,11 @@
                 strikerIndex: currentBattingTeam.currentStrikerIndex,
                 bowlerIndex: currentBowlerIndex,
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
-                wasStrikeSwitched: false, // Will be updated if strike is switched
-                prevPartnershipRuns: currentPartnershipRuns, // Store partnership before this action
+                wasStrikeSwitched: false,
+                prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit
             };
-            currentPartnershipRuns += runs; // Update partnership
+            currentPartnershipRuns += runs;
 
             // Apply flash effect to runs display
             const runsDisplayElement = currentBattingTeam === team1 ? team1RunsDisplay : team2RunsDisplay;
@@ -1904,14 +1908,14 @@
 
             // If runs are odd, switch strike
             if (runs % 2 !== 0) {
-                switchStrike(true); // true means it's an automatic switch
+                switchStrike(true);
                 lastAction.wasStrikeSwitched = true;
             }
 
-            isFreeHit = false; // Free hit ends after a legal delivery
+            isFreeHit = false;
             checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         // Function to add a wicket (now handles fielder selection)
@@ -1937,11 +1941,11 @@
             }
 
             // Handle Free Hit first
-            if (isFreeHit && dismissalType !== 'Run Out') { // Run Out is the only dismissal on a free hit
+            if (isFreeHit && dismissalType !== 'Run Out') {
                 showMessageBox(`Wicket on Free Hit! ${striker.name} is not out (${dismissalType}), but ball counted.`, 'info');
-                striker.ballsFaced++; // Still counts as a ball faced
-                bowler.ballsBowled++; // Still counts as a ball bowled
-                currentBattingTeam.balls++; // Still counts as a ball in the over
+                striker.ballsFaced++;
+                bowler.ballsBowled++;
+                currentBattingTeam.balls++;
                 // No wicket is recorded, no change to runs
                 lastAction = {
                     type: 'freeHitWicketAttempt',
@@ -1950,9 +1954,9 @@
                     team: currentBattingTeam === team1 ? 'team1' : 'team2',
                     prevPartnershipRuns: currentPartnershipRuns,
                     prevIsFreeHit: isFreeHit,
-                    dismissalType: dismissalType // Store for undo message
+                    dismissalType: dismissalType
                 };
-                isFreeHit = false; // Free hit ends
+                isFreeHit = false;
                 checkInningsCompletion();
                 updateScoreboardDisplay();
                 saveCurrentMatchStateToLocal();
@@ -2016,10 +2020,10 @@
         function processWicket(striker, bowler, dismissalType, fielderName = null) {
             striker.isOut = true;
             currentBattingTeam.wickets++;
-            if (dismissalType !== 'Run Out' && dismissalType !== 'Hit Wicket') { // Bowler gets credit for most wickets
+            if (dismissalType !== 'Run Out' && dismissalType !== 'Hit Wicket') {
                 bowler.wicketsTaken++;
             }
-            striker.ballsFaced++; // A wicket implies a ball bowled
+            striker.ballsFaced++;
             bowler.ballsBowled++;
             currentBattingTeam.balls++;
 
@@ -2040,12 +2044,12 @@
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 previousStrikerIndex: currentBattingTeam.currentStrikerIndex,
                 previousNonStrikerIndex: currentBattingTeam.currentNonStrikerIndex,
-                prevPartnershipRuns: currentPartnershipRuns, // Store partnership before this action
+                prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit,
-                dismissalType: dismissalType, // Store dismissal type for undo
+                dismissalType: dismissalType,
                 fielderName: fielderName
             };
-            currentPartnershipRuns = 0; // Reset partnership on wicket
+            currentPartnershipRuns = 0;
 
             // Apply flash effect to wickets display
             const wicketsDisplayElement = currentBattingTeam === team1 ? team1WicketsDisplay : team2WicketsDisplay;
@@ -2083,11 +2087,11 @@
                 message += ` ${currentBattingTeam.name} All Out!`;
                 showMessageBox(message, 'success');
             }
-            isFreeHit = false; // Free hit ends after a legal delivery (even if it's a wicket)
+            isFreeHit = false;
 
             checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
 
@@ -2123,11 +2127,11 @@
                 prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit
             };
-            isFreeHit = false; // Free hit ends after a legal delivery
+            isFreeHit = false;
 
             checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         // Functions for Extras
@@ -2148,7 +2152,7 @@
             // Set up event listeners for modal buttons
             confirmWideExtraRunsBtn.onclick = () => {
                 const selectedRadio = document.querySelector('input[name="wideExtraRuns"]:checked');
-                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0; // Default to 0 if no selection for some reason
+                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0;
                 processWide(extraRuns);
                 wideExtraRunsModal.classList.add('hidden');
             };
@@ -2161,12 +2165,12 @@
         // Helper function to process the wide after getting extra runs
         function processWide(extraRuns) {
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
-            const totalRunsAdded = 1 + extraRuns; // 1 for the wide itself, plus any extra runs
+            const totalRunsAdded = 1 + extraRuns;
 
             currentBattingTeam.runs += totalRunsAdded;
-            currentBattingTeam.totalWides += 1; // Only count one wide event
+            currentBattingTeam.totalWides += 1;
             bowler.runsConceded += totalRunsAdded;
-            bowler.wides += 1; // Only count one wide for the bowler
+            bowler.wides += 1;
 
             lastAction = {
                 type: 'wide',
@@ -2174,8 +2178,8 @@
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit,
-                totalRunsAdded: totalRunsAdded, // Store total runs added for undo
-                extraRuns: extraRuns // Store extra runs for undo message
+                totalRunsAdded: totalRunsAdded,
+                extraRuns: extraRuns
             };
 
             // Apply flash effect to runs display
@@ -2184,9 +2188,9 @@
             setTimeout(() => runsDisplayElement.classList.remove('flash-effect'), 300);
 
             // Wide does not end a free hit, as it's not a legal delivery
-            checkInningsCompletion(); // Wide doesn't count as a ball, but check innings completion
+            checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
             showMessageBox(`Wide ball recorded. ${totalRunsAdded} runs added.`, 'success');
         }
 
@@ -2208,7 +2212,7 @@
             // Set up event listeners for modal buttons
             confirmNoBallExtraRunsBtn.onclick = () => {
                 const selectedRadio = document.querySelector('input[name="noBallExtraRuns"]:checked');
-                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0; // Default to 0 if no selection for some reason
+                const extraRuns = selectedRadio ? parseInt(selectedRadio.value) : 0;
                 processNoBall(extraRuns);
                 noBallExtraRunsModal.classList.add('hidden');
             };
@@ -2221,12 +2225,12 @@
         // Helper function to process the no ball after getting extra runs
         function processNoBall(extraRuns) {
             const bowler = currentBowlingTeam.players[currentBowlerIndex];
-            const totalRunsAdded = 1 + extraRuns; // 1 for the no ball itself, plus any extra runs
+            const totalRunsAdded = 1 + extraRuns;
 
             currentBattingTeam.runs += totalRunsAdded;
-            currentBattingTeam.totalNoBalls += 1; // Only count one no ball event
+            currentBattingTeam.totalNoBalls += 1;
             bowler.runsConceded += totalRunsAdded;
-            bowler.noBalls += 1; // Only count one no ball for the bowler
+            bowler.noBalls += 1;
 
             lastAction = {
                 type: 'noBall',
@@ -2234,10 +2238,10 @@
                 team: currentBattingTeam === team1 ? 'team1' : 'team2',
                 prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit,
-                totalRunsAdded: totalRunsAdded, // Store total runs added for undo
-                extraRuns: extraRuns // Store extra runs for undo message
+                totalRunsAdded: totalRunsAdded,
+                extraRuns: extraRuns
             };
-            isFreeHit = true; // Set free hit for the next ball
+            isFreeHit = true;
             showMessageBox(`No Ball recorded. ${totalRunsAdded} runs added. Free Hit on next delivery!`, 'info');
 
             // Apply flash effect to runs display
@@ -2245,9 +2249,9 @@
             runsDisplayElement.classList.add('flash-effect');
             setTimeout(() => runsDisplayElement.classList.remove('flash-effect'), 300);
 
-            checkInningsCompletion(); // No ball doesn't count as a ball, but check innings completion
+            checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
 
@@ -2267,10 +2271,10 @@
                 lastCompletedBowlerIndex = -1;
             }
 
-            currentBattingTeam.runs += 1; // 1 run for bye
+            currentBattingTeam.runs += 1;
             currentBattingTeam.totalByes += 1;
-            currentBattingTeam.balls++; // Bye counts as a ball
-            bowler.ballsBowled++; // Bowler bowls a ball
+            currentBattingTeam.balls++;
+            bowler.ballsBowled++;
 
             // Store previous partnership runs for undo (partnership does not increase for extras not off bat)
             lastAction = {
@@ -2280,7 +2284,7 @@
                 prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit
             };
-            isFreeHit = false; // Free hit ends after a legal delivery (even if it's a bye)
+            isFreeHit = false;
 
             // Apply flash effect to runs display
             const runsDisplayElement = currentBattingTeam === team1 ? team1RunsDisplay : team2RunsDisplay;
@@ -2289,7 +2293,7 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         function addLegBye() {
@@ -2308,10 +2312,10 @@
                 lastCompletedBowlerIndex = -1;
             }
 
-            currentBattingTeam.runs += 1; // 1 run for leg bye
+            currentBattingTeam.runs += 1;
             currentBattingTeam.totalLegByes += 1;
-            currentBattingTeam.balls++; // Leg bye counts as a ball
-            bowler.ballsBowled++; // Bowler bowls a ball
+            currentBattingTeam.balls++;
+            bowler.ballsBowled++;
 
             // Store previous partnership runs for undo (partnership does not increase for extras not off bat)
             lastAction = {
@@ -2321,7 +2325,7 @@
                 prevPartnershipRuns: currentPartnershipRuns,
                 prevIsFreeHit: isFreeHit
             };
-            isFreeHit = false; // Free hit ends after a legal delivery (even if it's a leg bye)
+            isFreeHit = false;
 
             // Apply flash effect to runs display
             const runsDisplayElement = currentBattingTeam === team1 ? team1RunsDisplay : team2RunsDisplay;
@@ -2330,7 +2334,7 @@
 
             checkInningsCompletion();
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         // Function to switch strike between the two current batsmen
@@ -2339,10 +2343,10 @@
                 const temp = currentBattingTeam.currentStrikerIndex;
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.currentNonStrikerIndex;
                 currentBattingTeam.currentNonStrikerIndex = temp;
-                populatePlayerDropdowns(); // Update dropdowns to reflect strike change
+                populatePlayerDropdowns();
                 if (!isAutomatic) {
                     showMessageBox('Strike switched manually.', 'info');
-                    saveCurrentMatchStateToLocal(); // Save changes to local storage
+                    saveCurrentMatchStateToLocal();
                 }
             } else if (!isAutomatic) {
                 showMessageBox('Cannot switch strike: ensure both batsmen are selected.', 'error');
@@ -2356,10 +2360,10 @@
                 currentBattingTeam.overs += Math.floor(currentBattingTeam.balls / 6);
                 currentBattingTeam.balls = currentBattingTeam.balls % 6;
                 // After an over, automatically switch strike
-                switchStrike(true); // Automatic switch
-                lastCompletedBowlerIndex = currentBowlerIndex; // Store the bowler who just completed the over
-                currentBowlerIndex = -1; // Reset current bowler
-                bowlerSelect.value = ''; // Clear dropdown
+                switchStrike(true);
+                lastCompletedBowlerIndex = currentBowlerIndex;
+                currentBowlerIndex = -1;
+                bowlerSelect.value = '';
                 showMessageBox('Over completed! Select a new bowler.', 'info');
             }
 
@@ -2378,23 +2382,22 @@
 
             if (matchState === 'innings1') {
                 if (isAllOut || allOversBowled) {
-                    // Corrected: Set firstInningsTotalRuns to the runs of the team that just batted (currentBattingTeam)
                     firstInningsTotalRuns = currentBattingTeam.runs;
                     showMessageBox(`${currentBattingTeam.name} Innings Completed! Target for ${currentBowlingTeam.name} is ${firstInningsTotalRuns + 1}.`, 'success');
                     matchState = 'innings2';
-                    switchBattingTeam(); // Automatically switch to the other team for chasing
-                    updateScoreboardDisplay(); // Update display immediately after switch
-                    saveCurrentMatchStateToLocal(); // Save changes to local storage
+                    switchBattingTeam();
+                    updateScoreboardDisplay();
+                    saveCurrentMatchStateToLocal();
                 }
             } else if (matchState === 'innings2') {
                 // Check for win condition immediately when target is surpassed
                 if (currentBattingTeam.runs > firstInningsTotalRuns) {
-                    declareWinner('Completed'); // Pass status 'Completed'
-                    return; // Exit to prevent further score updates
+                    declareWinner('Completed');
+                    return;
                 }
 
                 if (isAllOut || allOversBowled) {
-                    declareWinner('Completed'); // Pass status 'Completed'
+                    declareWinner('Completed');
                 }
             }
         }
@@ -2408,8 +2411,6 @@
 
             // Save current batsmen's state before switching
             if (currentBattingTeam) {
-                // currentStrikerIndex and currentNonStrikerIndex already refer to original players array
-                // No need to re-assign values from dropdowns as they are already updated by their change listeners
             }
 
             // Determine the next batting and bowling teams
@@ -2421,7 +2422,7 @@
 
             // Reset current bowler for the new bowling team
             currentBowlerIndex = -1;
-            lastCompletedBowlerIndex = -1; // Reset for new innings
+            lastCompletedBowlerIndex = -1;
 
             // Set initial batsmen for the new batting team from their playing XI
             const nextBattingXI = getPlayingXIPlayers(currentBattingTeam);
@@ -2445,17 +2446,17 @@
             currentBattingTeam.currentStrikerIndex = nextBatsmanIndex;
             currentBattingTeam.currentNonStrikerIndex = nextNonStrikerIndex;
 
-            currentPartnershipRuns = 0; // Reset partnership when switching batting teams
-            isFreeHit = false; // Reset free hit on innings switch
+            currentPartnershipRuns = 0;
+            isFreeHit = false;
 
             showMessageBox(`Switched to ${currentBattingTeam.name} batting!`, 'success');
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         // Function to declare the winner and Man of the Match
-        async function declareWinner(status, reason = null) { // Added status parameter and new reason parameter
-            matchState = status; // Set matchState to 'completed' or 'cancelled'
+        async function declareWinner(status, reason = null) {
+            matchState = status;
             let resultMessage = '';
 
             // Determine which team batted first and which batted second
@@ -2463,14 +2464,14 @@
             const secondBattingTeam = (firstInningsTotalRuns === team1.runs) ? team2 : team1;
 
             if (status === 'Cancelled') {
-                cancellationReason = reason; // Store the reason
-                resultMessage = `Match Cancelled! Reason: ${cancellationReason}`; // Now explicitly setting the message for cancelled matches
-            } else { // status === 'Completed'
-                cancellationReason = ''; // Clear cancellation reason for completed matches
+                cancellationReason = reason;
+                resultMessage = `Match Cancelled! Reason: ${cancellationReason}`;
+            } else {
+                cancellationReason = '';
                 const targetChased = secondBattingTeam.runs > firstInningsTotalRuns;
 
                 if (targetChased) {
-                    resultMessage = `${secondBattingTeam.name} wins by ${getPlayingXIPlayers(secondBattingTeam).length - 1 - secondBattingTeam.wickets} wickets!`; // Use playing XI length
+                    resultMessage = `${secondBattingTeam.name} wins by ${getPlayingXIPlayers(secondBattingTeam).length - 1 - secondBattingTeam.wickets} wickets!`;
                 } else if (firstInningsTotalRuns > secondBattingTeam.runs) {
                     resultMessage = `${firstBattingTeam.name} wins by ${firstInningsTotalRuns - secondBattingTeam.runs} runs!`;
                 } else {
@@ -2481,21 +2482,11 @@
 
             // Determine Man of the Match (only for completed matches)
             const motmPlayer = (status === 'Completed') ? determineManOfTheMatch() : null;
-            const motmName = motmPlayer ? motmPlayer.name : 'Not Available As Match ' + status; // Use 'status' directly
+            const motmName = motmPlayer ? motmPlayer.name : 'Not Available As Match ' + status;
 
             // Save match details to localStorage immediately
-            saveMatchDetailsLocal(resultMessage, motmName, status, cancellationReason); // Pass status and reason to save function
-            saveCurrentMatchStateToLocal(); // Save final state to local storage
-
-            // Immediately show the match result (winner and difference)
-            matchResultMessageText.textContent = resultMessage; // Update only the text span
-            
-            // Show all summary elements
-            matchResultDisplay.classList.remove('hidden');
-            manOfTheMatchDisplay.classList.remove('hidden');
-            manOfTheMatchPlayer.textContent = motmName; // Set Man of the Match player
-            finalScorecardsSection.classList.remove('hidden');
-            renderFinalScorecards(); // Render the final scorecards
+            saveMatchDetailsLocal(resultMessage, motmName, status, cancellationReason);
+            saveCurrentMatchStateToLocal();
 
             // Hide live score elements and show summary navigation
             currentBattingTeamContainer.classList.add('hidden');
@@ -2509,14 +2500,18 @@
             liveScorecardsSection.classList.add('hidden');
             liveFOWSection.classList.add('hidden');
 
-            restartMatchBtn.classList.add('hidden'); // HIDE RESTART BUTTON WHEN MATCH IS CONCLUDED
-            newMatchBtn.classList.remove('hidden'); // Show new match button
-            backBtnMatchSummary.classList.remove('hidden'); // Show back to summary button
-            cancelMatchBtn.classList.add('hidden'); // Hide cancel button
-            endMatchBtn.classList.add('hidden'); // Hide End Match button
+            restartMatchBtn.classList.add('hidden');
+            newMatchBtn.classList.remove('hidden');
+            backBtnMatchSummary.classList.remove('hidden');
+            cancelMatchBtn.classList.add('hidden');
+            concludeMatchBtn.classList.add('hidden'); // Hide Conclude Match button
 
-            showMessageBox(`Match ${status.toLowerCase()}! Full summary displayed.`, 'success');
-            console.log(`declareWinner(): Match ${status.toLowerCase()}. Summary displayed.`);
+            // Show the new End Match button for summary acknowledgement
+            endMatchSummaryBtn.classList.remove('hidden');
+
+
+            showMessageBox(`Match ${status.toLowerCase()}! Click 'End Match' to view full summary.`, 'success');
+            console.log(`declareWinner(): Match ${status.toLowerCase()}. Summary ready to be displayed.`);
 
             // Disable score controls
             Array.from(scoreControls.children).forEach(button => button.disabled = true);
@@ -2524,7 +2519,7 @@
             nonStrikerSelect.disabled = true;
             bowlerSelect.disabled = true;
 
-            updateScoreboardDisplay(); // Update scoreboard display to reflect final state (this will hide the info boxes)
+            updateScoreboardDisplay(); // Update UI state to reflect button visibility
         }
 
         // Function to determine Man of the Match based on a simple heuristic
@@ -2532,7 +2527,7 @@
             // Only consider players who were part of the playing XI
             let allPlayingXIPlayers = [...getPlayingXIPlayers(team1), ...getPlayingXIPlayers(team2)];
             let manOfTheMatch = null;
-            let highestScore = -Infinity; // Initialize with negative infinity to ensure any valid score is higher
+            let highestScore = -Infinity;
 
             allPlayingXIPlayers.forEach(player => {
                 // Heuristic: Runs are highly valued, wickets are highly valued, low runs conceded are good.
@@ -2543,10 +2538,10 @@
                 if (player.ballsFaced > 0 || player.ballsBowled > 0) {
                     performanceScore += 1;
                 }
-                
+
                 // Prioritize players who actually contributed (e.g., non-zero runs or wickets)
                 if (player.runsScored === 0 && player.wicketsTaken === 0 && player.wides === 0 && player.noBalls === 0 && player.ballsFaced === 0 && player.ballsBowled === 0) {
-                    performanceScore = -Infinity; // Penalize players with absolutely no contribution
+                    performanceScore = -Infinity;
                 }
 
 
@@ -2569,7 +2564,6 @@
 
             const targetTeam = lastAction.team === 'team1' ? team1 : team2;
             // Determine the bowling team based on the current batting team (for extras/bowler stats)
-            // This needs to be the team that was bowling when the action happened, not necessarily the currentBowlingTeam
             const bowlingTeamForUndo = (targetTeam === team1) ? team2 : team1;
             const currentBowler = bowlingTeamForUndo.players[lastAction.bowlerIndex];
 
@@ -2601,7 +2595,7 @@
                     targetTeam.currentNonStrikerIndex = lastAction.previousNonStrikerIndex;
                     // Remove last fall of wicket entry
                     if (targetTeam.fallOfWickets.length > 0) {
-                        targetTeam.fallOfWickets.pop(); // Remove the last wicket entry
+                        targetTeam.fallOfWickets.pop();
                     }
                     break;
                 case 'freeHitWicketAttempt':
@@ -2660,22 +2654,10 @@
                 currentBowler.ballsBowled += 6;
             }
 
-            // If undoing an action that was the first ball of an over, and a bowler was previously restricted,
-            // reinstate that restriction. This is crucial for the bowler re-selection fix.
-            // This logic is complex and might need more robust state management for `lastCompletedBowlerIndex`
-            // if multiple undo operations are expected to cross over boundaries. For a single undo,
-            // we can try to infer.
-            // For now, let's assume `lastCompletedBowlerIndex` is only set on over completion and cleared on first ball.
-            // If we undo the first ball, the restriction should conceptually return.
-            // This is a tricky edge case for `undo`. For simplicity, we'll keep `lastCompletedBowlerIndex` as is,
-            // and the `populatePlayerDropdowns` will handle disabling based on `currentBattingTeam.balls === 0`.
-            // The main fix for re-selection is in the `bowlerSelect.addEventListener`.
-
-
-            lastAction = null; // Clear last action after undo
+            lastAction = null;
             showMessageBox('Last action undone.', 'info');
             updateScoreboardDisplay();
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
         // Function to save current match state to local storage
@@ -2693,13 +2675,13 @@
                     currentStrikerIndex: currentBattingTeam ? currentBattingTeam.currentStrikerIndex : -1,
                     currentNonStrikerIndex: currentBattingTeam ? currentBattingTeam.currentNonStrikerIndex : -1,
                     currentPartnershipRuns: currentPartnershipRuns,
-                    isFreeHit: isFreeHit, // Save free hit state
-                    lastCompletedBowlerIndex: lastCompletedBowlerIndex, // Save last completed bowler
+                    isFreeHit: isFreeHit || false,
+                    lastCompletedBowlerIndex: lastCompletedBowlerIndex || -1,
                     matchDate: document.getElementById('matchDate').value,
                     matchTime: document.getElementById('matchTime').value,
-                    tossWinnerName: tossWinnerName, // NEW: Save toss winner
-                    tossDecision: tossDecision, // NEW: Save toss decision
-                    cancellationReason: cancellationReason // NEW: Save cancellation reason
+                    tossWinnerName: tossWinnerName,
+                    tossDecision: tossDecision,
+                    cancellationReason: cancellationReason
                 };
                 localStorage.setItem('currentCricketMatch', JSON.stringify(currentMatchState));
                 console.log("Current match state saved to local storage.");
@@ -2722,11 +2704,11 @@
                     matchState = loadedState.matchState;
                     firstInningsTotalRuns = loadedState.firstInningsTotalRuns;
                     currentPartnershipRuns = loadedState.currentPartnershipRuns;
-                    isFreeHit = loadedState.isFreeHit || false; // Load free hit state, default to false
-                    lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1; // Load last completed bowler
-                    tossWinnerName = loadedState.tossWinnerName || ''; // NEW: Load toss winner
-                    tossDecision = loadedState.tossDecision || ''; // NEW: Load toss decision
-                    cancellationReason = loadedState.cancellationReason || ''; // NEW: Load cancellation reason
+                    isFreeHit = loadedState.isFreeHit || false;
+                    lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1;
+                    tossWinnerName = loadedState.tossWinnerName || '';
+                    tossDecision = loadedState.tossDecision || '';
+                    cancellationReason = loadedState.cancellationReason || '';
 
                     // Re-establish object references for currentBattingTeam and currentBowlingTeam
                     if (loadedState.currentBattingTeamName === team1.name) {
@@ -2745,7 +2727,7 @@
                         currentBattingTeam.currentStrikerIndex = loadedState.currentStrikerIndex;
                         currentBattingTeam.currentNonStrikerIndex = loadedState.currentNonStrikerIndex;
                     }
-                    
+
                     // Restore date and time inputs
                     document.getElementById('matchDate').value = loadedState.matchDate || '';
                     document.getElementById('matchTime').value = loadedState.matchTime || '';
@@ -2755,16 +2737,15 @@
                     document.getElementById('team1Players').value = loadedState.team1.players.map(p => p.name).join('\n') || '';
                     document.getElementById('team2Players').value = loadedState.team2.players.map(p => p.name).join('\n') || '';
 
-                    updateUIForMatchState(); // Show appropriate section based on loaded match state
-                    // showMessageBox('Match state loaded from local storage.', 'info'); // Removed this message
+                    updateUIForMatchState();
                 } else {
                     console.log("No previous match state found in local storage. Starting new registration.");
-                    newMatch(); // Start a fresh match if no state found
+                    newMatch();
                 }
             } catch (e) {
                 console.error("Error loading current match state from local storage: ", e);
                 showMessageBox('Failed to load previous match state. Starting a new match.', 'error');
-                newMatch(); // Ensure the UI is in a consistent state even after error
+                newMatch();
             }
         }
 
@@ -2784,16 +2765,16 @@
             matchState = 'registration';
             firstInningsTotalRuns = 0;
             lastAction = null;
-            currentPartnershipRuns = 0; // Reset partnership for new match
-            isFreeHit = false; // Reset free hit for new match
-            lastCompletedBowlerIndex = -1; // Reset last completed bowler for new match
-            tossWinnerName = ''; // NEW: Reset toss winner
-            tossDecision = ''; // NEW: Reset toss decision
-            cancellationReason = ''; // NEW: Reset cancellation reason
+            currentPartnershipRuns = 0;
+            isFreeHit = false;
+            lastCompletedBowlerIndex = -1;
+            tossWinnerName = '';
+            tossDecision = '';
+            cancellationReason = '';
 
             // Clear form fields
             teamRegistrationForm.reset();
-            registerTeamsBtn.textContent = 'Register Teams'; // Reset button text
+            registerTeamsBtn.textContent = 'Register Teams';
 
             // Clear scorecards
             liveBatsmanScorecardTable.innerHTML = '';
@@ -2812,22 +2793,21 @@
             finalTeam1NameDisplay.textContent = '';
             finalTeam2NameDisplay.textContent = '';
 
-            pastMatchesList.innerHTML = ''; // Clear past matches list
+            pastMatchesList.innerHTML = '';
 
             // Enable score controls and player selectors
             Array.from(scoreControls.children).forEach(button => button.disabled = false);
             strikerSelect.disabled = false;
             nonStrikerSelect.disabled = false;
             bowlerSelect.disabled = false;
-            populatePlayerDropdowns(); // Clear dropdowns
+            populatePlayerDropdowns();
 
-            updateUIForMatchState(); // Show registration section and handle button visibility
-            // showMessageBox('New match started! Please register teams.', 'success'); // Removed this message
+            updateUIForMatchState();
 
-            loadPastMatchesLocal(); // Reload past matches after a new match is started
+            loadPastMatchesLocal();
         }
 
-        // NEW: Function to restart the current match with same teams and toss
+        // Function to restart the current match with same teams and toss
         function restartCurrentMatch() {
             // Reset core match stats for both teams
             [team1, team2].forEach(team => {
@@ -2853,7 +2833,6 @@
                     player.noBalls = 0;
                     player.oversBowled = 0;
                 });
-                // playing11Names should remain as selected
             });
 
             firstInningsTotalRuns = 0;
@@ -2861,10 +2840,9 @@
             currentPartnershipRuns = 0;
             isFreeHit = false;
             lastCompletedBowlerIndex = -1;
-            cancellationReason = ''; // Reset cancellation reason on restart
+            cancellationReason = '';
 
             // Re-establish currentBattingTeam and currentBowlingTeam based on original toss
-            // This logic needs to mirror the toss decision in proceedToMatchReadyBtn
             let tempTeam1 = team1;
             let tempTeam2 = team2;
 
@@ -2872,15 +2850,15 @@
                 if (tossDecision === 'bat') {
                     currentBattingTeam = tempTeam1;
                     currentBowlingTeam = tempTeam2;
-                } else { // bowl
+                } else {
                     currentBattingTeam = tempTeam2;
                     currentBowlingTeam = tempTeam1;
                 }
-            } else { // team2 won toss
+            } else {
                 if (tossDecision === 'bat') {
                     currentBattingTeam = tempTeam2;
                     currentBowlingTeam = tempTeam1;
-                } else { // bowl
+                } else {
                     currentBattingTeam = tempTeam1;
                     currentBowlingTeam = tempTeam2;
                 }
@@ -2898,9 +2876,9 @@
                 showMessageBox(`${currentBattingTeam.name} needs at least one player in Playing XI to start.`, 'error');
                 return;
             }
-            currentBowlerIndex = -1; // Reset bowler for new innings
+            currentBowlerIndex = -1;
 
-            matchState = 'innings1'; // Set match state back to first innings
+            matchState = 'innings1';
 
             // Clear live scorecards
             liveBatsmanScorecardTable.innerHTML = '';
@@ -2913,7 +2891,7 @@
             nonStrikerSelect.disabled = false;
             bowlerSelect.disabled = false;
 
-            updateUIForMatchState(); // Show scoreboard and handle button visibility
+            updateUIForMatchState();
             saveCurrentMatchStateToLocal();
             showMessageBox('Match restarted with same teams and Playing XI!', 'success');
         }
@@ -2921,7 +2899,7 @@
 
         // Function to render a batsman scorecard for a given team and table element
         function renderBatsmanScorecard(team, targetTable, teamNameElement, isLive = false) {
-            targetTable.innerHTML = ''; // Clear previous rows
+            targetTable.innerHTML = '';
             if (teamNameElement) teamNameElement.textContent = team ? team.name : '';
 
             if (team) {
@@ -2933,7 +2911,7 @@
                     const nameCell = row.insertCell();
                     const runsCell = row.insertCell();
                     const ballsCell = row.insertCell();
-                    const strikeRateCell = row.insertCell(); // New cell for Strike Rate
+                    const strikeRateCell = row.insertCell();
                     const statusCell = row.insertCell();
 
                     nameCell.textContent = player.name;
@@ -2943,7 +2921,7 @@
                     // Calculate Strike Rate: (Runs / Balls Faced) * 100
                     const strikeRate = player.ballsFaced > 0 ? ((player.runsScored / player.ballsFaced) * 100).toFixed(2) : '0.00';
                     strikeRateCell.textContent = strikeRate;
-                    
+
                     // Determine status based on context (live vs. final scorecard)
                     if (isLive) {
                         const originalPlayerIndex = team.players.findIndex(p => p.name === player.name);
@@ -2953,35 +2931,35 @@
                             statusCell.textContent = 'Batting (Striker)';
                         } else if (originalPlayerIndex === team.currentNonStrikerIndex) {
                             statusCell.textContent = 'Batting (Non-Striker)';
-                        } else if (player.ballsFaced === 0) { // If not out, not current batsman, and faced 0 balls
+                        } else if (player.ballsFaced === 0) {
                             statusCell.textContent = 'Did not bat';
-                        } else { // Not out, faced balls, not current batsman (e.g., retired not out, or already batted)
+                        } else {
                             statusCell.textContent = 'Not Out';
                         }
                         // Highlight current batsmen only in live scorecard
                         if (originalPlayerIndex === team.currentStrikerIndex || originalPlayerIndex === team.currentNonStrikerIndex) {
                             row.classList.add('bg-yellow-100');
                         }
-                    } else { // For final scorecard (isLive is false)
+                    } else {
                         if (player.isOut) {
                             statusCell.textContent = `Out (${team.fallOfWickets.find(fow => fow.batsman === player.name)?.dismissalType || 'N/A'})`;
-                        } else if (player.ballsFaced === 0) { // If not out and faced 0 balls
+                        } else if (player.ballsFaced === 0) {
                             statusCell.textContent = 'Did not bat';
-                        } else { // Not out and faced balls
+                        } else {
                             statusCell.textContent = 'Not Out';
                         }
                     }
 
                     runsCell.classList.add('text-right');
                     ballsCell.classList.add('text-right');
-                    strikeRateCell.classList.add('text-right'); // Align Strike Rate to right
+                    strikeRateCell.classList.add('text-right');
                 });
             }
         }
 
         // Function to render a bowler scorecard for a given team and table element
         function renderBowlerScorecard(team, targetTable, teamNameElement, isLive = false) {
-            targetTable.innerHTML = ''; // Clear previous rows
+            targetTable.innerHTML = '';
             if (teamNameElement) teamNameElement.textContent = team ? team.name : '';
 
             if (team) {
@@ -2998,7 +2976,7 @@
                         const wicketsCell = row.insertCell();
                         const widesCell = row.insertCell();
                         const noBallsCell = row.insertCell();
-                        const economyCell = row.insertCell(); // New cell for Economy
+                        const economyCell = row.insertCell();
 
                         nameCell.textContent = player.name;
                         oversCell.textContent = `${player.oversBowled}.${player.ballsBowled % 6}`;
@@ -3017,7 +2995,7 @@
                         wicketsCell.classList.add('text-right');
                         widesCell.classList.add('text-right');
                         noBallsCell.classList.add('text-right');
-                        economyCell.classList.add('text-right'); // Align Economy to right
+                        economyCell.classList.add('text-right');
 
                         // Highlight current bowler only in live scorecard
                         if (isLive) {
@@ -3033,14 +3011,14 @@
 
         // Function to render fall of wickets for a given team and list element
         function renderFallOfWickets(team, targetList, teamNameElement) {
-            targetList.innerHTML = ''; // Clear previous entries
+            targetList.innerHTML = '';
             if (teamNameElement) teamNameElement.textContent = team ? team.name : '';
 
             if (team && team.fallOfWickets.length > 0) {
                 team.fallOfWickets.forEach(fow => {
                     const listItem = document.createElement('li');
                     let fowText = `${fow.batsman} out (${fow.dismissalType})`;
-                    if (fow.fielder) { // Include fielder if present
+                    if (fow.fielder) {
                         fowText += ` by ${fow.fielder}`;
                     }
                     fowText += ` at ${fow.score} in ${fow.over} overs`;
@@ -3064,6 +3042,7 @@
                 console.warn("No last match data found to render final scorecards.");
                 return;
             }
+            console.log("Rendering final scorecards for match:", lastMatch); // Debugging log
 
             finalTeam1NameDisplay.textContent = lastMatch.team1.name;
             finalTeam2NameDisplay.textContent = lastMatch.team2.name;
@@ -3074,42 +3053,43 @@
 
 
             renderBatsmanScorecard(team1ForFinal, finalTeam1BatsmanScorecardTable);
-            renderBowlerScorecard(team2ForFinal, finalTeam1BowlerScorecardTable); // Team 2 bowled to Team 1
+            renderBowlerScorecard(team2ForFinal, finalTeam1BowlerScorecardTable);
             renderFallOfWickets(team1ForFinal, finalTeam1FOWList);
 
             renderBatsmanScorecard(team2ForFinal, finalTeam2BatsmanScorecardTable);
-            renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable); // Team 1 bowled to Team 2
+            renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable);
             renderFallOfWickets(team2ForFinal, finalTeam2FOWList);
 
             // Set result and Man of the Match from the saved data
             manOfTheMatchPlayer.textContent = lastMatch.manOfTheMatch;
-            matchResultMessageText.textContent = lastMatch.result; // Ensure message is set
-            
+            matchResultMessageText.textContent = lastMatch.result;
+
+            // These are now shown when the button is clicked
             matchResultDisplay.classList.remove('hidden');
             manOfTheMatchDisplay.classList.remove('hidden');
             finalScorecardsSection.classList.remove('hidden');
         }
 
         // Function to save match details to localStorage
-        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName, status, cancellationReason = null) { // Added status parameter and cancellationReason
+        function saveMatchDetailsLocal(resultMessage, manOfTheMatchName, status, cancellationReason = null) {
             try {
                 // Get existing matches or initialize an empty array
                 const existingMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
 
                 const matchData = {
-                    timestamp: new Date().toISOString(), // Store as ISO string for easy parsing
-                    matchDate: document.getElementById('matchDate').value, // Get match date
-                    matchTime: document.getElementById('matchTime').value, // Get match time
+                    timestamp: new Date().toISOString(),
+                    matchDate: document.getElementById('matchDate').value,
+                    matchTime: document.getElementById('matchTime').value,
                     team1: {
                         name: team1.name,
-                        captainName: team1.captainName, // NEW
-                        wicketKeeperName: team1.wicketKeeperName, // NEW
+                        captainName: team1.captainName,
+                        wicketKeeperName: team1.wicketKeeperName,
                         runs: team1.runs,
                         wickets: team1.wickets,
                         overs: team1.overs,
                         balls: team1.balls,
                         totalExtras: team1.totalWides + team1.totalNoBalls + team1.totalByes + team1.totalLegByes,
-                        players: team1.players.map(player => ({ // Store full player data
+                        players: team1.players.map(player => ({
                             name: player.name,
                             runsScored: player.runsScored,
                             ballsFaced: player.ballsFaced,
@@ -3117,17 +3097,17 @@
                             wicketsTaken: player.wicketsTaken,
                             runsConceded: player.runsConceded,
                             ballsBowled: player.ballsBowled,
-                            wides: player.wides, // Keep original wides
-                            noBalls: player.noBalls, // Keep original noBalls
+                            wides: player.wides,
+                            noBalls: player.noBalls,
                             oversBowled: player.oversBowled
                         })),
-                        playing11Names: team1.playing11Names, // NEW: Save playing XI names
+                        playing11Names: team1.playing11Names,
                         fallOfWickets: team1.fallOfWickets
                     },
                     team2: {
                         name: team2.name,
-                        captainName: team2.captainName, // NEW
-                        wicketKeeperName: team2.wicketKeeperName, // NEW
+                        captainName: team2.captainName,
+                        wicketKeeperName: team2.wicketKeeperName,
                         runs: team2.runs,
                         wickets: team2.wickets,
                         overs: team2.overs,
@@ -3137,7 +3117,7 @@
                         totalByes: team2.totalByes,
                         totalLegByes: team2.totalLegByes,
                         totalExtras: team2.totalWides + team2.totalNoBalls + team2.totalByes + team2.totalLegByes,
-                        players: team2.players.map(player => ({ // Store full player data
+                        players: team2.players.map(player => ({
                             name: player.name,
                             runsScored: player.runsScored,
                             ballsFaced: player.ballsFaced,
@@ -3145,27 +3125,28 @@
                             wicketsTaken: player.wicketsTaken,
                             runsConceded: player.runsConceded,
                             ballsBowled: player.ballsBowled,
-                            wides: player.wides, // Keep original wides
-                            noBalls: player.noBalls, // Keep original noBalls
+                            wides: player.wides,
+                            noBalls: player.noBalls,
                             oversBowled: player.oversBowled
                         })),
-                        playing11Names: team2.playing11Names, // NEW: Save playing XI names
+                        playing11Names: team2.playing11Names,
                         fallOfWickets: team2.fallOfWickets
                     },
                     totalOversPerInnings: totalOversPerInnings,
                     firstInningsTotalRuns: firstInningsTotalRuns,
                     result: resultMessage,
                     manOfTheMatch: manOfTheMatchName,
-                    tossWinnerName: tossWinnerName, // Save toss winner for historical record
-                    tossDecision: tossDecision, // Save toss decision for historical record
-                    status: status, // NEW: Save match status
-                    cancellationReason: cancellationReason // NEW: Save cancellation reason
+                    tossWinnerName: tossWinnerName,
+                    tossDecision: tossDecision,
+                    status: status,
+                    cancellationReason: cancellationReason
                 };
 
-                existingMatches.unshift(matchData); // Add new match to the beginning
+                console.log("Saving match data:", matchData); // Debugging log
+                existingMatches.unshift(matchData);
                 localStorage.setItem('cricketMatches', JSON.stringify(existingMatches));
                 showMessageBox('Match details saved to local storage!', 'success');
-                loadPastMatchesLocal(); // Reload past matches to include the newly saved one
+                loadPastMatchesLocal();
 
             } catch (e) {
                 console.error("Error saving match details to local storage: ", e);
@@ -3175,7 +3156,7 @@
 
         // Function to load and display past matches from localStorage
         function loadPastMatchesLocal() {
-            pastMatchesList.innerHTML = ''; // Clear existing list
+            pastMatchesList.innerHTML = '';
 
             try {
                 const storedMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
@@ -3189,37 +3170,32 @@
 
                 storedMatches.forEach((match) => {
                     const listItem = document.createElement('li');
-                    // Use matchDate and matchTime if available, otherwise fallback to timestamp
                     const displayDateTime = match.matchDate && match.matchTime
                         ? `${match.matchDate} at ${match.matchTime}`
                         : new Date(match.timestamp).toLocaleString();
 
-                    // Include toss info if available
                     const tossInfo = match.tossWinnerName && match.tossDecision
                         ? `<p class="text-md text-gray-700 mb-2">${match.tossWinnerName} won the toss and chose to ${match.tossDecision} first.</p>`
                         : '';
 
-                    // Determine status text and color
                     let statusLabel = '';
                     if (match.status === 'Cancelled') {
-                        statusLabel = `<p class="text-md text-black mb-2">Status: Cancelled</p>`; // Black, not bold
+                        statusLabel = `<p class="text-md text-black mb-2">Status: Cancelled</p>`;
                     } else {
-                        statusLabel = `<p class="text-md text-black mb-2">Status: Completed</p>`; // Black, not bold
+                        statusLabel = `<p class="text-md text-black mb-2">Status: Completed</p>`;
                     }
 
-                    // Filter players for display in past match summary to show only playing XI
                     const team1PlayingXI = match.team1.players.filter(p => match.team1.playing11Names.includes(p.name));
                     const team2PlayingXI = match.team2.players.filter(p => match.team2.playing11Names.includes(p.name));
 
 
-                    // Create detailed HTML for each past match
                     listItem.innerHTML = `
                         <h4 class="text-lg font-bold text-gray-800">${match.team1.name} vs ${match.team2.name}</h4>
                         <p class="text-md text-gray-700 mb-2">Date & Time: ${displayDateTime}</p>
                         <p class="text-md text-gray-700 mb-2">Team 1: C: ${match.team1.captainName || 'N/A'}, WK: ${match.team1.wicketKeeperName || 'N/A'}</p>
                         <p class="text-md text-gray-700 mb-2">Team 2: C: ${match.team2.captainName || 'N/A'}, WK: ${match.team2.wicketKeeperName || 'N/A'}</p>
                         ${tossInfo}
-                        ${statusLabel} <!-- Display Status here -->
+                        ${statusLabel}
                         <p class="text-md text-gray-700 mb-2">${match.result}</p>
                         <p class="text-md text-gray-700 mb-2">Man of the Match: ${match.manOfTheMatch}</p>
                         <div class="past-match-details">
@@ -3330,7 +3306,7 @@
             );
         }
 
-        // NEW: Function to populate toss dropdowns
+        // Function to populate toss dropdowns
         function populateTossDropdowns() {
             tossWinnerSelect.innerHTML = '<option value="">Select Winning Team</option>';
             const team1Option = document.createElement('option');
@@ -3352,7 +3328,7 @@
             }
         }
 
-        // NEW: Function to render Captain & Wicket Keeper selection dropdowns
+        // Function to render Captain & Wicket Keeper selection dropdowns
         function renderCaptainWkSelection() {
             displayTeam1NameWk.textContent = team1.name;
             displayTeam2NameWk.textContent = team2.name;
@@ -3398,7 +3374,7 @@
             if (team2.wicketKeeperName) team2WkSelect.value = team2.wicketKeeperName;
         }
 
-        // NEW: Function to render Playing XI selection checkboxes
+        // Function to render Playing XI selection checkboxes
         function renderPlayingXISelection() {
             team1PlayersList.innerHTML = '';
             team2PlayersList.innerHTML = '';
@@ -3411,7 +3387,7 @@
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = player.name;
-                checkbox.checked = team1.playing11Names.includes(player.name); // Pre-check if already in XI
+                checkbox.checked = team1.playing11Names.includes(player.name);
                 checkbox.addEventListener('change', () => updatePlayingXI(team1, checkbox.value, checkbox.checked));
                 label.appendChild(checkbox);
                 label.appendChild(document.createTextNode(player.name));
@@ -3423,7 +3399,7 @@
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = player.name;
-                checkbox.checked = team2.playing11Names.includes(player.name); // Pre-check if already in XI
+                checkbox.checked = team2.playing11Names.includes(player.name);
                 checkbox.addEventListener('change', () => updatePlayingXI(team2, checkbox.value, checkbox.checked));
                 label.appendChild(checkbox);
                 label.appendChild(document.createTextNode(player.name));
@@ -3431,14 +3407,13 @@
             });
         }
 
-        // NEW: Function to update playing XI based on checkbox changes
+        // Function to update playing XI based on checkbox changes
         function updatePlayingXI(team, playerName, isChecked) {
             if (isChecked) {
                 if (team.playing11Names.length < 11) {
                     team.playing11Names.push(playerName);
                 } else {
                     showMessageBox(`You can only select 11 players for ${team.name}.`, 'error');
-                    // Uncheck the box if already 11 players selected
                     const checkbox = team === team1 ? team1PlayersList.querySelector(`input[value="${playerName}"]`) : team2PlayersList.querySelector(`input[value="${playerName}"]`);
                     if (checkbox) checkbox.checked = false;
                 }
@@ -3451,13 +3426,13 @@
             } else {
                 document.getElementById('team2PlayingXICounter').textContent = `(${team.playing11Names.length}/11)`;
             }
-            saveCurrentMatchStateToLocal(); // Save changes to local storage
+            saveCurrentMatchStateToLocal();
         }
 
 
         // Event listener for team registration form submission
         teamRegistrationForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
             try {
                 // Get team names
@@ -3500,10 +3475,8 @@
                     ballsBowled: 0,
                     wides: 0,
                     noBalls: 0,
-                    oversBowled: 0 // Track full overs bowled by bowler
+                    oversBowled: 0
                 }));
-                // Preserve playing11Names if already set (e.g., if returning from XI selection)
-                // If this is a fresh registration, it will be an empty array
                 if (!team1.playing11Names || team1.playing11Names.length === 0) {
                     team1.playing11Names = [];
                 }
@@ -3522,18 +3495,16 @@
                     noBalls: 0,
                     oversBowled: 0
                 }));
-                // Preserve playing11Names if already set
                 if (!team2.playing11Names || team2.playing11Names.length === 0) {
                     team2.playing11Names = [];
                 }
 
 
-                // Set match state to 'playing_xi_selection' after successful registration
                 matchState = 'playing_xi_selection';
 
-                updateUIForMatchState(); // Show playing XI selection section and handle button visibility
+                updateUIForMatchState();
                 showMessageBox('Teams registered! Now select your Playing XI.', 'success');
-                saveCurrentMatchStateToLocal(); // Save current state after registration
+                saveCurrentMatchStateToLocal();
             }
             catch (error) {
                 console.error('Error registering teams:', error);
@@ -3541,7 +3512,7 @@
             }
         });
 
-        // NEW: Event listener for Confirm Playing XI button
+        // Event listener for Confirm Playing XI button
         confirmPlayingXIBtn.addEventListener('click', () => {
             if (team1.players.length < 11 || team2.players.length < 11) {
                 showMessageBox('Each team must have at least 11 registered players to select a Playing XI.', 'error');
@@ -3552,14 +3523,14 @@
                 return;
             }
 
-            matchState = 'captain_wk_selection'; // Move to Captain/WK selection
+            matchState = 'captain_wk_selection';
 
-            updateUIForMatchState(); // Show Captain/WK selection section and handle button visibility
+            updateUIForMatchState();
             showMessageBox('Playing XI confirmed! Now select your Captain and Wicket Keeper.', 'success');
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for Confirm Captain & WK button
+        // Event listener for Confirm Captain & WK button
         confirmCaptainWkBtn.addEventListener('click', () => {
             const team1Cap = team1CaptainSelect.value;
             const team1Wk = team1WkSelect.value;
@@ -3570,15 +3541,6 @@
                 showMessageBox('Please select a Captain and Wicket Keeper for both teams.', 'error');
                 return;
             }
-            // Removed validation: Captain and Wicket Keeper can now be the same person.
-            // if (team1Cap === team1Wk) {
-            //     showMessageBox('Team 1 Captain and Wicket Keeper cannot be the same player.', 'error');
-            //     return;
-            // }
-            // if (team2Cap === team2Wk) {
-            //     showMessageBox('Team 2 Captain and Wicket Keeper cannot be the same player.', 'error');
-            //     return;
-            // }
 
             // Ensure Captain and WK are part of the Playing XI
             if (!team1.playing11Names.includes(team1Cap) || !team1.playing11Names.includes(team1Wk)) {
@@ -3595,9 +3557,9 @@
             team2.captainName = team2Cap;
             team2.wicketKeeperName = team2Wk;
 
-            matchState = 'toss'; // Move to toss after Captain/WK selection
+            matchState = 'toss';
 
-            updateUIForMatchState(); // Show toss section and handle button visibility
+            updateUIForMatchState();
             showMessageBox('Captain and Wicket Keeper confirmed! Now perform the toss.', 'success');
             saveCurrentMatchStateToLocal();
         });
@@ -3620,33 +3582,32 @@
                 if (selectedTossDecision === 'bat') {
                     currentBattingTeam = team1;
                     currentBowlingTeam = team2;
-                } else { // bowl
+                } else {
                     currentBattingTeam = team2;
                     currentBowlingTeam = team1;
                 }
-            } else { // team2 won toss
+            } else {
                 if (selectedTossDecision === 'bat') {
                     currentBattingTeam = team2;
                     currentBowlingTeam = team1;
-                } else { // bowl
+                } else {
                     currentBattingTeam = team1;
                     currentBowlingTeam = team2;
                 }
             }
 
-            matchState = 'teams_registered'; // Set match state to teams_registered after toss
+            matchState = 'teams_registered';
 
-            updateUIForMatchState(); // Show match ready section and handle button visibility
+            updateUIForMatchState();
             registeredTeamsSummary.textContent = `${team1.name} (C: ${team1.captainName}, WK: ${team1.wicketKeeperName}) vs ${team2.name} (C: ${team2.captainName}, WK: ${team2.wicketKeeperName}) (${totalOversPerInnings} Overs per innings) on ${document.getElementById('matchDate').value} at ${document.getElementById('matchTime').value}. ${tossWinnerName} won the toss and chose to ${tossDecision} first.`;
             showMessageBox('Toss completed! Match ready to start.', 'success');
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for "Back" button from Playing XI Selection
+        // Event listener for "Back" button from Playing XI Selection
         backBtnPlayingXI.addEventListener('click', () => {
-            matchState = 'registration'; // Set match state back to registration
-            updateUIForMatchState(); // Show registration section and handle button visibility
-            // Re-populate the registration form fields with current data
+            matchState = 'registration';
+            updateUIForMatchState();
             document.getElementById('team1Name').value = team1.name;
             document.getElementById('team1Players').value = team1.players.map(p => p.name).join('\n');
             document.getElementById('team2Name').value = team2.name;
@@ -3655,36 +3616,35 @@
             document.getElementById('matchDate').value = document.getElementById('matchDate').value;
             document.getElementById('matchTime').value = document.getElementById('matchTime').value;
 
-            // Change the button text
             registerTeamsBtn.textContent = 'Update Team Details';
 
             showMessageBox('Returned to Team Registration to edit player lists.', 'info');
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for "Back" button from Captain/WK Selection
+        // Event listener for "Back" button from Captain/WK Selection
         backBtnCaptainWk.addEventListener('click', () => {
-            matchState = 'playing_xi_selection'; // Set match state back to Playing XI selection
-            updateUIForMatchState(); // Show Playing XI section and handle button visibility
-            renderPlayingXISelection(); // Re-render checkboxes
+            matchState = 'playing_xi_selection';
+            updateUIForMatchState();
+            renderPlayingXISelection();
             showMessageBox('Returned to Playing XI selection.', 'info');
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for "Back" button from Toss Section
+        // Event listener for "Back" button from Toss Section
         backBtnToss.addEventListener('click', () => {
-            matchState = 'captain_wk_selection'; // Set match state back to Captain/WK selection
-            updateUIForMatchState(); // Show Captain/WK section and handle button visibility
-            renderCaptainWkSelection(); // Re-render dropdowns
+            matchState = 'captain_wk_selection';
+            updateUIForMatchState();
+            renderCaptainWkSelection();
             showMessageBox('Returned to Captain & Wicket Keeper selection.', 'info');
             saveCurrentMatchStateToLocal();
         });
 
-        // NEW: Event listener for "Back" button from Match Ready Section
+        // Event listener for "Back" button from Match Ready Section
         backBtnMatchReady.addEventListener('click', () => {
-            matchState = 'toss'; // Set match state back to toss
-            updateUIForMatchState(); // Show toss section and handle button visibility
-            populateTossDropdowns(); // Re-populate toss dropdowns
+            matchState = 'toss';
+            updateUIForMatchState();
+            populateTossDropdowns();
             showMessageBox('Returned to Toss section.', 'info');
             saveCurrentMatchStateToLocal();
         });
@@ -3693,19 +3653,18 @@
         // Event listener for Start Match button
         startMatchBtn.addEventListener('click', async () => {
             if (matchState === 'teams_registered') {
-                matchState = 'innings1'; // Set match state to first innings
+                matchState = 'innings1';
 
                 // Set initial batsmen for the current batting team (determined by toss) from their playing XI
                 const battingXI = getPlayingXIPlayers(currentBattingTeam);
                 if (battingXI.length >= 2) {
                     currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
-                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name); // Initialize non-striker to first player, will be updated later
-                    // Find the second player in playing XI who is not the striker
+                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
                     const secondPlayer = battingXI.find(p => p.name !== battingXI[0].name);
                     if (secondPlayer) {
                         currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === secondPlayer.name);
                     } else {
-                        currentBattingTeam.currentNonStrikerIndex = -1; // Only one player available
+                        currentBattingTeam.currentNonStrikerIndex = -1;
                     }
 
                 } else if (battingXI.length === 1) {
@@ -3716,9 +3675,9 @@
                     return;
                 }
 
-                updateUIForMatchState(); // Show scoreboard and handle button visibility
+                updateUIForMatchState();
                 showMessageBox('Match started!', 'success');
-                saveCurrentMatchStateToLocal(); // Save initial match state to local storage
+                saveCurrentMatchStateToLocal();
             } else {
                 showMessageBox('Teams are not registered, toss is not completed, or Playing XI is not selected.', 'error');
             }
@@ -3730,7 +3689,6 @@
         add2RunsBtn.addEventListener('click', () => addRuns(2));
         add4RunsBtn.addEventListener('click', () => addRuns(4));
         add6RunsBtn.addEventListener('click', () => addRuns(6));
-        // New Wicket Buttons
         addCaughtBtn.addEventListener('click', () => addWicket('Caught'));
         addBowledLbwBtn.addEventListener('click', () => addWicket('Bowled/LBW'));
         addRunOutBtn.addEventListener('click', () => addWicket('Run Out'));
@@ -3747,103 +3705,120 @@
         undoBtn.addEventListener('click', undoLastAction);
         switchTeamBtn.addEventListener('click', switchBattingTeam);
         newMatchBtn.addEventListener('click', () => {
-            showConfirmationModal('Are you sure you want to start a new match? Current game progress will be lost if not saved.', newMatch, () => { /* do nothing */ });
+            showConfirmationModal('Are you sure you want to start a new match? Current game progress will be lost if not saved.', newMatch, () => { });
         });
-        clearPastMatchesBtn.addEventListener('click', clearAllPastMatches); // New button listener
-        
-        // NEW: Restart Match button listener
+        clearPastMatchesBtn.addEventListener('click', clearAllPastMatches);
+
+        // Restart Match button listener
         restartMatchBtn.addEventListener('click', () => {
             showConfirmationModal('Are you sure you want to restart the current match? All current progress will be lost.',
                 () => {
-                    restartCurrentMatch(); // Call new function to restart with same teams/toss
+                    restartCurrentMatch();
                 },
                 () => {
-                    // No message on cancel
                 }
             );
         });
 
-        // NEW: Cancel Match button listener
+        // Cancel Match button listener
         cancelMatchBtn.addEventListener('click', () => {
-            // Show the cancellation reason modal first
             cancelReasonModal.classList.remove('hidden');
-            // Reset dropdown to default
             cancellationReasonSelect.value = '';
         });
 
-        // NEW: Confirm Cancellation Reason button listener
+        // Confirm Cancellation Reason button listener
         confirmCancellationReasonBtn.addEventListener('click', () => {
             const selectedReason = cancellationReasonSelect.value;
             if (!selectedReason) {
                 showMessageBox('Please select a cancellation reason.', 'error');
                 return;
             }
-            cancelReasonModal.classList.add('hidden'); // Hide the reason modal
-            declareWinner('Cancelled', selectedReason); // Pass the selected reason
+            cancelReasonModal.classList.add('hidden');
+            declareWinner('Cancelled', selectedReason);
             showMessageBox('Match cancelled and saved to past matches.', 'success');
         });
 
-        // NEW: Back from Cancel Reason button listener
+        // Back from Cancel Reason button listener
         backFromCancelReasonBtn.addEventListener('click', () => {
-            cancelReasonModal.classList.add('hidden'); // Just hide the modal
+            cancelReasonModal.classList.add('hidden');
         });
 
-        // NEW: End Match button listener
-        endMatchBtn.addEventListener('click', () => {
-            showConfirmationModal('Are you sure you want to end the match?',
+        // Conclude Match button listener (Renamed from endMatchBtn)
+        concludeMatchBtn.addEventListener('click', () => {
+            showConfirmationModal('Are you sure you want to conclude the match?',
                 () => {
-                    declareWinner('Completed'); // Conclude the match as completed
+                    declareWinner('Completed');
                 },
                 () => {
-                    // No message on cancel
                 }
             );
         });
 
-        // NEW: Back button from Match Summary (Final Scorecards Section)
+        // NEW: End Match button listener (for summary acknowledgement)
+        endMatchSummaryBtn.addEventListener('click', () => {
+            if (matchState === 'completed' || matchState === 'cancelled') {
+                // Display the match result, Man of the Match, and final scorecards
+                matchResultDisplay.classList.remove('hidden');
+                manOfTheMatchDisplay.classList.remove('hidden');
+                finalScorecardsSection.classList.remove('hidden');
+
+                // Populate the details from the last saved match
+                const storedMatches = JSON.parse(localStorage.getItem('cricketMatches')) || [];
+                const lastMatch = storedMatches.length > 0 ? storedMatches[0] : null;
+                if (lastMatch) {
+                    matchResultMessageText.textContent = lastMatch.result;
+                    manOfTheMatchPlayer.textContent = lastMatch.manOfTheMatch;
+                    renderFinalScorecards(); // Re-render to ensure data is fresh
+                }
+
+                endMatchSummaryBtn.classList.add('hidden'); // Hide the button itself
+                showMessageBox('Match summary displayed.', 'info');
+            }
+        });
+
+
+        // Back button from Match Summary (Final Scorecards Section)
         backBtnMatchSummary.addEventListener('click', () => {
-            matchState = 'past_matches'; // Set state to past matches
-            updateUIForMatchState(); // Show past matches section and handle button visibility
+            matchState = 'past_matches';
+            updateUIForMatchState();
             showMessageBox('Returned to Past Matches.', 'info');
         });
 
-        // NEW: Reset All button listener (MOVED)
+        // Reset All button listener
         resetAllBtn.addEventListener('click', () => {
             showConfirmationModal('Are you sure you want to reset all team and player data? This will start a completely new match registration.',
                 () => {
-                    newMatch(); // Reuse the newMatch function for a full reset
-                    registerTeamsBtn.textContent = 'Register Teams'; // Ensure button text is reset
+                    newMatch();
+                    registerTeamsBtn.textContent = 'Register Teams';
                     showMessageBox('All data reset. Please register new teams.', 'info');
                 },
                 () => {
-                    // No message on cancel
                 }
             );
         });
 
-        // NEW: Event listener for "Past Match Summary" button on Team Registration page
+        // Event listener for "Past Match Summary" button on Team Registration page
         showPastMatchesBtn.addEventListener('click', () => {
             matchState = 'past_matches';
             updateUIForMatchState();
             showMessageBox('Viewing past match summaries.', 'info');
         });
 
-        // NEW: Event listener for "Back to Main" button on Past Match Summary page
+        // Event listener for "Back to Main" button on Past Match Summary page
         backBtnPastMatches.addEventListener('click', () => {
-            matchState = 'registration'; // Return to registration page
-            teamRegistrationForm.reset(); // Clear the form fields
+            matchState = 'registration';
+            teamRegistrationForm.reset();
             updateUIForMatchState();
             showMessageBox('Returned to Main Registration. Form cleared.', 'info');
         });
 
-        // NEW: Event listener for "Go to Live Score" button
+        // Event listener for "Go to Live Score" button
         goToLiveScoreBtn.addEventListener('click', () => {
             try {
                 const storedState = localStorage.getItem('currentCricketMatch');
                 if (storedState) {
                     const loadedState = JSON.parse(storedState);
                     if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
-                        // Restore the loaded state to global variables
                         team1 = loadedState.team1;
                         team2 = loadedState.team2;
                         totalOversPerInnings = loadedState.totalOversPerInnings;
@@ -3856,7 +3831,6 @@
                         tossDecision = loadedState.tossDecision || '';
                         cancellationReason = loadedState.cancellationReason || '';
 
-                        // Re-establish object references for currentBattingTeam and currentBowlingTeam
                         if (loadedState.currentBattingTeamName === team1.name) {
                             currentBattingTeam = team1;
                             currentBowlingTeam = team2;
@@ -3873,8 +3847,8 @@
                             currentBattingTeam.currentStrikerIndex = loadedState.currentStrikerIndex;
                             currentBattingTeam.currentNonStrikerIndex = loadedState.currentNonStrikerIndex;
                         }
-                        
-                        updateUIForMatchState(); // Update UI to show the scoreboard
+
+                        updateUIForMatchState();
                         showMessageBox('Resuming live match.', 'info');
                     } else {
                         showMessageBox('No active match to resume.', 'error');
@@ -3889,35 +3863,27 @@
         });
 
 
-        // Event listeners for Developer Info page (NEW)
+        // Event listeners for Developer Info page
         developerInfoBtn.addEventListener('click', () => {
-            matchState = 'developer_info'; // Set state to developer info
-            updateUIForMatchState(); // Show developer info section and handle button visibility
+            matchState = 'developer_info';
+            updateUIForMatchState();
         });
 
         backBtnDeveloperInfo.addEventListener('click', () => {
-            // Determine which section to return to based on the current match state
-            // This logic is now handled by updateUIForMatchState based on the previous matchState
-            // We need a way to store the *previous* state before going to developer info.
-            // For simplicity, let's assume it always returns to 'registration' or 'scoreboard' if active.
-            // A more robust solution would involve pushing states onto a stack.
-            // For now, let's just make it return to 'registration' unless a match is active.
-
-            // A simple approach: if a match is active or completed, return to scoreboard, else to registration.
             if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
-                matchState = 'scoreboard'; // Return to scoreboard
+                matchState = 'scoreboard';
             } else {
-                matchState = 'registration'; // Return to registration
+                matchState = 'registration';
             }
-            updateUIForMatchState(); // Show appropriate section and handle button visibility
+            updateUIForMatchState();
             showMessageBox('Returned to previous section.', 'info');
         });
 
 
         // Initial load of past matches and current match state when the page loads
         window.onload = () => {
-            loadCurrentMatchStateFromLocal(); // Attempt to load current match state first
-            loadPastMatchesLocal(); // Always load past matches on startup
+            loadCurrentMatchStateFromLocal();
+            loadPastMatchesLocal();
         };
     </script>
 </body>
