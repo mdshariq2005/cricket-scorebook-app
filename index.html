@@ -2868,7 +2868,13 @@
             const nextBattingXI = getPlayingXIPlayers(currentBattingTeam);
             if (nextBattingXI.length >= 2) {
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
-                currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[1].name);
+                currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
+                const secondPlayer = battingXI.find(p => p.name !== battingXI[0].name);
+                if (secondPlayer) {
+                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === secondPlayer.name);
+                } else {
+                    currentBattingTeam.currentNonStrikerIndex = -1;
+                }
             } else if (nextBattingXI.length === 1) {
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
                 currentBattingTeam.currentNonStrikerIndex = -1;
