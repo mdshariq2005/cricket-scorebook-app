@@ -3788,7 +3788,7 @@
             console.log("End Match button clicked. Current matchState:", matchState); // Existing Debugging log
             // Add another log to be absolutely sure of the state right before the if condition
             console.log("Debug: matchState before condition check:", matchState, "Type:", typeof matchState); // NEW DEBUG LOG
-            if (matchState === 'completed' || matchState === 'cancelled') {
+            if (matchState === 'Completed' || matchState === 'Cancelled') {
                 console.log("Match state is completed or cancelled. Attempting to render final scorecards."); // Existing Debugging log
                 // Display the match result, Man of the Match, and final scorecards
                 matchResultDisplay.classList.remove('hidden');
@@ -3821,4 +3821,105 @@
 
         // Reset All button listener
         resetAllBtn.addEventListener('click', () => {
-            showConfirmationModal('Are you sure you want to reset all team and player data? T
+            showConfirmationModal('Are you sure you want to reset all team and player data? This will start a completely new match registration.',
+                () => {
+                    newMatch();
+                    registerTeamsBtn.textContent = 'Register Teams';
+                    showMessageBox('All data reset. Please register new teams.', 'info');
+                },
+                () => {
+                }
+            );
+        });
+
+        // Event listener for "Past Match Summary" button on Team Registration page
+        showPastMatchesBtn.addEventListener('click', () => {
+            matchState = 'past_matches';
+            updateUIForMatchState();
+            showMessageBox('Viewing past match summaries.', 'info');
+        });
+
+        // Event listener for "Back to Main" button on Past Match Summary page
+        backBtnPastMatches.addEventListener('click', () => {
+            matchState = 'registration';
+            teamRegistrationForm.reset();
+            updateUIForMatchState();
+            showMessageBox('Returned to Main Registration. Form cleared.', 'info');
+        });
+
+        // Event listener for "Go to Live Score" button
+        goToLiveScoreBtn.addEventListener('click', () => {
+            try {
+                const storedState = localStorage.getItem('currentCricketMatch');
+                if (storedState) {
+                    const loadedState = JSON.parse(storedState);
+                    if (loadedState.matchState === 'innings1' || loadedState.matchState === 'innings2') {
+                        team1 = loadedState.team1;
+                        team2 = loadedState.team2;
+                        totalOversPerInnings = loadedState.totalOversPerInnings;
+                        matchState = loadedState.matchState;
+                        firstInningsTotalRuns = loadedState.firstInningsTotalRuns;
+                        currentPartnershipRuns = loadedState.currentPartnershipRuns;
+                        isFreeHit = loadedState.isFreeHit || false;
+                        lastCompletedBowlerIndex = loadedState.lastCompletedBowlerIndex || -1;
+                        tossWinnerName = loadedState.tossWinnerName || '';
+                        tossDecision = loadedState.tossDecision || '';
+                        cancellationReason = loadedState.cancellationReason || '';
+
+                        if (loadedState.currentBattingTeamName === team1.name) {
+                            currentBattingTeam = team1;
+                            currentBowlingTeam = team2;
+                        } else if (loadedState.currentBattingTeamName === team2.name) {
+                            currentBattingTeam = team2;
+                            currentBowlingTeam = team1;
+                        } else {
+                            currentBattingTeam = null;
+                            currentBowlingTeam = null;
+                        }
+
+                        currentBowlerIndex = loadedState.currentBowlerIndex;
+                        if (currentBattingTeam) {
+                            currentBattingTeam.currentStrikerIndex = loadedState.currentStrikerIndex;
+                            currentBattingTeam.currentNonStrikerIndex = loadedState.currentNonStrikerIndex;
+                        }
+
+                        updateUIForMatchState();
+                        showMessageBox('Resuming live match.', 'info');
+                    } else {
+                        showMessageBox('No active match to resume.', 'error');
+                    }
+                } else {
+                    showMessageBox('No saved match to resume.', 'error');
+                }
+            } catch (e) {
+                console.error("Error resuming match:", e);
+                showMessageBox('Failed to resume match.', 'error');
+            }
+        });
+
+
+        // Event listeners for Developer Info page
+        developerInfoBtn.addEventListener('click', () => {
+            matchState = 'developer_info';
+            updateUIForMatchState();
+        });
+
+        backBtnDeveloperInfo.addEventListener('click', () => {
+            if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
+                matchState = 'scoreboard';
+            } else {
+                matchState = 'registration';
+            }
+            updateUIForMatchState();
+            showMessageBox('Returned to previous section.', 'info');
+        });
+
+
+        // Initial load of past matches and current match state when the page loads
+        window.onload = () => {
+            loadCurrentMatchStateFromLocal();
+            loadPastMatchesLocal();
+        };
+    </script>
+</body>
+</html>
