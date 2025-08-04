@@ -134,6 +134,7 @@
         #goToLiveScoreBtn,
         #adminLoginBtn,
         #adminPanelSection button
+        /* Removed: #adminLoginModal button to allow it to inherit default button styles */
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -621,6 +622,44 @@
             font-weight: 500;
             margin-top: 1rem;
             text-align: center;
+        }
+
+        /* NEW: Admin Login Modal */
+        #adminLoginModal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(75, 85, 99, 0.75); /* Equivalent to bg-gray-600 bg-opacity-75 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000; /* Ensure it's on top */
+        }
+        #adminLoginModal.hidden {
+            display: none;
+        }
+
+        /* Ensure Admin Login Modal buttons are always visible */
+        #adminLoginModal #loginAdminBtn,
+        #adminLoginModal #cancelAdminLoginBtn {
+            display: inline-flex !important; /* Force display */
+            visibility: visible !important; /* Force visibility */
+            opacity: 1 !important; /* Force opacity */
+            background-color: #3b82f6 !important; /* Blue for Login */
+            color: white !important; /* White text */
+            padding: 0.8rem 2rem !important; /* Ensure good size */
+            font-size: 0.9rem !important;
+            border: 1px solid #2563eb !important; /* Darker blue border */
+        }
+
+        #adminLoginModal #cancelAdminLoginBtn {
+            background-color: #ef4444 !important; /* Red for Cancel */
+            border: 1px solid #dc2626 !important; /* Darker red border */
+        }
+        #adminLoginModal #loginAdminBtn:hover {
+            background-color: #2563eb !important;
+        }
+        #adminLoginModal #cancelAdminLoginBtn:hover {
+            background-color: #dc2626 !important;
         }
     </style>
 </head>
@@ -1310,8 +1349,9 @@
                     <input type="password" id="adminPassword" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="loginAdminBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Login</button>
-                    <button id="cancelAdminLoginBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                    <!-- Apply standard button classes directly -->
+                    <button id="loginAdminBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Login</button>
+                    <button id="cancelAdminLoginBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1662,7 +1702,8 @@
                 clearPastMatchesBtn, backBtnPastMatches,
                 developerInfoBtn, backBtnDeveloperInfo,
                 endMatchSummaryBtn, // NEW button
-                updateTeamInfoBtn, deleteSelectedTeamBtn, applyScoreCorrectionBtn, backBtnAdminPanel
+                updateTeamInfoBtn, deleteSelectedTeamBtn, applyScoreCorrectionBtn, backBtnAdminPanel,
+                loginAdminBtn, cancelAdminLoginBtn // Ensure these are handled
             ];
             allButtons.forEach(button => button.classList.add('hidden'));
 
@@ -3399,7 +3440,7 @@
 
 
                     listItem.innerHTML = `
-                        <h4 class="text-lg font-bold text-gray-800">${match.team1.name} vs ${match.team2.name}</h4>
+                        <h4 class="text-lg font-bold text-gray-800">${match.team1.name} vs ${match.team1.name}</h4>
                         <p class="text-md text-gray-700 mb-2">Date & Time: ${displayDateTime}</p>
                         <p class="text-md text-gray-700 mb-2">Team 1: C: ${match.team1.captainName || 'N/A'}, WK: ${match.team1.wicketKeeperName || 'N/A'}</p>
                         <p class="text-md text-gray-700 mb-2">Team 2: C: ${match.team2.captainName || 'N/A'}, WK: ${match.team2.wicketKeeperName || 'N/A'}</p>
@@ -4201,6 +4242,7 @@
         adminLoginBtn.addEventListener('click', () => {
             adminPasswordInput.value = ''; // Clear password field
             adminLoginModal.classList.remove('hidden');
+            console.log('Admin Login modal unhidden.'); // Debugging log
         });
 
         loginAdminBtn.addEventListener('click', () => {
