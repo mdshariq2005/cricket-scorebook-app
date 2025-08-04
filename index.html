@@ -491,7 +491,7 @@
         }
         /* Removed: #matchResultMessageText { background-color: lightblue; /* Added for debugging */ } */
 
-        /* NEW: Playing XI Selection Section */
+        /* NEW: Playing XI Selection Section (initially hidden) */
         #playingXISelectionSection {
             background-color: #f0f8ff;
             border: 1px solid #e0e7ff;
@@ -663,6 +663,19 @@
         #adminLoginModal #cancelAdminLoginBtn:hover {
             background-color: #dc2626 !important;
         }
+        /* Style for forgot password link */
+        /* REMOVED: #forgotPasswordLink {
+            color: #3b82f6;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: block;
+            text-align: center;
+        }
+        #forgotPasswordLink:hover {
+            color: #2563eb;
+        } */
     </style>
 </head>
 <body>
@@ -1375,6 +1388,7 @@
                     <button id="loginAdminBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Login</button>
                     <button id="cancelAdminLoginBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Cancel</button>
                 </div>
+                <!-- Removed: <a href="#" id="forgotPasswordLink" class="text-sm text-blue-600 hover:underline mt-2 inline-block">Forgot Password?</a> -->
             </div>
         </div>
 
@@ -1591,6 +1605,8 @@
         const newAdminPasswordInput = document.getElementById('newAdminPassword');
         const confirmNewAdminPasswordInput = document.getElementById('confirmNewAdminPassword');
         const changeAdminPasswordBtn = document.getElementById('changeAdminPasswordBtn');
+        // NEW: Forgot Password Link (now removed)
+        // const forgotPasswordLink = document.getElementById('forgotPasswordLink');
 
 
         // Array of all main content sections to easily hide/show them
@@ -4462,6 +4478,23 @@
                 confirmNewAdminPasswordInput.value = '';
             });
         });
+
+        // Removed: Forgot Password Link Listener
+        // forgotPasswordLink.addEventListener('click', (event) => {
+        //     event.preventDefault(); // Prevent default link behavior
+        //     adminLoginModal.classList.add('hidden'); // Hide the login modal
+        //     showConfirmationModal('Are you sure you want to reset the admin password to the default "admin123"? This action cannot be undone.',
+        //         () => {
+        //             ADMIN_PASSWORD = 'admin123';
+        //             showMessageBox('Admin password has been reset to "admin123".', 'success');
+        //         },
+        //         () => {
+        //             // If cancelled, optionally re-show the login modal
+        //             adminLoginModal.classList.remove('hidden');
+        //             showMessageBox('Password reset cancelled.', 'info');
+        //         }
+        //     );
+        // });
 
 
         // Initial load of past matches and current match state when the page loads
