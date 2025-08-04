@@ -366,9 +366,8 @@
         .app-logo {
             display: block;
             margin: 0 auto 1.8rem auto; /* Center the logo and add more margin below */
-            width: 60px; /* Reduced logo size */
-            height: 60px; /* Reduced logo size */
-            color: #3b82f6; /* Blue color for the logo */
+            width: 100px; /* Adjust size as needed */
+            height: auto; /* Maintain aspect ratio */
         }
         /* New styles for team registration form */
         #teamRegistrationSection {
@@ -566,17 +565,10 @@
     <div class="app-container">
         <!-- Logo -->
         <div class="text-center mb-6">
-            <svg class="app-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M12 2v10"></path>
-                <path d="M12 12l4 4"></path>
-                <path d="M12 12l-4 4"></path>
-                <line x1="12" y1="2" x2="12" y2="22"></line>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-            </svg>
+            <img src="https://process.filestackapi.com/cache=expiry:max/resize=width:1050/WolEwbrMSBXbOjqF4HDI" alt="Cricket Scorebook Logo" class="app-logo">
         </div>
 
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Scorebook</h1>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Scorebook</h1>
 
         <!-- Team Registration Section -->
         <div id="teamRegistrationSection">
@@ -3082,7 +3074,8 @@
             } catch (e) { console.error("Error rendering finalTeam2BatsmanScorecard:", e); }
             try {
                 renderBowlerScorecard(team1ForFinal, finalTeam2BowlerScorecardTable); // Bowlers from Team 1 bowled to Team 2
-            } catch (e) { console.error("Error rendering finalTeam2BowlerScorecard:", e); }
+            }
+            catch (e) { console.error("Error rendering finalTeam2BowlerScorecard:", e); }
             try {
                 renderFallOfWickets(team2ForFinal, finalTeam2FOWList);
             } catch (e) { console.error("Error rendering finalTeam2FOWList:", e); }
