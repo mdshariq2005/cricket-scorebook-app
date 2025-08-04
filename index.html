@@ -45,6 +45,7 @@
         input[type="number"],
         input[type="date"], /* Added style for date input */
         input[type="time"], /* Added style for time input */
+        input[type="password"], /* Added style for password input */
         textarea,
         select {
             width: 100%;
@@ -61,6 +62,7 @@
         input[type="number"]:focus,
         input[type="date"]:focus, /* Added focus style for date input */
         input[type="time"]:focus, /* Added focus style for time input */
+        input[type="password"]:focus, /* Added focus style for password input */
         textarea:focus,
         select:focus {
             outline: none;
@@ -1206,6 +1208,26 @@
                 </div>
             </div>
 
+            <!-- NEW: Change Admin Password Section -->
+            <div class="admin-section-card">
+                <h3>Change Admin Password</h3>
+                <div class="form-group mb-4">
+                    <label for="currentAdminPassword" class="mb-2">Current Admin Password:</label>
+                    <input type="password" id="currentAdminPassword" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="newAdminPassword" class="mb-2">New Admin Password:</label>
+                    <input type="password" id="newAdminPassword" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="confirmNewAdminPassword" class="mb-2">Confirm New Admin Password:</label>
+                    <input type="password" id="confirmNewAdminPassword" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="flex justify-center gap-4 mt-4">
+                    <button id="changeAdminPasswordBtn" class="bg-purple-500 hover:bg-purple-600 text-white">Change Password</button>
+                </div>
+            </div>
+
             <div class="flex justify-center mt-6">
                 <button id="backBtnAdminPanel">Back to Main</button>
             </div>
@@ -1564,6 +1586,12 @@
         const currentBattingTeamScoreCorrectionInput = document.getElementById('currentBattingTeamScoreCorrection');
         const applyScoreCorrectionBtn = document.getElementById('applyScoreCorrectionBtn');
 
+        // NEW: Admin Password Change elements
+        const currentAdminPasswordInput = document.getElementById('currentAdminPassword');
+        const newAdminPasswordInput = document.getElementById('newAdminPassword');
+        const confirmNewAdminPasswordInput = document.getElementById('confirmNewAdminPassword');
+        const changeAdminPasswordBtn = document.getElementById('changeAdminPasswordBtn');
+
 
         // Array of all main content sections to easily hide/show them
         const allSections = [
@@ -1640,7 +1668,7 @@
 
         // Local Storage key for registered teams
         const REGISTERED_TEAMS_KEY = 'registeredCricketTeams';
-        const ADMIN_PASSWORD = 'admin123'; // Simple admin password for demonstration
+        let ADMIN_PASSWORD = 'admin123'; // Simple admin password for demonstration
 
 
         // Function to show a message box
@@ -1703,7 +1731,8 @@
                 developerInfoBtn, backBtnDeveloperInfo,
                 endMatchSummaryBtn, // NEW button
                 updateTeamInfoBtn, deleteSelectedTeamBtn, applyScoreCorrectionBtn, backBtnAdminPanel,
-                loginAdminBtn, cancelAdminLoginBtn // Ensure these are handled
+                loginAdminBtn, cancelAdminLoginBtn, // Ensure these are handled
+                changeAdminPasswordBtn // NEW: Admin password change button
             ];
             allButtons.forEach(button => button.classList.add('hidden'));
 
@@ -1840,6 +1869,7 @@
                     updateTeamInfoBtn.classList.remove('hidden');
                     deleteSelectedTeamBtn.classList.remove('hidden');
                     applyScoreCorrectionBtn.classList.remove('hidden');
+                    changeAdminPasswordBtn.classList.remove('hidden'); // NEW: Show password change button
                     populateAdminTeamSelect(); // Populate dropdown with registered teams
                     // Pre-fill score correction if a match is active
                     if (currentBattingTeam && (matchState === 'innings1' || matchState === 'innings2')) {
@@ -1847,6 +1877,10 @@
                     } else {
                         currentBattingTeamScoreCorrectionInput.value = '';
                     }
+                    // Clear password fields on entering admin panel
+                    currentAdminPasswordInput.value = '';
+                    newAdminPasswordInput.value = '';
+                    confirmNewAdminPasswordInput.value = '';
                     break;
                 default:
                     teamRegistrationSection.classList.remove('hidden');
@@ -2104,8 +2138,8 @@
             striker.ballsFaced++;
             currentBattingTeam.runs += runs;
             bowler.runsConceded += runs;
-            currentBattingTeam.balls++;
             bowler.ballsBowled++;
+            currentBattingTeam.balls++;
 
             // Store previous partnership runs for undo
             lastAction = {
@@ -4394,6 +4428,38 @@
                 showMessageBox(`Score for ${currentBattingTeam.name} updated to ${newScore}.`, 'success');
                 updateScoreboardDisplay();
                 saveCurrentMatchStateToLocal();
+            });
+        });
+
+        // NEW: Admin Panel - Change Admin Password
+        changeAdminPasswordBtn.addEventListener('click', () => {
+            const currentPassword = currentAdminPasswordInput.value;
+            const newPassword = newAdminPasswordInput.value;
+            const confirmNewPassword = confirmNewAdminPasswordInput.value;
+
+            if (currentPassword !== ADMIN_PASSWORD) {
+                showMessageBox('Current password is incorrect.', 'error');
+                return;
+            }
+            if (!newPassword) {
+                showMessageBox('New password cannot be empty.', 'error');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                showMessageBox('New password and confirm password do not match.', 'error');
+                return;
+            }
+            if (newPassword === ADMIN_PASSWORD) {
+                showMessageBox('New password cannot be the same as the current password.', 'error');
+                return;
+            }
+
+            showConfirmationModal('Are you sure you want to change the admin password?', () => {
+                ADMIN_PASSWORD = newPassword;
+                showMessageBox('Admin password changed successfully!', 'success');
+                currentAdminPasswordInput.value = '';
+                newAdminPasswordInput.value = '';
+                confirmNewAdminPasswordInput.value = '';
             });
         });
 
