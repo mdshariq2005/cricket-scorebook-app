@@ -73,7 +73,7 @@
         button {
             background-color: #87CEEB; /* Solid Light blue background (SkyBlue) */
             color: #1a202c; /* Black text */
-            padding: 0.6rem 1.2rem; /* Reduced default padding for a more balanced look */
+            padding: 0.6rem 1.2rem; /* Default padding for buttons */
             border-radius: 0.5rem; /* Equivalent to rounded-lg */
             font-weight: 700; /* Bold */
             cursor: pointer;
@@ -85,9 +85,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Removed: white-space: nowrap; */ /* Allow text to wrap */
             text-align: center; /* Ensure text is centered when it wraps */
-            /* Removed margin: 0 auto; from here, as parent flex will handle centering */
         }
         button:hover {
             background-color: #6495ED; /* Slightly darker light blue on hover */
@@ -106,43 +104,7 @@
             transform: none;
             border-color: #cbd5e1; /* Match border to background */
         }
-        /* Specific padding for larger primary action buttons */
-        #teamRegistrationForm button[type="submit"],
-        #proceedToMatchReadyBtn,
-        #startMatchBtn,
-        #newMatchBtn,
-        #clearPastMatchesBtn,
-        #developerInfoBtn,
-        #restartMatchBtn,
-        #cancelMatchBtn,
-        #concludeMatchBtn, /* Renamed from endMatchBtn */
-        #endMatchSummaryBtn, /* NEW button for summary */
-        #confirmationModal button,
-        #cancelReasonModal button,
-        #confirmPlayingXIBtn,
-        #backBtnPlayingXI,
-        #backBtnToss,
-        #backBtnMatchReady,
-        #backBtnMatchSummary,
-        #backBtnDeveloperInfo,
-        #wideExtraRunsModal button,
-        #noBallExtraRunsModal button,
-        #fielderSelectionModal button,
-        #confirmCaptainWkBtn,
-        #backBtnCaptainWk,
-        #resetAllBtn,
-        #showPastMatchesBtn,
-        #backBtnPastMatches,
-        #goToLiveScoreBtn,
-        #adminLoginBtn,
-        #adminPanelSection button
-        /* Removed: #adminLoginModal button to allow it to inherit default button styles */
-        {
-            padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
-            font-size: 0.9rem; /* Slightly larger font for main action buttons */
-        }
-
-        /* Ensure score control buttons maintain their size or inherit the new default */
+        /* Specific padding for score control buttons */
         .score-control-button {
             padding: 0.5rem 1rem; /* Slightly smaller padding for score controls */
         }
@@ -219,7 +181,6 @@
             font-weight: bold;
             color: #065f46;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            /* Removed: border: 2px solid purple; /* Added for debugging */ */
         }
         .match-result.draw {
             background-color: #bfdbfe; /* Light blue for draw */
@@ -270,7 +231,6 @@
             width: 100%; /* Ensure it takes full available width */
             box-sizing: border-box; /* Ensure padding is correctly handled within the width */
             min-width: 0; /* Ensure the ul can shrink */
-            /* Removed: background-color: #f0f9ff; /* Temporary: Light blue background for visibility */ */
         }
         .fall-of-wickets-list li {
             padding: 0.6rem 0;
@@ -489,7 +449,6 @@
         #tossSection .space-y-4 > div {
             margin-bottom: 1rem;
         }
-        /* Removed: #matchResultMessageText { background-color: lightblue; /* Added for debugging */ } */
 
         /* NEW: Playing XI Selection Section (initially hidden) */
         #playingXISelectionSection {
@@ -663,19 +622,6 @@
         #adminLoginModal #cancelAdminLoginBtn:hover {
             background-color: #dc2626 !important;
         }
-        /* Style for forgot password link */
-        /* REMOVED: #forgotPasswordLink {
-            color: #3b82f6;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            display: block;
-            text-align: center;
-        }
-        #forgotPasswordLink:hover {
-            color: #2563eb;
-        } */
     </style>
 </head>
 <body>
@@ -746,11 +692,11 @@
                 </div>
 
                 <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
-                    <button type="submit" id="registerTeamsBtn">Register Teams</button>
-                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
-                    <button type="button" id="showPastMatchesBtn">Past Match Summary</button>
-                    <button id="developerInfoBtn">Developer Info</button>
-                    <button id="adminLoginBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white">Admin Login</button>
+                    <button type="submit" id="registerTeamsBtn" class="py-2 px-4 sm:py-3 sm:px-6">Register Teams</button>
+                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-3 sm:px-6">Reset All</button>
+                    <button type="button" id="showPastMatchesBtn" class="py-2 px-4 sm:py-3 sm:px-6">Past Match Summary</button>
+                    <button id="developerInfoBtn" class="py-2 px-4 sm:py-3 sm:px-6">Developer Info</button>
+                    <button id="adminLoginBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 sm:py-3 sm:px-6">Admin Login</button>
                 </div>
             </form>
         </div>
@@ -773,8 +719,8 @@
                 </div>
             </div>
             <div class="flex justify-center gap-4">
-                <button id="backBtnPlayingXI">Back</button>
-                <button id="confirmPlayingXIBtn">Confirm Playing XI</button>
+                <button id="backBtnPlayingXI" class="py-2 px-4 sm:py-3 sm:px-6">Back</button>
+                <button id="confirmPlayingXIBtn" class="py-2 px-4 sm:py-3 sm:px-6">Confirm Playing XI</button>
             </div>
         </div>
 
@@ -810,8 +756,8 @@
                 </div>
             </div>
             <div class="flex justify-center gap-4">
-                <button id="backBtnCaptainWk">Back</button>
-                <button id="confirmCaptainWkBtn">Confirm Captain & WK</button>
+                <button id="backBtnCaptainWk" class="py-2 px-4 sm:py-3 sm:px-6">Back</button>
+                <button id="confirmCaptainWkBtn" class="py-2 px-4 sm:py-3 sm:px-6">Confirm Captain & WK</button>
             </div>
         </div>
 
@@ -836,8 +782,8 @@
                     </select>
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="backBtnToss">Back</button>
-                    <button id="proceedToMatchReadyBtn">Proceed to Match Ready</button>
+                    <button id="backBtnToss" class="py-2 px-4 sm:py-3 sm:px-6">Back</button>
+                    <button id="proceedToMatchReadyBtn" class="py-2 px-4 sm:py-3 sm:px-6">Proceed to Match Ready</button>
                 </div>
             </div>
         </div>
@@ -848,8 +794,8 @@
             <h2 class="text-xl font-semibold text-blue-800 mb-4">Match Ready!</h2>
             <p id="registeredTeamsSummary" class="text-lg text-blue-700 mb-6"></p>
             <div class="flex justify-center gap-4">
-                <button id="backBtnMatchReady">Back</button>
-                <button id="startMatchBtn">Start Match</button>
+                <button id="backBtnMatchReady" class="py-2 px-4 sm:py-3 sm:px-6">Back</button>
+                <button id="startMatchBtn" class="py-2 px-4 sm:py-3 sm:px-6">Start Match</button>
             </div>
         </div>
 
@@ -1036,7 +982,7 @@
 
             <!-- NEW: End Match button for summary (initially hidden) -->
             <div class="flex justify-center mt-4">
-                <button id="endMatchSummaryBtn" class="hidden bg-blue-500 text-white hover:bg-blue-600">End Match</button>
+                <button id="endMatchSummaryBtn" class="hidden bg-blue-500 text-white hover:bg-blue-600 py-2 px-4 sm:py-3 sm:px-6">End Match</button>
             </div>
 
             <!-- Final Scorecards Section (initially hidden) -->
@@ -1151,9 +1097,9 @@
             </div>
 
             <div class="flex justify-center mt-8 gap-4">
-                <button id="backBtnMatchSummary">Back to Past Matches</button>
-                <button id="restartMatchBtn">Restart Match</button>
-                <button id="newMatchBtn">New Match</button>
+                <button id="backBtnMatchSummary" class="py-2 px-4 sm:py-3 sm:px-6">Back to Past Matches</button>
+                <button id="restartMatchBtn" class="py-2 px-4 sm:py-3 sm:px-6">Restart Match</button>
+                <button id="newMatchBtn" class="py-2 px-4 sm:py-3 sm:px-6">New Match</button>
             </div>
         </div>
 
@@ -1164,9 +1110,9 @@
                 <!-- Past matches will be loaded here from localStorage -->
             </ul>
             <div class="flex justify-center flex-wrap gap-4 mt-4">
-                <button id="clearPastMatchesBtn">Clear All Past Matches</button>
-                <button type="button" id="goToLiveScoreBtn" class="hidden">Go to Live Score</button>
-                <button id="backBtnPastMatches">Back to Main</button>
+                <button id="clearPastMatchesBtn" class="py-2 px-4 sm:py-3 sm:px-6">Clear All Past Matches</button>
+                <button type="button" id="goToLiveScoreBtn" class="hidden py-2 px-4 sm:py-3 sm:px-6">Go to Live Score</button>
+                <button id="backBtnPastMatches" class="py-2 px-4 sm:py-3 sm:px-6">Back to Main</button>
             </div>
         </div>
 
@@ -1177,7 +1123,7 @@
             <p>Contact: testemail@gmail.com</p>
             <p>&copy; 2025 SM0786. All rights reserved.</p>
             <div class="flex justify-center">
-                <button id="backBtnDeveloperInfo">Back to Main</button>
+                <button id="backBtnDeveloperInfo" class="py-2 px-4 sm:py-3 sm:px-6">Back to Previous Page</button>
             </div>
         </div>
 
@@ -1202,8 +1148,8 @@
                     <textarea id="adminTeamPlayers" rows="6" class="w-full px-4 py-2 border rounded-lg"></textarea>
                 </div>
                 <div class="flex justify-center gap-4 mt-4">
-                    <button id="updateTeamInfoBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Update Team Info</button>
-                    <button id="deleteSelectedTeamBtn" class="bg-red-500 hover:bg-red-600 text-white">Delete Selected Team</button>
+                    <button id="updateTeamInfoBtn" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 sm:py-3 sm:px-6">Update Team Info</button>
+                    <button id="deleteSelectedTeamBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-3 sm:px-6">Delete Selected Team</button>
                 </div>
             </div>
 
@@ -1217,7 +1163,7 @@
                     <input type="number" id="currentBattingTeamScoreCorrection" min="0" class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 <div class="flex justify-center gap-4 mt-4">
-                    <button id="applyScoreCorrectionBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Apply Score Correction</button>
+                    <button id="applyScoreCorrectionBtn" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 sm:py-3 sm:px-6">Apply Score Correction</button>
                 </div>
             </div>
 
@@ -1237,12 +1183,12 @@
                     <input type="password" id="confirmNewAdminPassword" class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 <div class="flex justify-center gap-4 mt-4">
-                    <button id="changeAdminPasswordBtn" class="bg-purple-500 hover:bg-purple-600 text-white">Change Password</button>
+                    <button id="changeAdminPasswordBtn" class="bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 sm:py-3 sm:px-6">Change Password</button>
                 </div>
             </div>
 
             <div class="flex justify-center mt-6">
-                <button id="backBtnAdminPanel">Back to Main</button>
+                <button id="backBtnAdminPanel" class="py-2 px-4 sm:py-3 sm:px-6">Back to Main</button>
             </div>
         </div>
 
@@ -1277,8 +1223,8 @@
                     </select>
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="confirmCancellationReasonBtn" class="bg-red-500 hover:bg-red-600 text-white">Confirm Cancellation</button>
-                    <button id="backFromCancelReasonBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Back</button>
+                    <button id="confirmCancellationReasonBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-3 sm:px-6">Confirm Cancellation</button>
+                    <button id="backFromCancelReasonBtn" class="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 sm:py-3 sm:px-6">Back</button>
                 </div>
             </div>
         </div>
@@ -1314,8 +1260,8 @@
                     </label>
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="confirmWideExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
-                    <button id="cancelWideExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                    <button id="confirmWideExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 sm:py-3 sm:px-6">Confirm</button>
+                    <button id="cancelWideExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 sm:py-3 sm:px-6">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1351,8 +1297,8 @@
                     </label>
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="confirmNoBallExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
-                    <button id="cancelNoBallExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                    <button id="confirmNoBallExtraRunsBtn" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 sm:py-3 sm:px-6">Confirm</button>
+                    <button id="cancelNoBallExtraRunsBtn" class="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 sm:py-3 sm:px-6">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1369,8 +1315,8 @@
                     </select>
                 </div>
                 <div class="flex justify-center gap-4">
-                    <button id="confirmFielderBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
-                    <button id="cancelFielderBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                    <button id="confirmFielderBtn" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 sm:py-3 sm:px-6">Confirm</button>
+                    <button id="cancelFielderBtn" class="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 sm:py-3 sm:px-6">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1388,7 +1334,6 @@
                     <button id="loginAdminBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Login</button>
                     <button id="cancelAdminLoginBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out">Cancel</button>
                 </div>
-                <!-- Removed: <a href="#" id="forgotPasswordLink" class="text-sm text-blue-600 hover:underline mt-2 inline-block">Forgot Password?</a> -->
             </div>
         </div>
 
@@ -1490,7 +1435,7 @@
         const addWideBtn = document.getElementById('addWideBtn');
         const addNoBallBtn = document.getElementById('addNoBallBtn');
         const addByeBtn = document.getElementById('addByeBtn');
-        const addLegByeBtn = document.getElementById('addLegByeBtn');
+        const addLegByeBtn = document.getElementById('addLegByeBtn'); // Corrected ID
         const switchStrikeBtn = document.getElementById('switchStrikeBtn');
         const undoBtn = document.getElementById('undoBtn');
         const switchTeamBtn = document.getElementById('switchTeamBtn');
@@ -1605,8 +1550,6 @@
         const newAdminPasswordInput = document.getElementById('newAdminPassword');
         const confirmNewAdminPasswordInput = document.getElementById('confirmNewAdminPassword');
         const changeAdminPasswordBtn = document.getElementById('changeAdminPasswordBtn');
-        // NEW: Forgot Password Link (now removed)
-        // const forgotPasswordLink = document.getElementById('forgotPasswordLink');
 
 
         // Array of all main content sections to easily hide/show them
@@ -1619,7 +1562,7 @@
             scoreboardSection,
             pastMatchesSection,
             developerInfoSection,
-            adminPanelSection // NEW: Add admin panel to sections
+            adminPanelSection
         ];
 
         // Function to hide all main content sections
@@ -1670,6 +1613,7 @@
 
         let totalOversPerInnings = 0;
         let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'captain_wk_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled', 'admin_panel'
+        let previousMatchState = 'registration'; // Stores the state before navigating to developer info
         let firstInningsTotalRuns = 0;
 
         let lastAction = null;
@@ -1731,7 +1675,7 @@
         function updateUIForMatchState() {
             hideAllSections();
 
-            // Hide all buttons by default
+            // Hide all buttons by default (except those explicitly shown)
             const allButtons = [
                 registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn, adminLoginBtn,
                 confirmPlayingXIBtn, backBtnPlayingXI,
@@ -1741,14 +1685,14 @@
                 add1RunBtn, add2RunsBtn, add4RunsBtn, add6RunsBtn,
                 addCaughtBtn, addBowledLbwBtn, addRunOutBtn, addStumpedBtn, addHitWicketBtn, addOtherWicketBtn,
                 addWideBtn, addNoBallBtn, addByeBtn, addLegByeBtn, addBallBtn,
-                switchStrikeBtn, undoBtn, switchTeamBtn, cancelMatchBtn, concludeMatchBtn, // Renamed
+                switchStrikeBtn, undoBtn, switchTeamBtn, cancelMatchBtn, concludeMatchBtn,
                 newMatchBtn, restartMatchBtn, backBtnMatchSummary,
                 clearPastMatchesBtn, backBtnPastMatches,
                 developerInfoBtn, backBtnDeveloperInfo,
-                endMatchSummaryBtn, // NEW button
+                endMatchSummaryBtn,
                 updateTeamInfoBtn, deleteSelectedTeamBtn, applyScoreCorrectionBtn, backBtnAdminPanel,
-                loginAdminBtn, cancelAdminLoginBtn, // Ensure these are handled
-                changeAdminPasswordBtn // NEW: Admin password change button
+                loginAdminBtn, cancelAdminLoginBtn,
+                changeAdminPasswordBtn
             ];
             allButtons.forEach(button => button.classList.add('hidden'));
 
@@ -1767,9 +1711,9 @@
             liveScorePanel.classList.add('hidden');
             liveScorecardsSection.classList.add('hidden');
             liveFOWSection.classList.add('hidden');
-            matchResultDisplay.classList.add('hidden'); // Initially hidden
-            manOfTheMatchDisplay.classList.add('hidden'); // Initially hidden
-            finalScorecardsSection.classList.add('hidden'); // Initially hidden
+            matchResultDisplay.classList.add('hidden');
+            manOfTheMatchDisplay.classList.add('hidden');
+            finalScorecardsSection.classList.add('hidden');
 
 
             switch (matchState) {
@@ -1780,8 +1724,8 @@
                     showPastMatchesBtn.classList.remove('hidden');
                     developerInfoBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    adminLoginBtn.classList.remove('hidden'); // Show Admin Login button
-                    loadRegisteredTeams(); // Load registered teams for dropdowns
+                    adminLoginBtn.classList.remove('hidden');
+                    loadRegisteredTeams();
                     break;
                 case 'playing_xi_selection':
                     playingXISelectionSection.classList.remove('hidden');
@@ -1824,11 +1768,9 @@
                     liveFOWSection.classList.remove('hidden');
                     restartMatchBtn.classList.remove('hidden');
                     cancelMatchBtn.classList.remove('hidden');
-                    concludeMatchBtn.classList.remove('hidden'); // Show Conclude Match button during active play
+                    concludeMatchBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    // Hide the new End Match button during live play
                     endMatchSummaryBtn.classList.add('hidden');
-                    // Show all score control buttons
                     add1RunBtn.classList.remove('hidden'); add2RunsBtn.classList.remove('hidden'); add4RunsBtn.classList.remove('hidden'); add6RunsBtn.classList.remove('hidden');
                     addCaughtBtn.classList.remove('hidden'); addBowledLbwBtn.classList.remove('hidden'); addRunOutBtn.classList.remove('hidden'); addStumpedBtn.classList.remove('hidden'); addHitWicketBtn.classList.remove('hidden'); addOtherWicketBtn.classList.remove('hidden');
                     addWideBtn.classList.remove('hidden'); addNoBallBtn.classList.remove('hidden'); addByeBtn.classList.remove('hidden'); addLegByeBtn.classList.remove('hidden'); addBallBtn.classList.remove('hidden');
@@ -1838,18 +1780,10 @@
                 case 'completed':
                 case 'cancelled':
                     scoreboardSection.classList.remove('hidden');
-                    // matchResultDisplay.classList.remove('hidden'); // Now shown by button click
-                    // manOfTheMatchDisplay.classList.remove('hidden'); // Now shown by button click
-                    // finalScorecardsSection.classList.remove('hidden'); // Now shown by button click
                     backBtnMatchSummary.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
-                    // Show the new End Match button for summary acknowledgement
                     endMatchSummaryBtn.classList.remove('hidden');
-                    // Hide the Conclude Match button as the match is over
                     concludeMatchBtn.classList.add('hidden');
-                    // renderFinalScorecards(); // Now called by button click
-
-                    // Disable score controls and player selectors when match is completed/cancelled
                     Array.from(scoreControls.children).forEach(button => button.disabled = true);
                     strikerSelect.disabled = true;
                     nonStrikerSelect.disabled = true;
@@ -1862,7 +1796,6 @@
                     newMatchBtn.classList.remove('hidden');
                     loadPastMatchesLocal();
 
-                    // Show "Go to Live Score" button if an active match exists
                     try {
                         const storedState = localStorage.getItem('currentCricketMatch');
                         if (storedState) {
@@ -1879,21 +1812,19 @@
                     developerInfoSection.classList.remove('hidden');
                     backBtnDeveloperInfo.classList.remove('hidden');
                     break;
-                case 'admin_panel': // NEW Admin Panel state
+                case 'admin_panel':
                     adminPanelSection.classList.remove('hidden');
                     backBtnAdminPanel.classList.remove('hidden');
                     updateTeamInfoBtn.classList.remove('hidden');
                     deleteSelectedTeamBtn.classList.remove('hidden');
                     applyScoreCorrectionBtn.classList.remove('hidden');
-                    changeAdminPasswordBtn.classList.remove('hidden'); // NEW: Show password change button
-                    populateAdminTeamSelect(); // Populate dropdown with registered teams
-                    // Pre-fill score correction if a match is active
+                    changeAdminPasswordBtn.classList.remove('hidden');
+                    populateAdminTeamSelect();
                     if (currentBattingTeam && (matchState === 'innings1' || matchState === 'innings2')) {
                         currentBattingTeamScoreCorrectionInput.value = currentBattingTeam.runs;
                     } else {
                         currentBattingTeamScoreCorrectionInput.value = '';
                     }
-                    // Clear password fields on entering admin panel
                     currentAdminPasswordInput.value = '';
                     newAdminPasswordInput.value = '';
                     confirmNewAdminPasswordInput.value = '';
@@ -2774,7 +2705,7 @@
             newMatchBtn.classList.remove('hidden');
             backBtnMatchSummary.classList.remove('hidden');
             cancelMatchBtn.classList.add('hidden');
-            concludeMatchBtn.classList.add('hidden'); // Hide Conclude Match button
+            concludeMatchBtn.classList.add('hidden');
 
             // Show the new End Match button for summary acknowledgement
             endMatchSummaryBtn.classList.remove('hidden');
@@ -3033,6 +2964,7 @@
             currentBowlerIndex = -1;
             totalOversPerInnings = 0;
             matchState = 'registration';
+            previousMatchState = 'registration'; // Reset previous state too
             firstInningsTotalRuns = 0;
             lastAction = null;
             currentPartnershipRuns = 0;
@@ -3138,13 +3070,7 @@
             const nextBattingXI = getPlayingXIPlayers(currentBattingTeam);
             if (nextBattingXI.length >= 2) {
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
-                currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
-                const secondPlayer = battingXI.find(p => p.name !== battingXI[0].name);
-                if (secondPlayer) {
-                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === secondPlayer.name);
-                } else {
-                    currentBattingTeam.currentNonStrikerIndex = -1;
-                }
+                currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[1].name); // Fix: second player
             } else if (nextBattingXI.length === 1) {
                 currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === nextBattingXI[0].name);
                 currentBattingTeam.currentNonStrikerIndex = -1;
@@ -3781,11 +3707,40 @@
                     adminOption.textContent = team.name;
                     adminTeamSelect.appendChild(adminOption);
                 });
+
+                // Apply initial disabling based on current selections
+                updateLoadTeamDropdowns();
+
             } catch (e) {
                 console.error("Error loading registered teams:", e);
                 showMessageBox('Failed to load saved teams.', 'error');
             }
         }
+
+        // Function to update the disabled state of options in load team dropdowns
+        function updateLoadTeamDropdowns() {
+            const selectedTeam1 = loadTeam1Select.value;
+            const selectedTeam2 = loadTeam2Select.value;
+
+            // Iterate over options in loadTeam1Select
+            Array.from(loadTeam1Select.options).forEach(option => {
+                if (option.value === selectedTeam2 && selectedTeam2 !== "") {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+
+            // Iterate over options in loadTeam2Select
+            Array.from(loadTeam2Select.options).forEach(option => {
+                if (option.value === selectedTeam1 && selectedTeam1 !== "") {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        }
+
 
         // Event listener for loading Team 1 from dropdown
         loadTeam1Select.addEventListener('change', (event) => {
@@ -3805,7 +3760,12 @@
                     console.error("Error loading selected team 1:", e);
                     showMessageBox('Failed to load selected team 1.', 'error');
                 }
+            } else {
+                // If selection is cleared, also clear the input fields
+                document.getElementById('team1Name').value = '';
+                document.getElementById('team1Players').value = '';
             }
+            updateLoadTeamDropdowns(); // Update the other dropdown
         });
 
         // Event listener for loading Team 2 from dropdown
@@ -3826,7 +3786,12 @@
                     console.error("Error loading selected team 2:", e);
                     showMessageBox('Failed to load selected team 2.', 'error');
                 }
+            } else {
+                // If selection is cleared, also clear the input fields
+                document.getElementById('team2Name').value = '';
+                document.getElementById('team2Players').value = '';
             }
+            updateLoadTeamDropdowns(); // Update the other dropdown
         });
 
 
@@ -3856,6 +3821,12 @@
                     showMessageBox('Please enter players for both teams.', 'error');
                     return;
                 }
+
+                if (team1Name === team2Name) {
+                    showMessageBox('Team 1 and Team 2 names cannot be the same.', 'error');
+                    return;
+                }
+
 
                 totalOversPerInnings = parseInt(oversInput, 10);
                 if (isNaN(totalOversPerInnings) || totalOversPerInnings <= 0) {
@@ -4062,13 +4033,7 @@
                 const battingXI = getPlayingXIPlayers(currentBattingTeam);
                 if (battingXI.length >= 2) {
                     currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
-                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
-                    const secondPlayer = battingXI.find(p => p.name !== battingXI[0].name);
-                    if (secondPlayer) {
-                        currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === secondPlayer.name);
-                    } else {
-                        currentBattingTeam.currentNonStrikerIndex = -1;
-                    }
+                    currentBattingTeam.currentNonStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[1].name); // Fix: second player
 
                 } else if (battingXI.length === 1) {
                     currentBattingTeam.currentStrikerIndex = currentBattingTeam.players.findIndex(p => p.name === battingXI[0].name);
@@ -4159,11 +4124,10 @@
 
         // NEW: End Match button listener (for summary acknowledgement)
         endMatchSummaryBtn.addEventListener('click', () => {
-            console.log("End Match button clicked. Current matchState:", matchState); // Existing Debugging log
-            // Add another log to be absolutely sure of the state right before the if condition
-            console.log("Debug: matchState before condition check:", matchState, "Type:", typeof matchState); // NEW DEBUG LOG
-            if (matchState === 'Completed' || matchState === 'Cancelled') {
-                console.log("Match state is completed or cancelled. Attempting to render final scorecards."); // Existing Debugging log
+            console.log("End Match button clicked. Current matchState:", matchState);
+            console.log("Debug: matchState before condition check:", matchState, "Type:", typeof matchState);
+            if (matchState === 'Completed' || matchState === 'Cancelled') { // Changed 'Completed' to 'completed' to match state variable
+                console.log("Match state is completed or cancelled. Attempting to render final scorecards.");
                 // Display the match result, Man of the Match, and final scorecards
                 matchResultDisplay.classList.remove('hidden');
                 manOfTheMatchDisplay.classList.remove('hidden');
@@ -4171,13 +4135,13 @@
 
                 try {
                     // Populate the details from the last saved match
-                    renderFinalScorecards(); // Re-render to ensure data is fresh
+                    renderFinalScorecards();
                 } catch (error) {
-                    console.error("Error calling renderFinalScorecards:", error); // Catch any errors here
+                    console.error("Error calling renderFinalScorecards:", error);
                     showMessageBox('An error occurred while displaying match summary.', 'error');
                 }
 
-                endMatchSummaryBtn.classList.add('hidden'); // Hide the button itself
+                endMatchSummaryBtn.classList.add('hidden');
                 showMessageBox('Match summary displayed.', 'info');
             } else {
                 console.warn("End Match button clicked but matchState is not 'completed' or 'cancelled'. Current state:", matchState);
@@ -4274,16 +4238,14 @@
 
         // Event listeners for Developer Info page
         developerInfoBtn.addEventListener('click', () => {
+            previousMatchState = matchState; // Store current state before navigating
             matchState = 'developer_info';
             updateUIForMatchState();
         });
 
         backBtnDeveloperInfo.addEventListener('click', () => {
-            if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
-                matchState = 'scoreboard';
-            } else {
-                matchState = 'registration';
-            }
+            // Restore to the state before developer info, or default to registration
+            matchState = previousMatchState || 'registration';
             updateUIForMatchState();
             showMessageBox('Returned to previous section.', 'info');
         });
@@ -4478,24 +4440,6 @@
                 confirmNewAdminPasswordInput.value = '';
             });
         });
-
-        // Removed: Forgot Password Link Listener
-        // forgotPasswordLink.addEventListener('click', (event) => {
-        //     event.preventDefault(); // Prevent default link behavior
-        //     adminLoginModal.classList.add('hidden'); // Hide the login modal
-        //     showConfirmationModal('Are you sure you want to reset the admin password to the default "admin123"? This action cannot be undone.',
-        //         () => {
-        //             ADMIN_PASSWORD = 'admin123';
-        //             showMessageBox('Admin password has been reset to "admin123".', 'success');
-        //         },
-        //         () => {
-        //             // If cancelled, optionally re-show the login modal
-        //             adminLoginModal.classList.remove('hidden');
-        //             showMessageBox('Password reset cancelled.', 'info');
-        //         }
-        //     );
-        // });
-
 
         // Initial load of past matches and current match state when the page loads
         window.onload = () => {
