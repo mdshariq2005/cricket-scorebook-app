@@ -692,11 +692,12 @@
                 </div>
 
                 <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
-                    <button type="submit" id="registerTeamsBtn" class="py-2 px-4 sm:py-3 sm:px-6">Register Teams</button>
-                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 sm:py-3 sm:px-6">Reset All</button>
-                    <button type="button" id="showPastMatchesBtn" class="py-2 px-4 sm:py-3 sm:px-6">Past Match Summary</button>
-                    <button id="developerInfoBtn" class="py-2 px-4 sm:py-3 sm:px-6">Developer Info</button>
-                    <button id="adminLoginBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 sm:py-3 sm:px-6">Admin Login</button>
+                    <button type="submit" id="registerTeamsBtn" class="bg-red-500 hover:bg-grey-600 text-white py-2 px-4 sm:py-3 sm:px-6">Register Teams</button>
+                    <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-grey-600 text-white py-2 px-4 sm:py-3 sm:px-6">Reset All</button>
+                    <button type="button" id="showPastMatchesBtn" class="bg-red-500 hover:bg-grey-600 text-white py-2 px-4 sm:py-3 sm:px-6">Past Match Summary</button>
+                    <button id="adminLoginBtn" class="bg-red-500 hover:bg-grey-600 text-white py-2 px-4 sm:py-3 sm:px-6">Admin Login</button>
+                    <button id="developerInfoBtn" class="bg-red-500 hover:bg-grey-600 text-white py-2 px-4 sm:py-3 sm:px-6">Developer Info</button>
+                    
                 </div>
             </form>
         </div>
@@ -944,7 +945,7 @@
                     <div class="overflow-x-auto">
                         <table id="bowlerScorecard" class="scorecard-table">
                             <thead>
-                                <tr>
+                                <tr> <br>
                                     <th>Bowler</th>
                                     <th class="text-right">Overs</th>
                                     <th class="text-right">Runs</th>
@@ -952,7 +953,8 @@
                                     <th class="text-right">WD</th>
                                     <th class="text-right">NB</th>
                                     <th class="text-right">Econ</th>
-                                </tr>
+                               </br>
+                               </tr>
                             </thead>
                             <tbody>
                                 <!-- Bowler rows will be inserted here by JavaScript -->
