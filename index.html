@@ -131,7 +131,9 @@
         #resetAllBtn,
         #showPastMatchesBtn,
         #backBtnPastMatches,
-        #goToLiveScoreBtn
+        #goToLiveScoreBtn,
+        #adminLoginBtn,
+        #adminPanelSection button
         {
             padding: 0.8rem 2rem; /* Slightly larger padding for main action buttons */
             font-size: 0.9rem; /* Slightly larger font for main action buttons */
@@ -559,6 +561,67 @@
             50% { transform: scale(1.05); opacity: 0.8; }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        /* Admin Panel Specific Styles */
+        #adminPanelSection {
+            background-color: #fffbeb; /* Light yellow background */
+            border: 1px solid #fcd34d;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        #adminPanelSection h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #78350f; /* Darker brown for admin title */
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        #adminPanelSection h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #78350f;
+            margin-bottom: 1rem;
+        }
+        #adminPanelSection .admin-section-card {
+            background-color: #fffdf0;
+            border: 1px solid #fde68a;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        #adminPanelSection .admin-section-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        #adminPanelSection .admin-section-card li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed #fcd34d;
+        }
+        #adminPanelSection .admin-section-card li:last-child {
+            border-bottom: none;
+        }
+        #adminPanelSection .admin-section-card .delete-btn {
+            background-color: #ef4444; /* Red */
+            color: white;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 0.375rem;
+            box-shadow: none;
+        }
+        #adminPanelSection .admin-section-card .delete-btn:hover {
+            background-color: #dc2626;
+        }
+        #adminPanelSection .warning-text {
+            color: #b45309; /* Dark orange */
+            font-weight: 500;
+            margin-top: 1rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -568,7 +631,7 @@
             <img src="https://process.filestackapi.com/cache=expiry:max/resize=width:1050/WolEwbrMSBXbOjqF4HDI" alt="Cricket Scorebook Logo" class="app-logo">
         </div>
 
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Scorebook</h1>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Scorebook</h1>
 
         <!-- Team Registration Section -->
         <div id="teamRegistrationSection">
@@ -609,11 +672,31 @@
                     <input type="time" id="matchTime" name="matchTime" required class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-400">
                 </div>
 
+                <!-- Load Existing Teams Section -->
+                <div class="form-group md:col-span-2">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3 text-center">Load Existing Teams</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label for="loadTeam1Select" class="mb-2">Load Team 1:</label>
+                            <select id="loadTeam1Select" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <option value="">-- Select Team 1 --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="loadTeam2Select" class="mb-2">Load Team 2:</label>
+                            <select id="loadTeam2Select" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                <option value="">-- Select Team 2 --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex justify-center flex-wrap gap-4 mt-6 md:col-span-2"> <!-- Buttons span two columns -->
                     <button type="submit" id="registerTeamsBtn">Register Teams</button>
                     <button type="button" id="resetAllBtn" class="bg-red-500 hover:bg-red-600 text-white">Reset All</button>
                     <button type="button" id="showPastMatchesBtn">Past Match Summary</button>
                     <button id="developerInfoBtn">Developer Info</button>
+                    <button id="adminLoginBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white">Admin Login</button>
                 </div>
             </form>
         </div>
@@ -1044,6 +1127,51 @@
             </div>
         </div>
 
+        <!-- NEW: Admin Panel Section -->
+        <div id="adminPanelSection" class="hidden">
+            <h2 class="text-2xl font-semibold mb-4">Admin Panel</h2>
+
+            <div class="admin-section-card">
+                <h3>Manage Registered Teams</h3>
+                <div class="mb-4">
+                    <label for="adminTeamSelect" class="mb-2">Select Team to Edit/Delete:</label>
+                    <select id="adminTeamSelect" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <option value="">-- Select a Team --</option>
+                    </select>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="adminTeamName" class="mb-2">Team Name:</label>
+                    <input type="text" id="adminTeamName" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="adminTeamPlayers" class="mb-2">Players (one per line):</label>
+                    <textarea id="adminTeamPlayers" rows="6" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                </div>
+                <div class="flex justify-center gap-4 mt-4">
+                    <button id="updateTeamInfoBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Update Team Info</button>
+                    <button id="deleteSelectedTeamBtn" class="bg-red-500 hover:bg-red-600 text-white">Delete Selected Team</button>
+                </div>
+            </div>
+
+            <div class="admin-section-card">
+                <h3>Current Match Score Correction</h3>
+                <p class="warning-text">
+                    Warning: Direct score correction does not affect individual player stats or undo history. Use with caution.
+                </p>
+                <div class="form-group mb-4">
+                    <label for="currentBattingTeamScoreCorrection" class="mb-2">Set Current Batting Team Runs:</label>
+                    <input type="number" id="currentBattingTeamScoreCorrection" min="0" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div class="flex justify-center gap-4 mt-4">
+                    <button id="applyScoreCorrectionBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Apply Score Correction</button>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-6">
+                <button id="backBtnAdminPanel">Back to Main</button>
+            </div>
+        </div>
+
 
         <!-- Message Box for notifications -->
         <div id="messageBox" class="message-box"></div>
@@ -1169,6 +1297,21 @@
                 <div class="flex justify-center gap-4">
                     <button id="confirmFielderBtn" class="bg-green-500 hover:bg-green-600 text-white">Confirm</button>
                     <button id="cancelFielderBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Admin Login Modal -->
+        <div id="adminLoginModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Admin Login</h3>
+                <div class="mb-4">
+                    <label for="adminPassword" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="adminPassword" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button id="loginAdminBtn" class="bg-blue-500 hover:bg-blue-600 text-white">Login</button>
+                    <button id="cancelAdminLoginBtn" class="bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1360,6 +1503,27 @@
         // Go to Live Score button
         const goToLiveScoreBtn = document.getElementById('goToLiveScoreBtn');
 
+        // Load Existing Teams elements
+        const loadTeam1Select = document.getElementById('loadTeam1Select');
+        const loadTeam2Select = document.getElementById('loadTeam2Select');
+
+        // NEW Admin Panel elements
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const loginAdminBtn = document.getElementById('loginAdminBtn');
+        const cancelAdminLoginBtn = document.getElementById('cancelAdminLoginBtn');
+        const adminPanelSection = document.getElementById('adminPanelSection');
+        const backBtnAdminPanel = document.getElementById('backBtnAdminPanel');
+
+        const adminTeamSelect = document.getElementById('adminTeamSelect');
+        const adminTeamNameInput = document.getElementById('adminTeamName');
+        const adminTeamPlayersTextarea = document.getElementById('adminTeamPlayers');
+        const updateTeamInfoBtn = document.getElementById('updateTeamInfoBtn');
+        const deleteSelectedTeamBtn = document.getElementById('deleteSelectedTeamBtn');
+        const currentBattingTeamScoreCorrectionInput = document.getElementById('currentBattingTeamScoreCorrection');
+        const applyScoreCorrectionBtn = document.getElementById('applyScoreCorrectionBtn');
+
 
         // Array of all main content sections to easily hide/show them
         const allSections = [
@@ -1370,7 +1534,8 @@
             matchReadySection,
             scoreboardSection,
             pastMatchesSection,
-            developerInfoSection
+            developerInfoSection,
+            adminPanelSection // NEW: Add admin panel to sections
         ];
 
         // Function to hide all main content sections
@@ -1420,7 +1585,7 @@
         let currentBowlerIndex = -1;
 
         let totalOversPerInnings = 0;
-        let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'captain_wk_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled'
+        let matchState = 'registration'; // 'registration', 'playing_xi_selection', 'captain_wk_selection', 'toss', 'teams_registered', 'innings1', 'innings2', 'completed', 'cancelled', 'admin_panel'
         let firstInningsTotalRuns = 0;
 
         let lastAction = null;
@@ -1432,6 +1597,10 @@
         let tossWinnerName = '';
         let tossDecision = '';
         let cancellationReason = '';
+
+        // Local Storage key for registered teams
+        const REGISTERED_TEAMS_KEY = 'registeredCricketTeams';
+        const ADMIN_PASSWORD = 'admin123'; // Simple admin password for demonstration
 
 
         // Function to show a message box
@@ -1480,7 +1649,7 @@
 
             // Hide all buttons by default
             const allButtons = [
-                registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn,
+                registerTeamsBtn, resetAllBtn, showPastMatchesBtn, goToLiveScoreBtn, adminLoginBtn,
                 confirmPlayingXIBtn, backBtnPlayingXI,
                 confirmCaptainWkBtn, backBtnCaptainWk,
                 proceedToMatchReadyBtn, backBtnToss,
@@ -1492,7 +1661,8 @@
                 newMatchBtn, restartMatchBtn, backBtnMatchSummary,
                 clearPastMatchesBtn, backBtnPastMatches,
                 developerInfoBtn, backBtnDeveloperInfo,
-                endMatchSummaryBtn // NEW button
+                endMatchSummaryBtn, // NEW button
+                updateTeamInfoBtn, deleteSelectedTeamBtn, applyScoreCorrectionBtn, backBtnAdminPanel
             ];
             allButtons.forEach(button => button.classList.add('hidden'));
 
@@ -1524,6 +1694,8 @@
                     showPastMatchesBtn.classList.remove('hidden');
                     developerInfoBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
+                    adminLoginBtn.classList.remove('hidden'); // Show Admin Login button
+                    loadRegisteredTeams(); // Load registered teams for dropdowns
                     break;
                 case 'playing_xi_selection':
                     playingXISelectionSection.classList.remove('hidden');
@@ -1621,6 +1793,20 @@
                     developerInfoSection.classList.remove('hidden');
                     backBtnDeveloperInfo.classList.remove('hidden');
                     break;
+                case 'admin_panel': // NEW Admin Panel state
+                    adminPanelSection.classList.remove('hidden');
+                    backBtnAdminPanel.classList.remove('hidden');
+                    updateTeamInfoBtn.classList.remove('hidden');
+                    deleteSelectedTeamBtn.classList.remove('hidden');
+                    applyScoreCorrectionBtn.classList.remove('hidden');
+                    populateAdminTeamSelect(); // Populate dropdown with registered teams
+                    // Pre-fill score correction if a match is active
+                    if (currentBattingTeam && (matchState === 'innings1' || matchState === 'innings2')) {
+                        currentBattingTeamScoreCorrectionInput.value = currentBattingTeam.runs;
+                    } else {
+                        currentBattingTeamScoreCorrectionInput.value = '';
+                    }
+                    break;
                 default:
                     teamRegistrationSection.classList.remove('hidden');
                     registerTeamsBtn.classList.remove('hidden');
@@ -1628,6 +1814,7 @@
                     showPastMatchesBtn.classList.remove('hidden');
                     developerInfoBtn.classList.remove('hidden');
                     newMatchBtn.classList.remove('hidden');
+                    adminLoginBtn.classList.remove('hidden');
                     break;
             }
         }
@@ -3245,7 +3432,7 @@
                                             ${team2PlayersForDisplay.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
                                                 const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
                                                 const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
-                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${econ}</td></tr>`;
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3286,7 +3473,7 @@
                                             ${team1PlayersForDisplay.filter(p => p.ballsBowled > 0 || p.wicketsTaken > 0 || p.wides > 0 || p.noBalls > 0).map(p => {
                                                 const totalBallsBowled = (p.oversBowled * 6) + p.ballsBowled;
                                                 const econ = totalBallsBowled > 0 ? ((p.runsConceded / totalBallsBowled) * 6).toFixed(2) : '0.00';
-                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${p.noBalls}</td><td class="text-right">${econ}</td></tr>`;
+                                                return `<tr><td>${p.name}</td><td class="text-right">${p.oversBowled}.${p.ballsBowled % 6}</td><td class="text-right">${p.runsConceded}</td><td class="text-right">${p.wicketsTaken}</td><td class="text-right">${p.wides}</td><td class="text-right">${econ}</td></tr>`;
                                             }).join('')}
                                         </tbody>
                                     </table>
@@ -3451,6 +3638,106 @@
             saveCurrentMatchStateToLocal();
         }
 
+        // Function to save a team to registered teams
+        function saveRegisteredTeam(teamToSave) {
+            try {
+                let registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                const existingTeamIndex = registeredTeams.findIndex(t => t.name.toLowerCase() === teamToSave.name.toLowerCase());
+
+                const teamData = {
+                    name: teamToSave.name,
+                    players: teamToSave.players.map(p => p.name) // Store only player names
+                };
+
+                if (existingTeamIndex !== -1) {
+                    // Update existing team
+                    registeredTeams[existingTeamIndex] = teamData;
+                    console.log(`Updated existing team: ${teamToSave.name}`);
+                } else {
+                    // Add new team
+                    registeredTeams.push(teamData);
+                    console.log(`Added new team: ${teamToSave.name}`);
+                }
+                localStorage.setItem(REGISTERED_TEAMS_KEY, JSON.stringify(registeredTeams));
+                loadRegisteredTeams(); // Refresh dropdowns after saving
+            } catch (e) {
+                console.error("Error saving registered team:", e);
+                showMessageBox('Failed to save team registration data.', 'error');
+            }
+        }
+
+        // Function to load registered teams into dropdowns
+        function loadRegisteredTeams() {
+            loadTeam1Select.innerHTML = '<option value="">-- Select Team 1 --</option>';
+            loadTeam2Select.innerHTML = '<option value="">-- Select Team 2 --</option>';
+            adminTeamSelect.innerHTML = '<option value="">-- Select a Team --</option>'; // For admin panel
+
+            try {
+                const registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                registeredTeams.forEach(team => {
+                    const option1 = document.createElement('option');
+                    option1.value = team.name;
+                    option1.textContent = team.name;
+                    loadTeam1Select.appendChild(option1);
+
+                    const option2 = document.createElement('option');
+                    option2.value = team.name;
+                    option2.textContent = team.name;
+                    loadTeam2Select.appendChild(option2);
+
+                    const adminOption = document.createElement('option');
+                    adminOption.value = team.name;
+                    adminOption.textContent = team.name;
+                    adminTeamSelect.appendChild(adminOption);
+                });
+            } catch (e) {
+                console.error("Error loading registered teams:", e);
+                showMessageBox('Failed to load saved teams.', 'error');
+            }
+        }
+
+        // Event listener for loading Team 1 from dropdown
+        loadTeam1Select.addEventListener('change', (event) => {
+            const selectedTeamName = event.target.value;
+            if (selectedTeamName) {
+                try {
+                    const registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                    const selectedTeam = registeredTeams.find(t => t.name === selectedTeamName);
+                    if (selectedTeam) {
+                        document.getElementById('team1Name').value = selectedTeam.name;
+                        document.getElementById('team1Players').value = selectedTeam.players.join('\n');
+                        showMessageBox(`Team 1: ${selectedTeam.name} loaded successfully!`, 'success');
+                    } else {
+                        showMessageBox('Selected team not found.', 'error');
+                    }
+                } catch (e) {
+                    console.error("Error loading selected team 1:", e);
+                    showMessageBox('Failed to load selected team 1.', 'error');
+                }
+            }
+        });
+
+        // Event listener for loading Team 2 from dropdown
+        loadTeam2Select.addEventListener('change', (event) => {
+            const selectedTeamName = event.target.value;
+            if (selectedTeamName) {
+                try {
+                    const registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                    const selectedTeam = registeredTeams.find(t => t.name === selectedTeamName);
+                    if (selectedTeam) {
+                        document.getElementById('team2Name').value = selectedTeam.name;
+                        document.getElementById('team2Players').value = selectedTeam.players.join('\n');
+                        showMessageBox(`Team 2: ${selectedTeam.name} loaded successfully!`, 'success');
+                    } else {
+                        showMessageBox('Selected team not found.', 'error');
+                    }
+                } catch (e) {
+                    console.error("Error loading selected team 2:", e);
+                    showMessageBox('Failed to load selected team 2.', 'error');
+                }
+            }
+        });
+
 
         // Event listener for team registration form submission
         teamRegistrationForm.addEventListener('submit', async function(event) {
@@ -3527,6 +3814,9 @@
                 updateUIForMatchState();
                 showMessageBox('Teams registered! Now select your Playing XI.', 'success');
                 saveCurrentMatchStateToLocal();
+                // Save registered teams to local storage
+                saveRegisteredTeam(team1);
+                saveRegisteredTeam(team2);
             }
             catch (error) {
                 console.error('Error registering teams:', error);
@@ -3907,11 +4197,170 @@
             showMessageBox('Returned to previous section.', 'info');
         });
 
+        // NEW: Admin Login functionality
+        adminLoginBtn.addEventListener('click', () => {
+            adminPasswordInput.value = ''; // Clear password field
+            adminLoginModal.classList.remove('hidden');
+        });
+
+        loginAdminBtn.addEventListener('click', () => {
+            const password = adminPasswordInput.value;
+            if (password === ADMIN_PASSWORD) {
+                adminLoginModal.classList.add('hidden');
+                matchState = 'admin_panel';
+                updateUIForMatchState();
+                showMessageBox('Admin login successful!', 'success');
+            } else {
+                showMessageBox('Incorrect password.', 'error');
+            }
+        });
+
+        cancelAdminLoginBtn.addEventListener('click', () => {
+            adminLoginModal.classList.add('hidden');
+            showMessageBox('Admin login cancelled.', 'info');
+        });
+
+        backBtnAdminPanel.addEventListener('click', () => {
+            // Determine previous state to return to
+            if (matchState === 'innings1' || matchState === 'innings2' || matchState === 'completed' || matchState === 'cancelled') {
+                matchState = 'scoreboard';
+            } else {
+                matchState = 'registration';
+            }
+            updateUIForMatchState();
+            showMessageBox('Exited Admin Panel.', 'info');
+        });
+
+        // NEW: Admin Panel - Populate Team Select
+        function populateAdminTeamSelect() {
+            adminTeamSelect.innerHTML = '<option value="">-- Select a Team --</option>';
+            try {
+                const registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                registeredTeams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.name;
+                    option.textContent = team.name;
+                    adminTeamSelect.appendChild(option);
+                });
+            } catch (e) {
+                console.error("Error populating admin team select:", e);
+            }
+            // Clear inputs when dropdown is reset
+            adminTeamNameInput.value = '';
+            adminTeamPlayersTextarea.value = '';
+        }
+
+        // NEW: Admin Panel - Load team details into fields
+        adminTeamSelect.addEventListener('change', () => {
+            const selectedTeamName = adminTeamSelect.value;
+            if (selectedTeamName) {
+                try {
+                    const registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                    const selectedTeam = registeredTeams.find(t => t.name === selectedTeamName);
+                    if (selectedTeam) {
+                        adminTeamNameInput.value = selectedTeam.name;
+                        adminTeamPlayersTextarea.value = selectedTeam.players.join('\n');
+                    }
+                } catch (e) {
+                    console.error("Error loading team for admin edit:", e);
+                }
+            } else {
+                adminTeamNameInput.value = '';
+                adminTeamPlayersTextarea.value = '';
+            }
+        });
+
+        // NEW: Admin Panel - Update Team Info
+        updateTeamInfoBtn.addEventListener('click', () => {
+            const originalTeamName = adminTeamSelect.value;
+            const newTeamName = adminTeamNameInput.value.trim();
+            const newPlayersRaw = adminTeamPlayersTextarea.value.trim();
+
+            if (!originalTeamName) {
+                showMessageBox('Please select a team to update.', 'error');
+                return;
+            }
+            if (!newTeamName || !newPlayersRaw) {
+                showMessageBox('Team name and player list cannot be empty.', 'error');
+                return;
+            }
+
+            showConfirmationModal(`Are you sure you want to update ${originalTeamName}'s details?`, () => {
+                try {
+                    let registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                    const teamIndex = registeredTeams.findIndex(t => t.name === originalTeamName);
+
+                    if (teamIndex !== -1) {
+                        const newPlayersArray = newPlayersRaw.split('\n').map(p => p.trim()).filter(p => p);
+                        registeredTeams[teamIndex].name = newTeamName;
+                        registeredTeams[teamIndex].players = newPlayersArray;
+                        localStorage.setItem(REGISTERED_TEAMS_KEY, JSON.stringify(registeredTeams));
+                        showMessageBox(`${originalTeamName} updated to ${newTeamName} successfully!`, 'success');
+                        populateAdminTeamSelect(); // Refresh dropdown
+                        loadRegisteredTeams(); // Refresh main registration dropdowns
+                        adminTeamNameInput.value = ''; // Clear fields
+                        adminTeamPlayersTextarea.value = '';
+                    } else {
+                        showMessageBox('Team not found for update.', 'error');
+                    }
+                } catch (e) {
+                    console.error("Error updating team info:", e);
+                    showMessageBox('Failed to update team info.', 'error');
+                }
+            });
+        });
+
+        // NEW: Admin Panel - Delete Selected Team
+        deleteSelectedTeamBtn.addEventListener('click', () => {
+            const teamToDeleteName = adminTeamSelect.value;
+            if (!teamToDeleteName) {
+                showMessageBox('Please select a team to delete.', 'error');
+                return;
+            }
+
+            showConfirmationModal(`Are you sure you want to delete ${teamToDeleteName}? This action cannot be undone.`, () => {
+                try {
+                    let registeredTeams = JSON.parse(localStorage.getItem(REGISTERED_TEAMS_KEY)) || [];
+                    registeredTeams = registeredTeams.filter(t => t.name !== teamToDeleteName);
+                    localStorage.setItem(REGISTERED_TEAMS_KEY, JSON.stringify(registeredTeams));
+                    showMessageBox(`${teamToDeleteName} deleted successfully!`, 'success');
+                    populateAdminTeamSelect(); // Refresh dropdown
+                    loadRegisteredTeams(); // Refresh main registration dropdowns
+                    adminTeamNameInput.value = ''; // Clear fields
+                    adminTeamPlayersTextarea.value = '';
+                } catch (e) {
+                    console.error("Error deleting team:", e);
+                    showMessageBox('Failed to delete team.', 'error');
+                }
+            });
+        });
+
+        // NEW: Admin Panel - Apply Score Correction
+        applyScoreCorrectionBtn.addEventListener('click', () => {
+            if (!currentBattingTeam || (matchState !== 'innings1' && matchState !== 'innings2')) {
+                showMessageBox('No active match to correct score for.', 'error');
+                return;
+            }
+            const newScore = parseInt(currentBattingTeamScoreCorrectionInput.value, 10);
+            if (isNaN(newScore) || newScore < 0) {
+                showMessageBox('Please enter a valid positive number for score correction.', 'error');
+                return;
+            }
+
+            showConfirmationModal(`Are you sure you want to change ${currentBattingTeam.name}'s score to ${newScore}? This will NOT update individual player stats or undo history.`, () => {
+                currentBattingTeam.runs = newScore;
+                showMessageBox(`Score for ${currentBattingTeam.name} updated to ${newScore}.`, 'success');
+                updateScoreboardDisplay();
+                saveCurrentMatchStateToLocal();
+            });
+        });
+
 
         // Initial load of past matches and current match state when the page loads
         window.onload = () => {
             loadCurrentMatchStateFromLocal();
             loadPastMatchesLocal();
+            loadRegisteredTeams(); // Load registered teams into dropdowns on initial load
         };
     </script>
 </body>
